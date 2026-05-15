@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>八字排盘</title>
+  <link rel="stylesheet" href="css/bazi.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶部导航 -->
+    <header class="app-header">
+      <h1>☰ 八字排盘</h1>
+      <nav class="app-tabs">
+        <button class="tab active" data-tab="bazi">排盘</button>
+        <button class="tab" data-tab="hepan">合盘</button>
+        <button class="tab" data-tab="zeri">择日</button>
+        <button class="tab" data-tab="history">历史</button>
+        <button class="tab" data-tab="settings">设置</button>
+      </nav>
+    </header>
+
+    <main class="app-main">
+      <!-- ========== 排盘 TAB ========== -->
+      <section class="tab-content active" id="tab-bazi">
+        <!-- 输入区 -->
+        <div class="input-card">
+          <div class="input-row">
+            <div class="input-group">
+              <label>姓名</label>
+              <input type="text" id="name" placeholder="选填" maxlength="10">
+            </div>
+            <div class="input-group">
+              <label>性别</label>
+              <div class="radio-group">
+                <label><input type="radio" name="gender" value="male" checked> 男</label>
+                <label><input type="radio" name="gender" value="female"> 女</label>
+              </div>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label>出生日期</label>
+              <div class="date-group">
+                <select id="year"></select><span>年</span>
+                <select id="month"></select><span>月</span>
+                <select id="day"></select><span>日</span>
+              </div>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label>出生时间</label>
+              <div class="date-group">
+                <select id="hour"></select><span>时</span>
+                <select id="minute"></select><span>分</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>出生城市</label>
+              <select id="city">
+                <option value="beijing">北京</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-row actions">
+            <button class="btn-primary" id="btnCalc">开始排盘</button>
+            <label class="checkbox-label">
+              <input type="checkbox" id="useSolarTime" checked> 真太阳时校正
+            </label>
+          </div>
+        </div>
+
+        <!-- 结果区 -->
+        <div id="result" class="result-area" style="display:none">
+
+          <!-- 基础信息 -->
+          <div class="info-bar" id="infoBar"></div>
+
+          <!-- 四柱排盘表 -->
+          <div class="pillars-card">
+            <div class="pillars-grid" id="pillarsGrid">
+              <div class="pillar-cell header-cell">年柱</div>
+              <div class="pillar-cell header-cell">月柱</div>
+              <div class="pillar-cell header-cell">日柱</div>
+              <div class="pillar-cell header-cell">时柱</div>
+              <!-- JS 动态填充 -->
+            </div>
+          </div>
+
+          <!-- 详细分析 -->
+          <div class="analysis-grid">
+            <!-- 五行统计 -->
+            <div class="card" id="wuxingCard">
+              <h3>五行统计</h3>
+              <div class="wuxing-bars" id="wuxingBars"></div>
+            </div>
+            <!-- 神煞 -->
+            <div class="card" id="starsCard">
+              <h3>神煞</h3>
+              <div id="starsList" class="stars-list"></div>
+            </div>
+          </div>
+
+          <!-- 格局分析 -->
+          <div class="card" id="patternCard">
+            <h3>格局分析</h3>
+            <div id="patternContent"></div>
+          </div>
+
+          <!-- 特殊格局 -->
+          <div class="card" id="specialPatternCard" style="display:none">
+            <h3>特殊格局</h3>
+            <div id="specialPatternContent"></div>
+          </div>
+
+          <!-- 六亲排盘 -->
+          <div class="card" id="liuQinCard" style="display:none">
+            <h3>六亲排盘</h3>
+            <div id="liuQinContent"></div>
+          </div>
+
+          <!-- 大运 -->
+          <div class="card" id="dayunCard">
+            <h3>大运</h3>
+            <div class="dayun-timeline" id="dayunList"></div>
+          </div>
+
+          <!-- 当前流年 -->
+          <div class="card" id="currentYearCard">
+            <h3>当前流年</h3>
+            <div id="currentYearContent"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 合盘 TAB ========== -->
+      <section class="tab-content" id="tab-hepan">
+        <div class="input-card">
+          <h3 style="margin-bottom:12px;color:var(--primary)">婚姻合盘</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <!-- 甲方 -->
+            <div style="border:1px solid var(--border);border-radius:8px;padding:12px">
+              <h4 style="margin-bottom:8px;color:var(--text)">甲方</h4>
+              <div class="input-group">
+                <label>姓名</label>
+                <input type="text" id="hp1Name" placeholder="选填" maxlength="10">
+              </div>
+              <div class="input-group">
+                <label>性别</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="hp1Gender" value="male" checked> 男</label>
+                  <label><input type="radio" name="hp1Gender" value="female"> 女</label>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>出生日期</label>
+                <div class="date-group">
+                  <select id="hp1Year"></select><span>年</span>
+                  <select id="hp1Month"></select><span>月</span>
+                  <select id="hp1Day"></select><span>日</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>出生时间</label>
+                <div class="date-group">
+                  <select id="hp1Hour"></select><span>时</span>
+                  <select id="hp1Minute"></select><span>分</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>城市</label>
+                <select id="hp1City"></select>
+              </div>
+            </div>
+            <!-- 乙方 -->
+            <div style="border:1px solid var(--border);border-radius:8px;padding:12px">
+              <h4 style="margin-bottom:8px;color:var(--text)">乙方</h4>
+              <div class="input-group">
+                <label>姓名</label>
+                <input type="text" id="hp2Name" placeholder="选填" maxlength="10">
+              </div>
+              <div class="input-group">
+                <label>性别</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="hp2Gender" value="male"> 男</label>
+                  <label><input type="radio" name="hp2Gender" value="female" checked> 女</label>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>出生日期</label>
+                <div class="date-group">
+                  <select id="hp2Year"></select><span>年</span>
+                  <select id="hp2Month"></select><span>月</span>
+                  <select id="hp2Day"></select><span>日</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>出生时间</label>
+                <div class="date-group">
+                  <select id="hp2Hour"></select><span>时</span>
+                  <select id="hp2Minute"></select><span>分</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>城市</label>
+                <select id="hp2City"></select>
+              </div>
+            </div>
+          </div>
+          <div class="input-row actions" style="margin-top:12px">
+            <button class="btn-primary" id="btnHarmony">开始合盘</button>
+            <label class="checkbox-label">
+              <input type="checkbox" id="hpUseSolar" checked> 真太阳时校正
+            </label>
+          </div>
+        </div>
+
+        <!-- 合盘结果 -->
+        <div id="harmonyResult" style="display:none">
+          <div class="card" id="harmonyScoreCard">
+            <h3>合盘评分</h3>
+            <div id="harmonyScoreDisplay" style="text-align:center;padding:10px"></div>
+          </div>
+          <div class="card" id="harmonyDetailsCard">
+            <h3>详细分析</h3>
+            <div id="harmonyDetails"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 择日 TAB ========== -->
+      <section class="tab-content" id="tab-zeri">
+        <div class="input-card">
+          <div class="input-row">
+            <div class="input-group">
+              <label>选择日期</label>
+              <div class="date-group">
+                <select id="zeriYear"></select><span>年</span>
+                <select id="zeriMonth"></select><span>月</span>
+                <select id="zeriDay"></select><span>日</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>&nbsp;</label>
+              <button class="btn-primary" id="btnZeri">查黄历</button>
+            </div>
+          </div>
+        </div>
+        <div id="zeriResult" style="display:none">
+          <div class="card">
+            <h3>黄历</h3>
+            <div id="zeriContent" style="font-size:14px;line-height:1.8"></div>
+          </div>
+          <div class="card">
+            <h3>本月概况</h3>
+            <div id="zeriMonthView" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:12px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 历史记录 TAB ========== -->
+      <section class="tab-content" id="tab-history">
+        <div class="placeholder">
+          <h2>排盘历史</h2>
+          <p id="historyEmpty">暂无记录</p>
+          <div id="historyList"></div>
+        </div>
+      </section>
+
+      <!-- ========== 设置 TAB ========== -->
+      <section class="tab-content" id="tab-settings">
+        <div class="placeholder">
+          <h2>设置</h2>
+          <label class="checkbox-label">
+            <input type="checkbox" id="darkMode"> 暗黑模式
+          </label>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="app-footer">
+      <span>基于 lunar-javascript 引擎 | 数据仅供娱乐参考</span>
+    </footer>
+  </div>
+
+  <div style="position:fixed;bottom:20px;right:20px;z-index:1000">
+    <button class="btn-primary" id="btnExport" style="opacity:0.8;font-size:13px;padding:6px 16px" onclick="window.print()">📄 导出PDF</button>
+  </div>
+
+  <!-- lunar 库（CDN） -->
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.min.js"></script>
+  <script src="js/data/cities.js"></script>
+  <script src="js/data/stars-rules.js"></script>
+  <script src="js/core/bazi-engine.js"></script>
+  <script src="js/core/harmony.js"></script>
+  <script src="js/ui/app.js"></script>
+</body>
+</html>

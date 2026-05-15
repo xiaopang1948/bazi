@@ -1,0 +1,247 @@
+/* ===== 基础重置 ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f0eb;
+  --surface: #fff;
+  --border: #e0d8d0;
+  --text: #3a3530;
+  --text-light: #8a8580;
+  --primary: #b8860b;
+  --primary-light: #daa520;
+  --wood: #2e7d32;
+  --fire: #c62828;
+  --earth: #f9a825;
+  --metal: #78909c;
+  --water: #1565c0;
+  --good-star: #c62828;
+  --bad-star: #555;
+  --radius: 8px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+#app { max-width: 800px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ===== 头部 ===== */
+.app-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  padding: 12px 16px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 6px rgba(184,134,11,0.3);
+}
+.app-header h1 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.app-tabs { display: flex; gap: 0; }
+.tab {
+  flex: 1; padding: 8px 4px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.75);
+  font-size: 14px; cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab:hover { color: #fff; }
+.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+/* ===== 主区域 ===== */
+.app-main { flex: 1; padding: 12px; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== 卡片通用 ===== */
+.input-card, .card, .info-bar, .pillars-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.card h3 {
+  font-size: 14px; font-weight: 600;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  color: var(--primary);
+}
+
+/* ===== 输入区 ===== */
+.input-row { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.input-row:last-child { margin-bottom: 0; }
+.input-group { flex: 1; min-width: 140px; }
+.input-group label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+.input-group input[type="text"], .input-group select {
+  width: 100%; padding: 6px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+  font-size: 14px; background: #fff;
+}
+.date-group { display: flex; align-items: center; gap: 4px; }
+.date-group select { padding: 6px 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; }
+.date-group select#year { width: 80px; }
+.date-group select#month, .date-group select#day { width: 60px; }
+.date-group select#hour, .date-group select#minute { width: 70px; }
+.date-group span { font-size: 13px; color: var(--text-light); }
+.radio-group { display: flex; gap: 12px; padding-top: 4px; }
+.radio-group label { font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.actions { align-items: center; justify-content: space-between; }
+.checkbox-label { font-size: 13px; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+
+/* ===== 按钮 ===== */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  border: none; padding: 8px 24px;
+  border-radius: 6px; font-size: 15px;
+  font-weight: 600; cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ===== 信息栏 ===== */
+.info-bar { font-size: 14px; color: var(--text-light); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+
+/* ===== 四柱排盘 ===== */
+.pillars-card { padding: 20px 14px; }
+.pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  text-align: center;
+}
+.pillar-cell {
+  padding: 6px 4px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.header-cell {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(184,134,11,0.06);
+}
+.pillar-stem {
+  font-size: 28px;
+  font-weight: 700;
+  padding: 8px 4px 2px;
+  letter-spacing: 2px;
+}
+.pillar-branch {
+  font-size: 28px;
+  font-weight: 700;
+  padding: 0 4px 8px;
+  letter-spacing: 2px;
+}
+.pillar-hidden { font-size: 12px; color: var(--text-light); padding: 2px 4px; }
+.pillar-shishen { font-size: 12px; color: #666; padding: 2px 4px; background: rgba(0,0,0,0.03); }
+.pillar-nayin { font-size: 12px; color: var(--text-light); padding: 2px 4px; }
+.pillar-wuxing { font-size: 11px; padding: 1px 6px; border-radius: 3px; display: inline-block; color: #fff; margin: 2px 0; }
+.wuxing-wood { background: var(--wood); }
+.wuxing-fire { background: var(--fire); }
+.wuxing-earth { background: var(--earth); color: #333; }
+.wuxing-metal { background: var(--metal); }
+.wuxing-water { background: var(--water); }
+
+.pillar-year .pillar-stem, .pillar-year .pillar-branch { color: var(--wood); }
+.pillar-month .pillar-stem, .pillar-month .pillar-branch { color: var(--fire); }
+.pillar-day .pillar-stem, .pillar-day .pillar-branch { color: var(--earth); }
+.pillar-hour .pillar-stem, .pillar-hour .pillar-branch { color: var(--water); }
+
+/* ===== 分析网格 ===== */
+.analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ===== 五行统计 ===== */
+.wuxing-bars { display: flex; flex-direction: column; gap: 6px; }
+.wuxing-bar-row { display: flex; align-items: center; gap: 8px; }
+.wuxing-bar-label { width: 32px; font-size: 13px; font-weight: 600; text-align: right; }
+.wuxing-bar-track { flex: 1; height: 18px; background: #f0e8e0; border-radius: 3px; overflow: hidden; }
+.wuxing-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+.wuxing-bar-count { width: 24px; font-size: 12px; color: var(--text-light); text-align: center; }
+
+/* ===== 神煞 ===== */
+.stars-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.star-tag {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+.star-tag.good { border-color: var(--good-star); color: var(--good-star); background: #fff5f5; }
+.star-tag.bad { border-color: var(--bad-star); color: var(--bad-star); background: #f5f5f5; }
+
+/* ===== 格局分析 ===== */
+#patternContent { font-size: 14px; line-height: 1.8; }
+#patternContent strong { color: var(--primary); }
+.pattern-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f5f0eb; }
+
+/* ===== 大运 ===== */
+.dayun-timeline { display: flex; flex-direction: column; gap: 6px; }
+.dayun-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--primary);
+  border-radius: 0 4px 4px 0;
+  background: rgba(184,134,11,0.04);
+}
+.dayun-age { font-size: 12px; color: var(--text-light); min-width: 60px; }
+.dayun-ganzhi { font-size: 16px; font-weight: 600; min-width: 64px; }
+.dayun-shishen { font-size: 13px; color: #666; }
+
+/* ===== 流年 ===== */
+#currentYearContent { font-size: 14px; line-height: 1.8; }
+
+/* ===== 占位 ===== */
+.placeholder, .hepan-placeholder { padding: 40px 20px; text-align: center; color: var(--text-light); }
+.placeholder h2, .hepan-placeholder h2 { font-size: 20px; color: var(--text); margin-bottom: 8px; }
+
+/* ===== 底部 ===== */
+.app-footer {
+  text-align: center;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text-light);
+  border-top: 1px solid var(--border);
+}
+
+/* ===== 暗黑模式 ===== */
+body.dark-mode {
+  --bg: #1a1a1e;
+  --surface: #252529;
+  --border: #3a3a3e;
+  --text: #e0ddd8;
+  --text-light: #8a8885;
+}
+body.dark-mode .pillars-card,
+body.dark-mode .input-card,
+body.dark-mode .card,
+body.dark-mode .info-bar {
+  background: var(--surface);
+}
+body.dark-mode input, body.dark-mode select {
+  background: #333; color: #e0ddd8; border-color: #555;
+}
+body.dark-mode .star-tag { background: var(--surface); }
+body.dark-mode .dayun-item { background: rgba(184,134,11,0.08); }
+body.dark-mode .wuxing-bar-track { background: #3a3a3e; }
+
+/* ===== 打印样式 ===== */
+@media print {
+  .app-header, .app-footer, .input-card, .actions, .tab, footer,
+  button, #btnExport, .app-tabs { display: none !important; }
+  .tab-content { display: block !important; }
+  .tab-content:not(#tab-bazi) { display: none !important; }
+  .result-area { display: block !important; }
+  #app { max-width: 100%; }
+  .app-main { padding: 0; }
+  .pillars-card { break-inside: avoid; }
+  .card { break-inside: avoid; }
+  body { background: #fff; }
+  .pillar-cell { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wuxing-bar-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .star-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
