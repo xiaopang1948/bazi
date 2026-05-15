@@ -140,6 +140,9 @@ function doCalc() {
   renderLiuQin(result.liuQin);
   renderExtraPillars(result.extraPillars);
   renderRenYuan(result.renYuan);
+  renderPillarDiagram('pillarDiagram', result);
+  renderGuJi(result);
+  renderReport(result);
   renderDaYun(result.dayun);
   const liuNianDetail = calcLiuNianDetail(result.pillars, result.dayun, result.pillars.day.stem, result.input.year);
   renderLiuNian(liuNianDetail);
@@ -700,6 +703,19 @@ function renderLiuYue(liuYue, liuNian, dayun) {
   }
   html += '</table>';
   container.innerHTML = html;
+}
+
+/** 渲染古籍匹配 */
+function renderGuJi(result) {
+  const card = document.getElementById('guJiCard');
+  const container = document.getElementById('guJiContent');
+  if (!card) return;
+  const matches = calcGuJiMatches(result);
+  if (matches.length === 0) return;
+  card.style.display = 'block';
+  container.innerHTML = matches.map(m =>
+    `<div class="gu-ji-item"><span class="gu-ji-source">${m.source} · ${m.title}</span><p class="gu-ji-text">${m.content}</p></div>`
+  ).join('');
 }
 
 /** 渲染流日 */

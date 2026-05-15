@@ -230,6 +230,22 @@ body.dark-mode .star-tag { background: var(--surface); }
 body.dark-mode .dayun-item { background: rgba(184,134,11,0.08); }
 body.dark-mode .wuxing-bar-track { background: #3a3a3e; }
 
+/* ===== 古籍引证 ===== */
+.gu-ji-item { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.gu-ji-item:last-child { border-bottom: none; }
+.gu-ji-source { font-size: 11px; color: var(--primary); font-weight: 600; }
+.gu-ji-text { font-size: 14px; line-height: 1.7; margin-top: 4px; color: var(--text); font-style: italic; }
+
+/* ===== 运势报告 ===== */
+.report-text {
+  font-size: 13px; line-height: 1.8;
+  white-space: pre-wrap; word-break: break-all;
+  background: rgba(184,134,11,0.04);
+  padding: 12px; border-radius: 6px;
+  border: 1px solid var(--border);
+  font-family: "Noto Sans SC", "Courier New", monospace;
+}
+
 /* ===== 打印样式 ===== */
 @media print {
   .app-header, .app-footer, .input-card, .actions, .tab, footer,
