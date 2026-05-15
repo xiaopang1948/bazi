@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>八字排盘</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☯</text></svg>">
   <link rel="stylesheet" href="css/bazi.css">
 </head>
 <body>
@@ -85,18 +86,15 @@
             <div style="overflow-x:auto"><canvas id="pillarDiagram" style="display:block;width:100%"></canvas></div>
           </div>
 
-          <!-- 古籍匹配 -->
-          <div class="card" id="guJiCard" style="display:none">
-            <h3>古籍引证</h3>
-            <div id="guJiContent"></div>
-          </div>
-
           <!-- 运势报告 -->
           <div class="card" id="reportCard" style="display:none">
             <h3>运势报告</h3>
             <div id="reportContent" class="report-text"></div>
             <button class="btn-primary copy-report-btn" style="margin-top:10px;font-size:13px;padding:6px 16px" onclick="copyReport()">📋 复制报告</button>
           </div>
+
+          <!-- 辅助信息区（折叠式） -->
+          <div class="compact-grid" id="compactInfo" style="display:none">
 
           <!-- 四柱排盘表 -->
           <div class="pillars-card">
@@ -136,21 +134,34 @@
           </div>
 
           <!-- 六亲排盘 -->
-          <div class="card" id="liuQinCard" style="display:none">
-            <h3>六亲排盘</h3>
+          <div class="compact-item" id="liuQinCard" style="display:none">
+            <div class="compact-label">六亲</div>
             <div id="liuQinContent"></div>
           </div>
 
           <!-- 胎元命宫身宫 -->
-          <div class="card" id="extraPillarsCard" style="display:none">
-            <h3>胎元 · 命宫 · 身宫</h3>
+          <div class="compact-item" id="extraPillarsCard" style="display:none">
+            <div class="compact-label">胎元 · 命宫 · 身宫</div>
             <div id="extraPillarsContent"></div>
           </div>
 
           <!-- 人元司令 -->
-          <div class="card" id="renYuanCard" style="display:none">
-            <h3>人元司令</h3>
+          <div class="compact-item" id="renYuanCard" style="display:none">
+            <div class="compact-label">人元司令</div>
             <div id="renYuanContent"></div>
+          </div>
+
+          <!-- 古籍匹配 -->
+          <div class="compact-item" id="guJiCard" style="display:none">
+            <div class="compact-label">古籍引证</div>
+            <div id="guJiContent"></div>
+          </div>
+
+          <!-- 起名推荐 -->
+          <div class="compact-item" id="qiMingCard" style="display:none">
+            <div class="compact-label">起名推荐</div>
+            <div id="qiMingContent"></div>
+          </div>
           </div>
 
           <!-- 大运 -->
@@ -166,13 +177,13 @@
           </div>
 
           <!-- 流月 -->
-          <div class="card" id="liuYueCard" style="display:none">
+          <div class="card-secondary" id="liuYueCard" style="display:none">
             <h3>流月</h3>
             <div id="liuYueContent"></div>
           </div>
 
           <!-- 流日 -->
-          <div class="card" id="liuRiCard" style="display:none">
+          <div class="card-secondary" id="liuRiCard" style="display:none">
             <h3>本月流日</h3>
             <div id="liuRiContent"></div>
           </div>
