@@ -10,8 +10,8 @@
   --primary-light: #daa520;
   --wood: #4caf50;
   --fire: #f44336;
-  --earth: #ffb300;
-  --metal: #90a4ae;
+  --earth: #d4af37;
+  --metal: #ffb300;
   --water: #42a5f5;
   --good-star: #e53935;
   --bad-star: #757575;
@@ -219,8 +219,8 @@ body {
 .pillar-wuxing { font-size: 9px; padding: 0 5px; border-radius: 3px; display: inline-block; color: #fff; margin: 0; }
 .wuxing-wood { background: var(--wood); }
 .wuxing-fire { background: var(--fire); }
-.wuxing-earth { background: var(--earth); color: #333; }
-.wuxing-metal { background: var(--metal); }
+.wuxing-earth { background: var(--earth); color: #fff; }
+.wuxing-metal { background: var(--metal); color: #333; }
 .wuxing-water { background: var(--water); }
 
 /* 每列：独立卡片 */
@@ -235,8 +235,8 @@ body {
 /* 五行色 — 全程通用（stem/branch/hidden/大运/流年/流月/流日/流时） */
 .wx-mu { color: #4caf50 !important; }
 .wx-huo { color: #f44336 !important; }
-.wx-tu { color: #e65100 !important; }
-.wx-jin { color: #90a4ae !important; }
+.wx-tu { color: #d4af37 !important; }
+.wx-jin { color: #ffb300 !important; }
 .wx-shui { color: #42a5f5 !important; }
 
 /* 八字排盘区：stem/branch 保留大字号 */
