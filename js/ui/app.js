@@ -138,9 +138,13 @@ function doCalc() {
   renderPattern(result);
   if (result.specialPatterns && result.specialPatterns.length > 0) renderSpecialPatterns(result.specialPatterns);
   renderLiuQin(result.liuQin);
+  renderExtraPillars(result.extraPillars);
+  renderRenYuan(result.renYuan);
   renderDaYun(result.dayun);
   const liuNianDetail = calcLiuNianDetail(result.pillars, result.dayun, result.pillars.day.stem, result.input.year);
   renderLiuNian(liuNianDetail);
+  renderLiuYue(result.liuYue, result.liuNian, result.dayun);
+  renderLiuRi(result.liuRi, result.liuNian, result.dayun);
 
   // 保存历史
   saveHistory(name, result);
@@ -185,6 +189,7 @@ function renderPillars(result) {
     { cls: 'shishen', render: d => d.shishen },
     { cls: 'hidden', render: d => d.hiddenStems.join(' ') },
     { cls: 'nayin', render: d => d.nayin },
+    { cls: 'chs', render: d => d.changSheng },
   ];
 
   for (const row of dataRows) {
@@ -643,6 +648,79 @@ function renderMonthCalendar(year, month) {
       html += `<div style="padding:6px;text-align:center"><div>${day}</div></div>`;
     }
   }
+  container.innerHTML = html;
+}
+
+// ── 新增渲染函数 ──
+
+/** 渲染胎元/命宫/身宫 */
+function renderExtraPillars(extra) {
+  const card = document.getElementById('extraPillarsCard');
+  const container = document.getElementById('extraPillarsContent');
+  if (!extra || !card) return;
+  card.style.display = 'block';
+  container.innerHTML = `
+    <div class="pattern-row"><span>胎元</span><strong>${extra.taiYuan.ganzhi}</strong></div>
+    <div class="pattern-row"><span>命宫</span><strong>${extra.mingGong.ganzhi}</strong></div>
+    <div class="pattern-row"><span>身宫</span><strong>${extra.shenGong.ganzhi}</strong></div>
+  `;
+}
+
+/** 渲染人元司令 */
+function renderRenYuan(renYuan) {
+  const card = document.getElementById('renYuanCard');
+  const container = document.getElementById('renYuanContent');
+  if (!renYuan || Object.keys(renYuan).length === 0 || !card) return;
+  card.style.display = 'block';
+  container.innerHTML = Object.entries(renYuan)
+    .map(([stem, days]) => {
+      const wx = getStemWuxing(stem);
+      return `<div class="pattern-row"><span><span class="pillar-wuxing wuxing-${wx}" style="font-size:11px;padding:0 6px;display:inline-block;color:#fff;border-radius:3px">${stem}</span> 主事 ${days} 日</span><strong style="color:var(--text-light)">${wx}</strong></div>`;
+    })
+    .join('');
+}
+
+/** 渲染流月 */
+function renderLiuYue(liuYue, liuNian, dayun) {
+  const card = document.getElementById('liuYueCard');
+  const container = document.getElementById('liuYueContent');
+  if (!liuYue || liuYue.length === 0 || !card) return;
+  card.style.display = 'block';
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  let html = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+  html += '<tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px">月</td><td style="padding:4px 6px">干支</td><td style="padding:4px 6px">十神</td></tr>';
+  for (const m of liuYue) {
+    const isCurrent = m.month === currentMonth;
+    html += `<tr style="border-bottom:1px solid var(--border);${isCurrent ? 'background:rgba(184,134,11,0.08)' : ''}">
+      <td style="padding:4px 6px;font-weight:600">${m.month}月</td>
+      <td style="padding:4px 6px">${m.ganzhi}</td>
+      <td style="padding:4px 6px;color:var(--text-light)">${m.shishen}</td>
+    </tr>`;
+  }
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+/** 渲染流日 */
+function renderLiuRi(liuRi, liuNian, dayun) {
+  const card = document.getElementById('liuRiCard');
+  const container = document.getElementById('liuRiContent');
+  if (!liuRi || liuRi.length === 0 || !card) return;
+  card.style.display = 'block';
+  const now = new Date();
+  const currentDay = now.getDate();
+  let html = '<table style="width:100%;border-collapse:collapse;font-size:12px">';
+  html += '<tr style="background:var(--border);font-weight:600"><td style="padding:3px 4px">日</td><td style="padding:3px 4px">干支</td><td style="padding:3px 4px">十神</td></tr>';
+  for (const d of liuRi) {
+    const isToday = d.day === currentDay;
+    html += `<tr style="border-bottom:1px solid var(--border);${isToday ? 'background:rgba(184,134,11,0.08)' : ''}">
+      <td style="padding:3px 4px;font-weight:600">${d.day}日</td>
+      <td style="padding:3px 4px">${d.ganzhi}</td>
+      <td style="padding:3px 4px;color:var(--text-light)">${d.shishen}</td>
+    </tr>`;
+  }
+  html += '</table>';
   container.innerHTML = html;
 }
 

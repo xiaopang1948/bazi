@@ -449,6 +449,9 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
     // 神煞
     const stars = getStarsForPillar(p.stem + p.branch, p.stem, p.branch, pillars);
 
+    // 十二长生（日干查各柱地支）
+    const changSheng = key === 'day' ? '日元' : getShiErChangSheng(pillars.day.stem, p.branch);
+
     details[key] = {
       ganzhi: p.stem + p.branch,
       stem: p.stem,
@@ -460,8 +463,12 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
       shishen,
       nayin,
       stars,
+      changSheng,
     };
   }
+
+  // 人元司令（月柱）
+  const renYuan = getRenYuanSiLing(pillars.month.branch);
 
   // 五行统计
   const wuxingCount = { 木:0, 火:0, 土:0, 金:0, 水:0 };
@@ -487,12 +494,21 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
   // 特殊格局
   const specialPatterns = calcSpecialPattern(pillars, details, wuxingCount, pattern);
 
+  // 当前流年（先定义 currentYear，后续依赖它）
+  const now = new Date();
+  const currentYear = now.getFullYear();
+
+  // 胎元/命宫/身宫
+  const extraPillars = calcExtraPillars(pillars.year.stem, pillars.month.stem, pillars.month.branch);
+
+  // 流月/流日（当年）
+  const liuYue = calcLiuYue(pillars.day.stem, currentYear);
+  const liuRi = calcLiuRi(pillars.day.stem, currentYear, month, day);
+
   // 大运
   const dayun = calcDaYun(pillars, gender, year, month, day, calcHour, calcMin);
 
-  // 当前流年
-  const now = new Date();
-  const currentYear = now.getFullYear();
+  // 流年
   const liuNianGanIdx = ((currentYear - 4) % 10 + 10) % 10;
   const liuNianZhiIdx = ((currentYear - 4) % 12 + 12) % 12;
   const liuNian = {
@@ -514,8 +530,12 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
     tiaoHou,
     liuQin,
     specialPatterns,
+    extraPillars,
+    renYuan,
     dayun,
     liuNian,
+    liuYue,
+    liuRi,
   };
 }
 
@@ -766,4 +786,41 @@ function calcDaYun(pillars, gender, year, month, day, hour, minute) {
     direction: isForward ? '顺排' : '逆排',
     periods,
   };
+}
+
+/** 计算当前年份12个月的流月 */
+function calcLiuYue(dayStem, year) {
+  const months = [];
+  for (let m = 1; m <= 12; m++) {
+    const solar = Solar.fromYmd(year, m, 1);
+    const lunar = solar.getLunar();
+    const mGZ = lunar.getMonthInGanZhi();
+    months.push({
+      month: m,
+      ganzhi: mGZ,
+      stem: mGZ.charAt(0),
+      branch: mGZ.charAt(1),
+      shishen: getShiShen(dayStem, mGZ.charAt(0)),
+    });
+  }
+  return months;
+}
+
+/** 计算当天所在月份的流日 */
+function calcLiuRi(dayStem, year, month, day) {
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const days = [];
+  for (let d = 1; d <= daysInMonth; d++) {
+    const solar = Solar.fromYmd(year, month, d);
+    const lunar = solar.getLunar();
+    const dGZ = lunar.getDayInGanZhi();
+    days.push({
+      day: d,
+      ganzhi: dGZ,
+      stem: dGZ.charAt(0),
+      branch: dGZ.charAt(1),
+      shishen: getShiShen(dayStem, dGZ.charAt(0)),
+    });
+  }
+  return days;
 }
