@@ -143,6 +143,7 @@ function doCalc() {
   renderPillarDiagram('pillarDiagram', result);
   renderGuJi(result);
   renderReport(result);
+  renderQiMing(result);
   renderDaYun(result.dayun);
   const liuNianDetail = calcLiuNianDetail(result.pillars, result.dayun, result.pillars.day.stem, result.input.year);
   renderLiuNian(liuNianDetail);
@@ -683,6 +684,27 @@ function renderRenYuan(renYuan) {
     .join('');
 }
 
+/** 渲染起名推荐 */
+function renderQiMing(result) {
+  const card = document.getElementById('qiMingCard');
+  const container = document.getElementById('qiMingContent');
+  if (!card) return;
+  const p = result.pattern;
+  if (!p || !p.yongShen) return;
+  card.style.display = 'block';
+  const suggestions = calcNameSuggestions(p.dayStemWuxing, p.yongShen, 8);
+  let html = `<p style="font-size:13px;margin-bottom:8px;color:var(--text-light)">根据八字，宜补五行【${p.yongShen}】，以下推荐名字供参考：</p>`;
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
+  for (const s of suggestions) {
+    html += `<div style="padding:8px 14px;background:rgba(184,134,11,0.06);border:1px solid var(--border);border-radius:6px;text-align:center">
+      <div style="font-size:18px;font-weight:700;color:var(--primary)">${s.name}</div>
+      <div style="font-size:11px;color:var(--text-light);margin-top:2px">${s.reason}</div>
+    </div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 /** 渲染流月 */
 function renderLiuYue(liuYue, liuNian, dayun) {
   const card = document.getElementById('liuYueCard');
@@ -738,6 +760,111 @@ function renderLiuRi(liuRi, liuNian, dayun) {
   }
   html += '</table>';
   container.innerHTML = html;
+}
+
+// ── 名人库初始化 ──
+function initCelebrities() {
+  renderCelebrities(CELEBRITIES);
+}
+function renderCelebrities(list) {
+  const container = document.getElementById('celebrityList');
+  if (!container) return;
+  if (list.length === 0) { container.innerHTML = '<div class="placeholder"><p>未找到匹配的名人</p></div>'; return; }
+  container.innerHTML = list.map((c, i) => {
+    const birth = c.birth.replace(' ', ' ');
+    return `<div class="dayun-item" style="cursor:pointer;border-left-color:var(--primary-light)" onclick="loadCelebrity(${i})">
+      <span class="dayun-age"><strong>${c.name}</strong></span>
+      <span class="dayun-ganzhi" style="font-size:13px">${birth}</span>
+      <span class="dayun-shishen">${(c.tags || []).join(' · ')}</span>
+    </div>`;
+  }).join('');
+}
+function filterCelebrities() {
+  const query = (document.getElementById('celebritySearch')?.value || '').trim();
+  const tag = document.getElementById('celebrityTag')?.value || '';
+  let list = CELEBRITIES;
+  if (query) list = list.filter(c => c.name.includes(query));
+  if (tag) list = list.filter(c => c.tags.includes(tag));
+  renderCelebrities(list);
+}
+function loadCelebrity(index) {
+  const c = CELEBRITIES[index];
+  if (!c) return;
+  // 切换到排盘 tab 并填入数据
+  const parsed = parseCelebrityBirth(c);
+  if (parsed.year < 1900 || parsed.year > 2100) {
+    alert('该名人生辰不在排盘范围内（1900-当前年）');
+    return;
+  }
+  document.getElementById('name').value = c.name;
+  document.getElementById('year').value = parsed.year;
+  document.getElementById('month').value = parsed.month;
+  updateDays();
+  document.getElementById('day').value = parsed.day;
+  document.getElementById('hour').value = parsed.hour;
+  document.getElementById('minute').value = parsed.minute;
+  document.querySelector('input[name="gender"][value="' + c.gender + '"]').checked = true;
+
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab[data-tab="bazi"]').classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-bazi').classList.add('active');
+
+  doCalc();
+}
+initCelebrities();
+
+// ── 五运六气初始化 ──
+function initWuYun() {
+  const yearSel = document.getElementById('wuyunYear');
+  if (!yearSel) return;
+  const thisYear = new Date().getFullYear();
+  for (let y = thisYear - 10; y <= thisYear + 10; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (y === thisYear) opt.selected = true;
+    yearSel.appendChild(opt);
+  }
+}
+initWuYun();
+document.getElementById('btnWuYun')?.addEventListener('click', doWuYun);
+
+function doWuYun() {
+  const year = parseInt(document.getElementById('wuyunYear').value);
+  const result = calcWuYunLiuQi(year);
+  document.getElementById('wuyunResult').style.display = 'block';
+
+  // 概览
+  document.getElementById('wuyunOverview').innerHTML = `
+    <div class="pattern-row"><span>年份</span><strong>${year}年（${result.yearGanZhi}）</strong></div>
+    <div class="pattern-row"><span>岁运</span><strong style="color:var(--primary)">${result.suiYun}</strong></div>
+    <div class="pattern-row"><span>司天</span><strong>${result.siTian}</strong></div>
+    <div class="pattern-row"><span>在泉</span><strong>${result.zaiQuan}</strong></div>
+  `;
+
+  // 客运
+  document.getElementById('wuyunKeYun').innerHTML =
+    '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px">运</td><td style="padding:4px 6px">五行</td></tr>' +
+    result.keYun.map(k => `<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 6px">${k.name}</td><td style="padding:4px 6px"><span class="pillar-wuxing wuxing-${k.wx}" style="color:#fff;padding:0 8px;border-radius:3px;font-size:11px">${k.wx}</span></td></tr>`).join('') +
+    '</table>';
+
+  // 客气
+  document.getElementById('wuyunKeQi').innerHTML =
+    '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px">气</td><td style="padding:4px 6px">名称</td></tr>' +
+    result.keQi.map((k, i) => `<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 6px">${['初气','二气','三气','四气','五气','终气'][i]}</td><td style="padding:4px 6px">${k.name}</td></tr>`).join('') +
+    '</table>';
+
+  // 客主加临
+  document.getElementById('wuyunJiaLin').innerHTML =
+    '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px">气</td><td style="padding:4px 6px">主气</td><td style="padding:4px 6px">客气</td><td style="padding:4px 6px">生克</td></tr>' +
+    result.jiaLin.map((j, i) => {
+      const shengKe = j.zhuWx && j.keWx ? (j.zhuWx === j.keWx ? '同气' : ({ '木':'火','火':'土','土':'金','金':'水','水':'木' })[j.keWx] === j.zhuWx ? '客生主（顺）' : ({ '木':'土','火':'金','土':'水','金':'木','水':'火' })[j.keWx] === j.zhuWx ? '客克主（逆）' : '平和') : '';
+      const color = shengKe.includes('顺') ? '#2e7d32' : shengKe.includes('逆') ? '#c62828' : '#888';
+      return `<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 6px">${['初气','二气','三气','四气','五气','终气'][i]}</td><td style="padding:4px 6px">${j.zhu}</td><td style="padding:4px 6px">${j.ke}</td><td style="padding:4px 6px;color:${color}">${shengKe}</td></tr>`;
+    }).join('') +
+    '</table>';
+
+  window.scrollTo({ top: document.getElementById('wuyunResult').offsetTop - 80, behavior: 'smooth' });
 }
 
 // 初始化历史列表

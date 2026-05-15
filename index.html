@@ -15,6 +15,8 @@
         <button class="tab active" data-tab="bazi">排盘</button>
         <button class="tab" data-tab="hepan">合盘</button>
         <button class="tab" data-tab="zeri">择日</button>
+        <button class="tab" data-tab="celebrities">名人</button>
+        <button class="tab" data-tab="wuyun">五运六气</button>
         <button class="tab" data-tab="history">历史</button>
         <button class="tab" data-tab="settings">设置</button>
       </nav>
@@ -174,6 +176,12 @@
             <h3>本月流日</h3>
             <div id="liuRiContent"></div>
           </div>
+
+          <!-- 起名推荐 -->
+          <div class="card" id="qiMingCard" style="display:none">
+            <h3>起名推荐</h3>
+            <div id="qiMingContent"></div>
+          </div>
         </div>
       </section>
 
@@ -302,6 +310,56 @@
         </div>
       </section>
 
+      <!-- ========== 名人库 TAB ========== -->
+      <section class="tab-content" id="tab-celebrities">
+        <div class="input-card">
+          <div class="input-row">
+            <div class="input-group">
+              <label>搜索名人</label>
+              <input type="text" id="celebritySearch" placeholder="输入姓名..." oninput="filterCelebrities()">
+            </div>
+            <div class="input-group">
+              <label>分类</label>
+              <select id="celebrityTag" onchange="filterCelebrities()">
+                <option value="">全部</option>
+                <option value="帝王">帝王</option>
+                <option value="政治家">政治家</option>
+                <option value="企业家">企业家</option>
+                <option value="科学家">科学家</option>
+                <option value="演员">演员</option>
+                <option value="歌手">歌手</option>
+                <option value="导演">导演</option>
+                <option value="作家">作家</option>
+                <option value="运动员">运动员</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div id="celebrityList"></div>
+      </section>
+
+      <!-- ========== 五运六气 TAB ========== -->
+      <section class="tab-content" id="tab-wuyun">
+        <div class="input-card">
+          <div class="input-row">
+            <div class="input-group">
+              <label>选择年份</label>
+              <select id="wuyunYear"></select>
+            </div>
+            <div class="input-group">
+              <label>&nbsp;</label>
+              <button class="btn-primary" id="btnWuYun">查看五运六气</button>
+            </div>
+          </div>
+        </div>
+        <div id="wuyunResult" style="display:none">
+          <div class="card"><h3>岁运 · 司天 · 在泉</h3><div id="wuyunOverview"></div></div>
+          <div class="card"><h3>客运</h3><div id="wuyunKeYun"></div></div>
+          <div class="card"><h3>客气</h3><div id="wuyunKeQi"></div></div>
+          <div class="card"><h3>客主加临</h3><div id="wuyunJiaLin"></div></div>
+        </div>
+      </section>
+
       <!-- ========== 历史记录 TAB ========== -->
       <section class="tab-content" id="tab-history">
         <div class="placeholder">
@@ -339,6 +397,9 @@
   <script src="js/data/shi-er-chang-sheng.js"></script>
   <script src="js/data/ren-yuan-si-ling.js"></script>
   <script src="js/data/gu-ji-pi-pei.js"></script>
+  <script src="js/data/celebrities.js"></script>
+  <script src="js/data/qi-ming-zi-ku.js"></script>
+  <script src="js/core/wuyun-liuqi.js"></script>
   <script src="js/core/bazi-engine.js"></script>
   <script src="js/core/extra-pillars.js"></script>
   <script src="js/core/harmony.js"></script>
