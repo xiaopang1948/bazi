@@ -26,6 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── 排盘按钮 ──
   document.getElementById('btnCalc').addEventListener('click', doCalc);
 
+  // ── 时间轴切换 ──
+  document.getElementById('timeNav').addEventListener('click', function(e) {
+    const btn = e.target.closest('.time-btn');
+    if (btn && lastResult) switchTimeView(btn.dataset.time, lastResult);
+  });
+
   // ── 暗黑模式 ──
   document.getElementById('darkMode').addEventListener('change', function() {
     document.body.classList.toggle('dark-mode', this.checked);
@@ -111,6 +117,10 @@ function showError(msg) {
   result.innerHTML = `<div class="card" style="text-align:center;padding:40px;color:#c62828"><p style="font-size:16px;margin-bottom:8px">排盘出错</p><p style="font-size:14px;color:var(--text-light)">${msg}</p><p style="font-size:12px;margin-top:12px;color:var(--text-light)">请确认网络连接正常（需要加载 lunar 库），或刷新页面重试</p></div>`;
 }
 
+// 全局状态：最近排盘结果 + 时间轴选中维度和日期
+let lastResult = null;
+let timeSelectedDay = new Date().getDate();
+
 /** 执行排盘 */
 function doCalc() {
   try {
@@ -145,10 +155,13 @@ function doCalc() {
   renderReport(result);
   renderQiMing(result);
   renderDaYun(result.dayun);
-  const liuNianDetail = calcLiuNianDetail(result.pillars, result.dayun, result.pillars.day.stem, result.input.year);
-  renderLiuNian(liuNianDetail);
-  renderLiuYue(result.liuYue, result.liuNian, result.dayun);
-  renderLiuRi(result.liuRi, result.liuNian, result.dayun);
+
+  // 时间轴：默认显示流年
+  lastResult = result;
+  timeSelectedDay = new Date().getDate();
+  document.getElementById('timeNav').style.display = 'flex';
+  document.getElementById('timeContentCard').style.display = 'block';
+  switchTimeView('nian', result);
 
   // 保存历史
   saveHistory(name, result);
@@ -705,26 +718,100 @@ function renderQiMing(result) {
   container.innerHTML = html;
 }
 
-/** 渲染流月 */
-function renderLiuYue(liuYue, liuNian, dayun) {
-  const card = document.getElementById('liuYueCard');
-  const container = document.getElementById('liuYueContent');
-  if (!liuYue || liuYue.length === 0 || !card) return;
-  card.style.display = 'block';
+/** 时间轴切换 */
+function switchTimeView(view, result) {
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.toggle('active', b.dataset.time === view));
+  renderTimeContent(view, result);
+}
+
+/** 渲染时间内容（流年/流月/流日/流时） */
+function renderTimeContent(view, result) {
+  const container = document.getElementById('timeContent');
+  if (!container || !result) return;
+  const dayStem = result.pillars.day.stem;
   const now = new Date();
-  const currentMonth = now.getMonth() + 1;
-  let html = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
-  html += '<tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px">月</td><td style="padding:4px 6px">干支</td><td style="padding:4px 6px">十神</td></tr>';
-  for (const m of liuYue) {
-    const isCurrent = m.month === currentMonth;
-    html += `<tr style="border-bottom:1px solid var(--border);${isCurrent ? 'background:rgba(184,134,11,0.08)' : ''}">
-      <td style="padding:4px 6px;font-weight:600">${m.month}月</td>
-      <td style="padding:4px 6px">${m.ganzhi}</td>
-      <td style="padding:4px 6px;color:var(--text-light)">${m.shishen}</td>
-    </tr>`;
+
+  switch (view) {
+    case 'nian': {
+      const detail = calcLiuNianDetail(result.pillars, result.dayun, dayStem, result.input.year);
+      let html = `<p style="font-size:15px;font-weight:700;margin-bottom:6px">${detail.year} 年（${detail.liuNianGan}${detail.liuNianZhi}）</p>`;
+      html += `<p style="font-size:13px;margin-bottom:10px;color:var(--text-light)">${detail.summary}</p>`;
+      html += '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px;width:90px">项目</td><td style="padding:4px 6px">详情</td><td style="padding:4px 6px;width:50px;text-align:center">吉凶</td></tr>';
+      for (const a of detail.analysis) {
+        const color = a.effect === '吉' ? '#2e7d32' : a.effect === '凶' ? '#c62828' : '#888';
+        html += `<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 6px;font-weight:600">${a.item}</td><td style="padding:4px 6px;color:var(--text-light)">${a.detail}</td><td style="padding:4px 6px;text-align:center;color:${color};font-weight:600">${a.effect || '-'}</td></tr>`;
+      }
+      html += '</table>';
+      container.innerHTML = html;
+      break;
+    }
+    case 'yue': {
+      if (!result.liuYue) break;
+      const currentMonth = now.getMonth() + 1;
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px">月</td><td style="padding:4px 6px">干支</td><td style="padding:4px 6px">十神</td><td style="padding:4px 6px">冲合</td></tr>';
+      for (const m of result.liuYue) {
+        const isCurrent = m.month === currentMonth;
+        const chongHe = calcChongXingHe('', m.branch, result.pillars).map(i => i.detail).join('、') || '-';
+        html += `<tr style="border-bottom:1px solid var(--border);${isCurrent ? 'background:rgba(184,134,11,0.08)' : ''}">
+          <td style="padding:4px 6px;font-weight:600">${m.month}月</td>
+          <td style="padding:4px 6px">${m.ganzhi}</td>
+          <td style="padding:4px 6px;color:var(--text-light)">${m.shishen}</td>
+          <td style="padding:4px 6px;font-size:11px;color:var(--text-light)">${chongHe}</td>
+        </tr>`;
+      }
+      html += '</table>';
+      container.innerHTML = html;
+      break;
+    }
+    case 'ri': {
+      if (!result.liuRi) break;
+      const currentDay = now.getDate();
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="background:var(--border);font-weight:600"><td style="padding:3px 4px">日</td><td style="padding:3px 4px">干支</td><td style="padding:3px 4px">十神</td><td style="padding:3px 4px">冲合</td></tr>';
+      for (const d of result.liuRi) {
+        const isToday = d.day === currentDay;
+        const chongHe = calcChongXingHe('', d.branch, result.pillars).map(i => i.detail).join('、') || '-';
+        html += `<tr style="border-bottom:1px solid var(--border);${isToday ? 'background:rgba(184,134,11,0.08)' : ''}" data-day="${d.day}" style="cursor:pointer">
+          <td style="padding:3px 4px;font-weight:600">${d.day}日</td>
+          <td style="padding:3px 4px">${d.ganzhi}</td>
+          <td style="padding:3px 4px;color:var(--text-light)">${d.shishen}</td>
+          <td style="padding:3px 4px;font-size:11px;color:var(--text-light)">${chongHe}</td>
+        </tr>`;
+      }
+      html += '</table>';
+      container.innerHTML = html;
+      container.addEventListener('click', function(ev) {
+        const tr = ev.target.closest('tr[data-day]');
+        if (tr) {
+          timeSelectedDay = parseInt(tr.dataset.day);
+          // 如果当前在流日视图，切换到流时并带上选中日期
+          document.querySelector('.time-btn[data-time="shi"]').click();
+        }
+      });
+      break;
+    }
+    case 'shi': {
+      // 用 timeSelectedDay + 当前年月重新算流时
+      const sy = result.input.year, sm = result.input.month;
+      const hours = calcLiuShi(dayStem, sy, sm, timeSelectedDay);
+      const currentHour = now.getHours();
+      let html = `<p style="font-size:12px;color:var(--text-light);margin-bottom:6px">${sy}年${sm}月${timeSelectedDay}日 · 十二时辰</p>`;
+      html += '<table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="background:var(--border);font-weight:600"><td style="padding:3px 4px">时辰</td><td style="padding:3px 4px">时间</td><td style="padding:3px 4px">干支</td><td style="padding:3px 4px">十神</td><td style="padding:3px 4px">冲合</td></tr>';
+      for (const h of hours) {
+        const isNow = currentHour >= parseInt(h.timeRange.split(':')[0]) && currentHour < parseInt(h.timeRange.split(':')[0].split('-')[1] || h.timeRange.split(':')[0]) + 2;
+        const chongHe = calcChongXingHe(h.stem, h.branch, result.pillars).map(i => i.detail).join('、') || '-';
+        html += `<tr style="border-bottom:1px solid var(--border);${isNow ? 'background:rgba(184,134,11,0.08)' : ''}">
+          <td style="padding:3px 4px;font-weight:600">${h.label}时</td>
+          <td style="padding:3px 4px;font-size:10px;color:var(--text-light)">${h.timeRange}</td>
+          <td style="padding:3px 4px">${h.ganzhi}</td>
+          <td style="padding:3px 4px;color:var(--text-light)">${h.shishen}</td>
+          <td style="padding:3px 4px;font-size:10px;color:var(--text-light)">${chongHe}</td>
+        </tr>`;
+      }
+      html += '</table>';
+      container.innerHTML = html;
+      break;
+    }
   }
-  html += '</table>';
-  container.innerHTML = html;
 }
 
 /** 渲染古籍匹配 */
@@ -740,27 +827,7 @@ function renderGuJi(result) {
   ).join('');
 }
 
-/** 渲染流日 */
-function renderLiuRi(liuRi, liuNian, dayun) {
-  const card = document.getElementById('liuRiCard');
-  const container = document.getElementById('liuRiContent');
-  if (!liuRi || liuRi.length === 0 || !card) return;
-  card.style.display = 'block';
-  const now = new Date();
-  const currentDay = now.getDate();
-  let html = '<table style="width:100%;border-collapse:collapse;font-size:12px">';
-  html += '<tr style="background:var(--border);font-weight:600"><td style="padding:3px 4px">日</td><td style="padding:3px 4px">干支</td><td style="padding:3px 4px">十神</td></tr>';
-  for (const d of liuRi) {
-    const isToday = d.day === currentDay;
-    html += `<tr style="border-bottom:1px solid var(--border);${isToday ? 'background:rgba(184,134,11,0.08)' : ''}">
-      <td style="padding:3px 4px;font-weight:600">${d.day}日</td>
-      <td style="padding:3px 4px">${d.ganzhi}</td>
-      <td style="padding:3px 4px;color:var(--text-light)">${d.shishen}</td>
-    </tr>`;
-  }
-  html += '</table>';
-  container.innerHTML = html;
-}
+
 
 // ── 名人库初始化 ──
 function initCelebrities() {

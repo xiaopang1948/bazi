@@ -1,22 +1,22 @@
 /* ===== 基础重置 ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #f0f2f5;
+  --bg: #f5f0eb;
   --surface: #fff;
-  --border: #e4e7ed;
-  --text: #1a1a2e;
-  --text-light: #8b8fa3;
-  --primary: #5b4a8a;
-  --primary-light: #7c6cb0;
+  --border: #e0d8d0;
+  --text: #2c2c2c;
+  --text-light: #8a8580;
+  --primary: #b8860b;
+  --primary-light: #daa520;
   --wood: #4caf50;
   --fire: #f44336;
   --earth: #ffb300;
   --metal: #90a4ae;
   --water: #42a5f5;
-  --good-star: #f44336;
+  --good-star: #e53935;
   --bad-star: #757575;
   --radius: 20px;
-  --shadow: 0 8px 30px rgba(0,0,0,0.06);
+  --shadow: 0 8px 30px rgba(0,0,0,0.07);
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
@@ -29,7 +29,7 @@ body {
 
 /* ===== 头部 ===== */
 .app-header {
-  background: linear-gradient(135deg, #5b4a8a, #7c6cb0);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: #fff;
   padding: 0 16px;
   height: 54px;
@@ -37,7 +37,7 @@ body {
   align-items: center;
   justify-content: space-between;
   position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 16px rgba(91,74,138,0.25);
+  box-shadow: 0 2px 16px rgba(184,134,11,0.25);
 }
 .app-header h1 { font-size: 17px; font-weight: 700; letter-spacing: 1px; margin: 0; }
 .app-tabs { display: flex; height: 100%; gap: 0; align-items: stretch; }
@@ -80,7 +80,7 @@ body {
   font-size: 13px; font-weight: 700;
   margin-bottom: 10px;
   padding-bottom: 8px;
-  border-bottom: 2px solid rgba(91,74,138,0.1);
+  border-bottom: 2px solid rgba(184,134,11,0.12);
   color: var(--primary);
   letter-spacing: 0.5px;
 }
@@ -140,7 +140,7 @@ body {
 
 /* ===== 按钮 ===== */
 .btn-primary {
-  background: linear-gradient(135deg, #5b4a8a, #7c6cb0);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: #fff;
   border: none; padding: 10px 32px;
   border-radius: 12px; font-size: 15px;
@@ -156,7 +156,7 @@ body {
   font-size: 12px; color: var(--text-light);
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(91,74,138,0.05), rgba(124,108,176,0.02));
+  background: linear-gradient(135deg, rgba(184,134,11,0.05), rgba(218,165,32,0.02));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px 16px;
@@ -251,6 +251,27 @@ body {
 .pillar-month .pillar-stem, .pillar-month .pillar-branch { color: var(--fire); }
 .pillar-day .pillar-stem, .pillar-day .pillar-branch { color: #e65100; }
 .pillar-hour .pillar-stem, .pillar-hour .pillar-branch { color: var(--water); }
+
+/* ===== 时间轴导航 ===== */
+.time-nav {
+  display: flex; gap: 6px; margin-bottom: 12px;
+  background: var(--surface);
+  border-radius: 14px; padding: 5px;
+  border: 1px solid var(--border);
+}
+.time-btn {
+  flex: 1; padding: 7px 8px;
+  border: none; border-radius: 10px;
+  background: transparent;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-light); cursor: pointer;
+  transition: all 0.2s;
+}
+.time-btn:hover { background: rgba(184,134,11,0.06); }
+.time-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; box-shadow: 0 2px 8px rgba(184,134,11,0.25);
+}
 
 /* ===== 分析网格 ===== */
 .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -386,7 +407,7 @@ body.dark-mode input, body.dark-mode select {
 }
 body.dark-mode .star-tag { background: var(--surface); }
 body.dark-mode .wuxing-bar-track { background: #333340; }
-body.dark-mode .pattern-row { background: rgba(91,74,138,0.15); border-color: rgba(91,74,138,0.25); }
+body.dark-mode .pattern-row { background: rgba(184,134,11,0.12); border-color: rgba(184,134,11,0.2); }
 body.dark-mode #patternContent .pattern-row strong { color: var(--primary-light); }
 body.dark-mode .compact-item .pattern-row { border-bottom-color: rgba(255,255,255,0.04); }
 body.dark-mode .analysis-grid .card { background: transparent; border: none; box-shadow: none; }
@@ -401,7 +422,7 @@ body.dark-mode .analysis-grid .card { background: transparent; border: none; box
 .report-text {
   font-size: 12px; line-height: 1.7;
   white-space: pre-wrap; word-break: break-all;
-  background: rgba(91,74,138,0.03);
+  background: rgba(184,134,11,0.03);
   padding: 12px; border-radius: 8px;
   border: 1px solid var(--border);
   font-family: "Noto Sans SC", "Courier New", monospace;
@@ -422,6 +443,8 @@ body.dark-mode .analysis-grid .card { background: transparent; border: none; box
   .date-group select#hour, .date-group select#minute { width: 56px; }
   .actions { flex-direction: column; align-items: stretch; gap: 8px; }
   .btn-primary { width: 100%; text-align: center; }
+  .time-nav { padding: 4px; gap: 4px; }
+  .time-btn { font-size: 12px; padding: 6px 4px; }
   .pillars-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
   .pillar-stem { font-size: 28px; }
   .pillar-branch { font-size: 24px; }

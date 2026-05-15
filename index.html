@@ -77,115 +77,91 @@
         <!-- 结果区 -->
         <div id="result" class="result-area" style="display:none">
 
-          <!-- 基础信息 -->
+          <!-- 一级：基础信息 + 四柱 -->
           <div class="info-bar" id="infoBar"></div>
 
-          <!-- 四柱图示 -->
-          <div class="card" id="diagramCard" style="display:none">
-            <h3>四柱图示 · 干支流通</h3>
-            <div style="overflow-x:auto"><canvas id="pillarDiagram" style="display:block;width:100%"></canvas></div>
-          </div>
-
-          <!-- 运势报告 -->
-          <div class="card" id="reportCard" style="display:none">
-            <h3>运势报告</h3>
-            <div id="reportContent" class="report-text"></div>
-            <button class="btn-primary copy-report-btn" style="margin-top:10px;font-size:13px;padding:6px 16px" onclick="copyReport()">📋 复制报告</button>
-          </div>
-
-          <!-- 辅助信息区（折叠式） -->
-          <div class="compact-grid" id="compactInfo" style="display:none">
-
-          <!-- 四柱排盘表 -->
           <div class="pillars-card">
             <div class="pillars-grid" id="pillarsGrid">
               <div class="pillar-cell header-cell">年柱</div>
               <div class="pillar-cell header-cell">月柱</div>
               <div class="pillar-cell header-cell">日柱</div>
               <div class="pillar-cell header-cell">时柱</div>
-              <!-- JS 动态填充 -->
             </div>
           </div>
 
-          <!-- 详细分析 -->
+          <!-- 一级：格局 + 大运 -->
+          <div class="card" id="patternCard">
+            <h3>格局分析</h3>
+            <div id="patternContent"></div>
+          </div>
+
+          <div class="card" id="specialPatternCard" style="display:none">
+            <h3>特殊格局</h3>
+            <div id="specialPatternContent"></div>
+          </div>
+
+          <div class="card" id="dayunCard">
+            <h3>大运</h3>
+            <div class="dayun-timeline" id="dayunList"></div>
+          </div>
+
+          <!-- 一级：时间轴切换（流年/流月/流日/流时） -->
+          <div class="time-nav" id="timeNav" style="display:none">
+            <button class="time-btn active" data-time="nian">流年</button>
+            <button class="time-btn" data-time="yue">流月</button>
+            <button class="time-btn" data-time="ri">流日</button>
+            <button class="time-btn" data-time="shi">流时</button>
+          </div>
+          <div class="card" id="timeContentCard" style="display:none">
+            <div id="timeContent"></div>
+          </div>
+
+          <!-- 二级：五行 + 神煞 -->
           <div class="analysis-grid">
-            <!-- 五行统计 -->
             <div class="card" id="wuxingCard">
               <h3>五行统计</h3>
               <div class="wuxing-bars" id="wuxingBars"></div>
             </div>
-            <!-- 神煞 -->
             <div class="card" id="starsCard">
               <h3>神煞</h3>
               <div id="starsList" class="stars-list"></div>
             </div>
           </div>
 
-          <!-- 格局分析 -->
-          <div class="card" id="patternCard">
-            <h3>格局分析</h3>
-            <div id="patternContent"></div>
+          <!-- 二级：运势报告 + 四柱图示 -->
+          <div class="card" id="reportCard" style="display:none">
+            <h3>运势报告</h3>
+            <div id="reportContent" class="report-text"></div>
+            <button class="btn-primary copy-report-btn" style="margin-top:10px;font-size:13px;padding:6px 16px" onclick="copyReport()">📋 复制报告</button>
           </div>
 
-          <!-- 特殊格局 -->
-          <div class="card" id="specialPatternCard" style="display:none">
-            <h3>特殊格局</h3>
-            <div id="specialPatternContent"></div>
+          <div class="card" id="diagramCard" style="display:none">
+            <h3>四柱图示 · 干支流通</h3>
+            <div style="overflow-x:auto"><canvas id="pillarDiagram" style="display:block;width:100%"></canvas></div>
           </div>
 
-          <!-- 六亲排盘 -->
-          <div class="compact-item" id="liuQinCard" style="display:none">
-            <div class="compact-label">六亲</div>
-            <div id="liuQinContent"></div>
-          </div>
-
-          <!-- 胎元命宫身宫 -->
-          <div class="compact-item" id="extraPillarsCard" style="display:none">
-            <div class="compact-label">胎元 · 命宫 · 身宫</div>
-            <div id="extraPillarsContent"></div>
-          </div>
-
-          <!-- 人元司令 -->
-          <div class="compact-item" id="renYuanCard" style="display:none">
-            <div class="compact-label">人元司令</div>
-            <div id="renYuanContent"></div>
-          </div>
-
-          <!-- 古籍匹配 -->
-          <div class="compact-item" id="guJiCard" style="display:none">
-            <div class="compact-label">古籍引证</div>
-            <div id="guJiContent"></div>
-          </div>
-
-          <!-- 起名推荐 -->
-          <div class="compact-item" id="qiMingCard" style="display:none">
-            <div class="compact-label">起名推荐</div>
-            <div id="qiMingContent"></div>
-          </div>
-          </div>
-
-          <!-- 大运 -->
-          <div class="card" id="dayunCard">
-            <h3>大运</h3>
-            <div class="dayun-timeline" id="dayunList"></div>
-          </div>
-
-          <!-- 当前流年 -->
-          <div class="card" id="currentYearCard">
-            <h3>当前流年</h3>
-            <div id="currentYearContent"></div>
-          </div>
-
-          <!-- 流月 -->
-          <div class="card-secondary" id="liuYueCard" style="display:none">
-            <h3>流月</h3>
-            <div id="liuYueContent"></div>
-          </div>
-
-          <!-- 流日 -->
-          <div class="card-secondary" id="liuRiCard" style="display:none">
-            <h3>本月流日</h3>
-            <div id="liuRiContent"></div>
+          <!-- 三级：紧凑信息 -->
+          <div class="compact-grid" id="compactInfo" style="display:none">
+            <div class="compact-item" id="liuQinCard" style="display:none">
+              <div class="compact-label">六亲</div>
+              <div id="liuQinContent"></div>
+            </div>
+            <div class="compact-item" id="extraPillarsCard" style="display:none">
+              <div class="compact-label">胎元 · 命宫 · 身宫</div>
+              <div id="extraPillarsContent"></div>
+            </div>
+            <div class="compact-item" id="renYuanCard" style="display:none">
+              <div class="compact-label">人元司令</div>
+              <div id="renYuanContent"></div>
+            </div>
+            <div class="compact-item" id="guJiCard" style="display:none">
+              <div class="compact-label">古籍引证</div>
+              <div id="guJiContent"></div>
+            </div>
+            <div class="compact-item" id="qiMingCard" style="display:none">
+              <div class="compact-label">起名推荐</div>
+              <div id="qiMingContent"></div>
+            </div>
           </div>
         </div>
       </section>

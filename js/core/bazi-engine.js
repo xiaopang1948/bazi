@@ -501,9 +501,10 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
   // 胎元/命宫/身宫
   const extraPillars = calcExtraPillars(pillars.year.stem, pillars.month.stem, pillars.month.branch);
 
-  // 流月/流日（当年）
+  // 流月/流日/流时（当年）
   const liuYue = calcLiuYue(pillars.day.stem, currentYear);
   const liuRi = calcLiuRi(pillars.day.stem, currentYear, month, day);
+  const liuShi = calcLiuShi(pillars.day.stem, currentYear, month, day);
 
   // 大运
   const dayun = calcDaYun(pillars, gender, year, month, day, calcHour, calcMin);
@@ -536,6 +537,7 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
     liuNian,
     liuYue,
     liuRi,
+    liuShi,
   };
 }
 
@@ -823,4 +825,50 @@ function calcLiuRi(dayStem, year, month, day) {
     });
   }
   return days;
+}
+
+/** 计算某天12个时辰的流时 */
+function calcLiuShi(dayStem, year, month, day) {
+  const hourLabels = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  const hours = [];
+  for (let i = 0; i < 12; i++) {
+    const h = i * 2;
+    const solar = Solar.fromYmdHms(year, month, day, h, 0, 0);
+    const lunar = solar.getLunar();
+    const hGZ = lunar.getBaZi()[3];
+    hours.push({
+      index: i,
+      label: hourLabels[i],
+      timeRange: `${String(h).padStart(2,'0')}:00-${String(h+2).padStart(2,'0')}:00`,
+      ganzhi: hGZ,
+      stem: hGZ.charAt(0),
+      branch: hGZ.charAt(1),
+      shishen: getShiShen(dayStem, hGZ.charAt(0)),
+    });
+  }
+  return hours;
+}
+
+/** 分析某干支冲刑合会 */
+function calcChongXingHe(gan, zhi, pillars) {
+  const items = [];
+  const liuHe = { 子:'丑',丑:'子',寅:'亥',卯:'戌',辰:'酉',巳:'申',午:'未',未:'午',申:'巳',酉:'辰',戌:'卯',亥:'寅' };
+  const liuChong = { 子:'午',丑:'未',寅:'申',卯:'酉',辰:'戌',巳:'亥',午:'子',未:'丑',申:'寅',酉:'卯',戌:'辰',亥:'巳' };
+  const ganHe = { 甲:'己',乙:'庚',丙:'辛',丁:'壬',戊:'癸',己:'甲',庚:'乙',辛:'丙',壬:'丁',癸:'戊' };
+  const sanXing = {};
+  for (const [k, v] of Object.entries({ 寅:['巳','申'], 丑:['未','戌'], 巳:['寅','申'], 申:['寅','巳'], 未:['丑','戌'], 戌:['丑','未'], 子:['卯'], 卯:['子'] })) {
+    for (const t of v) sanXing[k + t] = true;
+  }
+  const pillarNames = ['year','month','day','hour'];
+  const pillarLabels = ['年柱','月柱','日柱','时柱'];
+  for (let i = 0; i < 4; i++) {
+    const pb = pillars[pillarNames[i]];
+    if (!pb) continue;
+    const pGan = pb.stem, pZhi = pb.branch;
+    if (ganHe[gan] === pGan) items.push({ pillar: pillarLabels[i], type:'天合', detail:`天干五合: ${gan}${pGan}合` });
+    if (liuHe[zhi] === pZhi) items.push({ pillar: pillarLabels[i], type:'六合', detail:`地支六合: ${zhi}${pZhi}合` });
+    if (liuChong[zhi] === pZhi) items.push({ pillar: pillarLabels[i], type:'六冲', detail:`地支六冲: ${zhi}${pZhi}冲` });
+    if (sanXing[zhi + pZhi]) items.push({ pillar: pillarLabels[i], type:'相刑', detail:`地支相刑: ${zhi}${pZhi}刑` });
+  }
+  return items;
 }
