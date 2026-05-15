@@ -227,30 +227,29 @@ body {
 .pillar-year, .pillar-month, .pillar-day, .pillar-hour {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 8px 4px;
+  border-radius: 12px;
+  padding: 10px 6px;
   box-shadow: var(--shadow);
-  position: relative;
-  overflow: hidden;
 }
-/* 顶部色条 */
-.pillar-year::before, .pillar-month::before,
-.pillar-day::before, .pillar-hour::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-}
-.pillar-year::before { background: var(--wood); }
-.pillar-month::before { background: var(--fire); }
-.pillar-day::before { background: var(--earth); }
-.pillar-hour::before { background: var(--water); }
 
-/* 每列五行色文字 */
-.pillar-year .pillar-stem, .pillar-year .pillar-branch { color: var(--wood); }
-.pillar-month .pillar-stem, .pillar-month .pillar-branch { color: var(--fire); }
-.pillar-day .pillar-stem, .pillar-day .pillar-branch { color: #e65100; }
-.pillar-hour .pillar-stem, .pillar-hour .pillar-branch { color: var(--water); }
+/* 五行色 — 全程通用（stem/branch/hidden/大运/流年/流月/流日/流时） */
+.wx-mu { color: #4caf50 !important; }
+.wx-huo { color: #f44336 !important; }
+.wx-tu { color: #e65100 !important; }
+.wx-jin { color: #90a4ae !important; }
+.wx-shui { color: #42a5f5 !important; }
+
+/* 八字排盘区：stem/branch 保留大字号 */
+.pillar-stem { font-size: 36px; font-weight: 800; line-height: 1.1; padding: 0; }
+.pillar-branch { font-size: 32px; font-weight: 800; line-height: 1.1; padding: 0; }
+.pillar-hidden { color: var(--text-light); }
+
+/* 大运天干加大字号 */
+.dayun-ganzhi .wx-mu,
+.dayun-ganzhi .wx-huo,
+.dayun-ganzhi .wx-tu,
+.dayun-ganzhi .wx-jin,
+.dayun-ganzhi .wx-shui { font-size: 18px; font-weight: 700; }
 
 /* ===== 时间轴导航 ===== */
 .time-nav {

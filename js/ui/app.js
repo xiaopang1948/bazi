@@ -121,6 +121,10 @@ function showError(msg) {
 let lastResult = null;
 let timeSelectedDay = new Date().getDate();
 
+// 五行→CSS类映射
+const WX_CLASS = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' };
+function wxSpan(wx, text) { return `<span class="wx-${WX_CLASS[wx] || ''}">${text}</span>`; }
+
 /** 执行排盘 */
 function doCalc() {
   try {
@@ -199,12 +203,13 @@ function renderPillars(result) {
   // 清空，保留表头
   grid.innerHTML = labels.map(l => `<div class="pillar-cell header-cell">${l}</div>`).join('');
 
+  const wxMap = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' };
   const dataRows = [
-    { cls: 'stem', render: d => d.stem },
-    { cls: 'branch', render: d => d.branch },
-    { cls: 'wuxing', render: d => `<span class="pillar-wuxing wuxing-${d.stemWuxing}">${d.stemWuxing}</span>` },
+    { cls: 'stem', render: d => `<span class="wx-${wxMap[d.stemWuxing] || ''}">${d.stem}</span>` },
+    { cls: 'branch', render: d => `<span class="wx-${wxMap[d.branchWuxing] || ''}">${d.branch}</span>` },
+    { cls: 'wuxing', render: d => `<span class="pillar-wuxing wx-${wxMap[d.stemWuxing] || ''}" style="background:var(--${d.stemWuxing === '木' ? 'wood' : d.stemWuxing === '火' ? 'fire' : d.stemWuxing === '土' ? 'earth' : d.stemWuxing === '金' ? 'metal' : 'water'})">${d.stemWuxing}</span>` },
     { cls: 'shishen', render: d => d.shishen },
-    { cls: 'hidden', render: d => d.hiddenStems.join(' ') },
+    { cls: 'hidden', render: d => d.hiddenShishen.map(h => `<span class="wx-${wxMap[h.wuxing] || ''}">${h.stem}</span>`).join(' ') },
     { cls: 'nayin', render: d => d.nayin },
     { cls: 'chs', render: d => d.changSheng },
   ];
@@ -320,10 +325,12 @@ function renderDaYun(dayun) {
     <span class="dayun-ganzhi">${dayun.direction}</span>
   </div>`;
   for (const p of dayun.periods) {
+    const sWx = getStemWuxing(p.stem);
+    const bWx = getBranchWuxing(p.branch);
     container.innerHTML += `
       <div class="dayun-item">
         <span class="dayun-age">${p.ageRange}岁</span>
-        <span class="dayun-ganzhi">${p.ganzhi}</span>
+        <span class="dayun-ganzhi">${wxSpan(sWx, p.stem)}${wxSpan(bWx, p.branch)}</span>
         <span class="dayun-shishen">${p.shishen}</span>
       </div>
     `;
@@ -335,7 +342,9 @@ function renderLiuNian(detail) {
   const container = document.getElementById('currentYearContent');
   if (!detail || !detail.analysis) { container.innerHTML = '<p>无法计算</p>'; return; }
 
-  let html = `<p style="font-size:16px;font-weight:600;margin-bottom:8px">${detail.year} 年（${detail.liuNianGan}${detail.liuNianZhi}）</p>`;
+  const lnGanWx = getStemWuxing(detail.liuNianGan);
+  const lnZhiWx = getBranchWuxing(detail.liuNianZhi);
+  let html = `<p style="font-size:16px;font-weight:600;margin-bottom:8px">${detail.year} 年（${wxSpan(lnGanWx, detail.liuNianGan)}${wxSpan(lnZhiWx, detail.liuNianZhi)}）</p>`;
   html += `<p style="font-size:14px;margin-bottom:10px;color:var(--text-light)">${detail.summary}</p>`;
 
   html += `<table style="width:100%;border-collapse:collapse;font-size:13px">`;
@@ -734,7 +743,9 @@ function renderTimeContent(view, result) {
   switch (view) {
     case 'nian': {
       const detail = calcLiuNianDetail(result.pillars, result.dayun, dayStem, result.input.year);
-      let html = `<p style="font-size:15px;font-weight:700;margin-bottom:6px">${detail.year} 年（${detail.liuNianGan}${detail.liuNianZhi}）</p>`;
+      const nGanWx = getStemWuxing(detail.liuNianGan);
+      const nZhiWx = getBranchWuxing(detail.liuNianZhi);
+      let html = `<p style="font-size:15px;font-weight:700;margin-bottom:6px">${detail.year} 年（${wxSpan(nGanWx, detail.liuNianGan)}${wxSpan(nZhiWx, detail.liuNianZhi)}）</p>`;
       html += `<p style="font-size:13px;margin-bottom:10px;color:var(--text-light)">${detail.summary}</p>`;
       html += '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px;width:90px">项目</td><td style="padding:4px 6px">详情</td><td style="padding:4px 6px;width:50px;text-align:center">吉凶</td></tr>';
       for (const a of detail.analysis) {
@@ -752,9 +763,11 @@ function renderTimeContent(view, result) {
       for (const m of result.liuYue) {
         const isCurrent = m.month === currentMonth;
         const chongHe = calcChongXingHe('', m.branch, result.pillars).map(i => i.detail).join('、') || '-';
+        const mGanWx = getStemWuxing(m.stem);
+        const mZhiWx = getBranchWuxing(m.branch);
         html += `<tr style="border-bottom:1px solid var(--border);${isCurrent ? 'background:rgba(184,134,11,0.08)' : ''}">
           <td style="padding:4px 6px;font-weight:600">${m.month}月</td>
-          <td style="padding:4px 6px">${m.ganzhi}</td>
+          <td style="padding:4px 6px">${wxSpan(mGanWx, m.stem)}${wxSpan(mZhiWx, m.branch)}</td>
           <td style="padding:4px 6px;color:var(--text-light)">${m.shishen}</td>
           <td style="padding:4px 6px;font-size:11px;color:var(--text-light)">${chongHe}</td>
         </tr>`;
@@ -770,9 +783,11 @@ function renderTimeContent(view, result) {
       for (const d of result.liuRi) {
         const isToday = d.day === currentDay;
         const chongHe = calcChongXingHe('', d.branch, result.pillars).map(i => i.detail).join('、') || '-';
+        const rGanWx = getStemWuxing(d.stem);
+        const rZhiWx = getBranchWuxing(d.branch);
         html += `<tr style="border-bottom:1px solid var(--border);${isToday ? 'background:rgba(184,134,11,0.08)' : ''}" data-day="${d.day}" style="cursor:pointer">
           <td style="padding:3px 4px;font-weight:600">${d.day}日</td>
-          <td style="padding:3px 4px">${d.ganzhi}</td>
+          <td style="padding:3px 4px">${wxSpan(rGanWx, d.stem)}${wxSpan(rZhiWx, d.branch)}</td>
           <td style="padding:3px 4px;color:var(--text-light)">${d.shishen}</td>
           <td style="padding:3px 4px;font-size:11px;color:var(--text-light)">${chongHe}</td>
         </tr>`;
@@ -799,10 +814,12 @@ function renderTimeContent(view, result) {
       for (const h of hours) {
         const isNow = currentHour >= parseInt(h.timeRange.split(':')[0]) && currentHour < parseInt(h.timeRange.split(':')[0].split('-')[1] || h.timeRange.split(':')[0]) + 2;
         const chongHe = calcChongXingHe(h.stem, h.branch, result.pillars).map(i => i.detail).join('、') || '-';
+        const sGanWx = getStemWuxing(h.stem);
+        const sZhiWx = getBranchWuxing(h.branch);
         html += `<tr style="border-bottom:1px solid var(--border);${isNow ? 'background:rgba(184,134,11,0.08)' : ''}">
           <td style="padding:3px 4px;font-weight:600">${h.label}时</td>
           <td style="padding:3px 4px;font-size:10px;color:var(--text-light)">${h.timeRange}</td>
-          <td style="padding:3px 4px">${h.ganzhi}</td>
+          <td style="padding:3px 4px">${wxSpan(sGanWx, h.stem)}${wxSpan(sZhiWx, h.branch)}</td>
           <td style="padding:3px 4px;color:var(--text-light)">${h.shishen}</td>
           <td style="padding:3px 4px;font-size:10px;color:var(--text-light)">${chongHe}</td>
         </tr>`;
