@@ -96,6 +96,12 @@
             </div>
           </div>
 
+          <!-- 一级：袁天罡称骨 -->
+          <div class="card" id="guKuCard" style="display:none">
+            <h3>袁天罡称骨</h3>
+            <div id="guKuContent"></div>
+          </div>
+
           <!-- 一级：格局 + 大运 -->
           <div class="card" id="patternCard">
             <h3>格局分析</h3>
@@ -112,15 +118,26 @@
             <div class="dayun-timeline" id="dayunList"></div>
           </div>
 
-          <!-- 一级：时间轴切换（流年/流月/流日/流时） -->
+          <div class="card" id="lifeKLineCard" style="display:none">
+            <h3>人生K线图</h3>
+            <div id="lifeKLineContent" style="overflow-x:auto"></div>
+          </div>
+
+          <!-- 一级：时间轴切换（流年/流月/流日/流时/周趋势） -->
           <div class="time-nav" id="timeNav" style="display:none">
             <button class="time-btn active" data-time="nian">流年</button>
             <button class="time-btn" data-time="yue">流月</button>
             <button class="time-btn" data-time="ri">流日</button>
             <button class="time-btn" data-time="shi">流时</button>
+            <button class="time-btn" data-time="week">周趋势</button>
           </div>
           <div class="card" id="timeContentCard" style="display:none">
             <div id="timeContent"></div>
+          </div>
+          <div class="card" id="weekTrendCard" style="display:none">
+            <h3>日运评分 · 周趋势</h3>
+            <div id="weekTrendNav" style="display:flex;align-items:center;justify-content:center;margin-bottom:8px"></div>
+            <div id="weekTrendContent" style="width:100%"></div>
           </div>
 
           <!-- 二级：五行 + 神煞 -->
@@ -379,7 +396,8 @@
   </div>
 
   <!-- lunar 库（CDN） -->
-  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.min.js"
+    onerror="var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.7/lunar.min.js';document.head.appendChild(s)"></script>
   <script src="js/data/cities.js"></script>
   <script src="js/data/stars-rules.js"></script>
   <script src="js/data/shi-er-chang-sheng.js"></script>
@@ -387,12 +405,26 @@
   <script src="js/data/gu-ji-pi-pei.js"></script>
   <script src="js/data/celebrities.js"></script>
   <script src="js/data/qi-ming-zi-ku.js"></script>
+  <script src="js/core/guku.js"></script>
   <script src="js/core/bazi-engine.js"></script>
   <script src="js/core/wuyun-liuqi.js"></script>
   <script src="js/core/extra-pillars.js"></script>
   <script src="js/core/harmony.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/router.js"></script>
   <script src="js/ui/pillar-diagram.js"></script>
   <script src="js/ui/report.js"></script>
+  <script src="js/ui/components/pillars.js"></script>
+  <script src="js/ui/components/patterns.js"></script>
+  <script src="js/ui/components/dayun.js"></script>
+  <script src="js/ui/components/timeline.js"></script>
+  <script src="js/ui/components/hepan.js"></script>
+  <script src="js/ui/components/zeri.js"></script>
+  <script src="js/ui/components/celebrity.js"></script>
+  <script src="js/ui/components/history.js"></script>
+  <script src="js/ui/components/wuyun.js"></script>
+  <script src="js/ui/components/daily-score.js"></script>
+  <script src="js/ui/components/life-kline.js"></script>
   <script src="js/ui/app.js"></script>
 </body>
 </html>
