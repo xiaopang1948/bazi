@@ -3,6 +3,10 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+  // 隐藏加载遮罩
+  const overlay = document.getElementById('loadingOverlay');
+  if (overlay) { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 300); }
+
   // 检查 lunar 库是否加载成功
   if (typeof Lunar === 'undefined' || typeof Solar === 'undefined') {
     document.body.insertAdjacentHTML('afterbegin',
@@ -35,6 +39,27 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── 暗黑模式 ──
   document.getElementById('darkMode').addEventListener('change', function() {
     document.body.classList.toggle('dark-mode', this.checked);
+  });
+
+  // ── 复制报告按钮 ──
+  const copyBtn = document.getElementById('btnCopyReport');
+  if (copyBtn) copyBtn.addEventListener('click', copyReport);
+
+  // ── 导出PDF按钮 ──
+  document.getElementById('btnExport').addEventListener('click', function() {
+    window.print();
+  });
+
+  // ── 名人搜索 ──
+  document.getElementById('celebritySearch').addEventListener('input', filterCelebrities);
+  document.getElementById('celebrityTag').addEventListener('change', filterCelebrities);
+
+  // ── 名人列表点击（事件委托）──
+  document.getElementById('celebrityList').addEventListener('click', function(e) {
+    const item = e.target.closest('.dayun-item');
+    if (item && item.dataset.index !== undefined) {
+      loadCelebrity(parseInt(item.dataset.index));
+    }
   });
 
   // ── 今天日期设为默认 ──
@@ -601,7 +626,7 @@ function initZeriSelectors() {
 }
 initZeriSelectors();
 document.getElementById('btnZeri').addEventListener('click', doZeri);
-doZeri(); // 展示今天黄历
+if (typeof Lunar !== 'undefined') doZeri(); // 展示今天黄历
 
 function doZeri() {
   try {
@@ -785,7 +810,7 @@ function renderTimeContent(view, result) {
         const chongHe = calcChongXingHe('', d.branch, result.pillars).map(i => i.detail).join('、') || '-';
         const rGanWx = getStemWuxing(d.stem);
         const rZhiWx = getBranchWuxing(d.branch);
-        html += `<tr style="border-bottom:1px solid var(--border);${isToday ? 'background:rgba(184,134,11,0.08)' : ''}" data-day="${d.day}" style="cursor:pointer">
+        html += `<tr style="border-bottom:1px solid var(--border);cursor:pointer${isToday ? ';background:rgba(184,134,11,0.08)' : ''}" data-day="${d.day}">
           <td style="padding:3px 4px;font-weight:600">${d.day}日</td>
           <td style="padding:3px 4px">${wxSpan(rGanWx, d.stem)}${wxSpan(rZhiWx, d.branch)}</td>
           <td style="padding:3px 4px;color:var(--text-light)">${d.shishen}</td>
@@ -794,14 +819,16 @@ function renderTimeContent(view, result) {
       }
       html += '</table>';
       container.innerHTML = html;
-      container.addEventListener('click', function(ev) {
-        const tr = ev.target.closest('tr[data-day]');
-        if (tr) {
-          timeSelectedDay = parseInt(tr.dataset.day);
-          // 如果当前在流日视图，切换到流时并带上选中日期
-          document.querySelector('.time-btn[data-time="shi"]').click();
-        }
-      });
+      if (!container.dataset.listener) {
+        container.dataset.listener = '1';
+        container.addEventListener('click', function(ev) {
+          const tr = ev.target.closest('tr[data-day]');
+          if (tr) {
+            timeSelectedDay = parseInt(tr.dataset.day);
+            document.querySelector('.time-btn[data-time="shi"]').click();
+          }
+        });
+      }
       break;
     }
     case 'shi': {
@@ -856,7 +883,7 @@ function renderCelebrities(list) {
   if (list.length === 0) { container.innerHTML = '<div class="placeholder"><p>未找到匹配的名人</p></div>'; return; }
   container.innerHTML = list.map((c, i) => {
     const birth = c.birth.replace(' ', ' ');
-    return `<div class="dayun-item" style="cursor:pointer;border-left-color:var(--primary-light)" onclick="loadCelebrity(${i})">
+    return `<div class="dayun-item" style="cursor:pointer;border-left-color:var(--primary-light)" data-index="${i}">
       <span class="dayun-age"><strong>${c.name}</strong></span>
       <span class="dayun-ganzhi" style="font-size:13px">${birth}</span>
       <span class="dayun-shishen">${(c.tags || []).join(' · ')}</span>

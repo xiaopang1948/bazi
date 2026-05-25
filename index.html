@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>八字排盘</title>
+  <meta name="description" content="专业八字排盘工具 - 支持四柱十神、大运流年、合盘择日、五运六气、名人库等功能，纯前端离线可用">
+  <meta name="theme-color" content="#b8860b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>八字排盘 - 专业免费在线工具</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☯</text></svg>">
   <link rel="stylesheet" href="css/bazi.css">
 </head>
 <body>
+  <div id="loadingOverlay" style="position:fixed;inset:0;background:#f5f0eb;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;transition:opacity 0.3s">
+    <div style="font-size:28px;color:#b8860b;font-weight:800">八字排盘</div>
+    <div style="font-size:13px;color:#8a8580">加载中...</div>
+  </div>
   <div id="app">
     <!-- 顶部导航 -->
     <header class="app-header">
@@ -132,7 +139,7 @@
           <div class="card" id="reportCard" style="display:none">
             <h3>运势报告</h3>
             <div id="reportContent" class="report-text"></div>
-            <button class="btn-primary copy-report-btn" style="margin-top:10px;font-size:13px;padding:6px 16px" onclick="copyReport()">📋 复制报告</button>
+            <button class="btn-primary copy-report-btn" id="btnCopyReport" style="margin-top:10px;font-size:13px;padding:6px 16px">📋 复制报告</button>
           </div>
 
           <div class="card" id="diagramCard" style="display:none">
@@ -297,11 +304,11 @@
           <div class="input-row">
             <div class="input-group">
               <label>搜索名人</label>
-              <input type="text" id="celebritySearch" placeholder="输入姓名..." oninput="filterCelebrities()">
+              <input type="text" id="celebritySearch" placeholder="输入姓名...">
             </div>
             <div class="input-group">
               <label>分类</label>
-              <select id="celebrityTag" onchange="filterCelebrities()">
+              <select id="celebrityTag">
                 <option value="">全部</option>
                 <option value="帝王">帝王</option>
                 <option value="政治家">政治家</option>
@@ -368,7 +375,7 @@
   </div>
 
   <div style="position:fixed;bottom:20px;right:20px;z-index:1000">
-    <button class="btn-primary" id="btnExport" style="opacity:0.8;font-size:13px;padding:6px 16px" onclick="window.print()">📄 导出PDF</button>
+    <button class="btn-primary" id="btnExport" style="opacity:0.8;font-size:13px;padding:6px 16px">📄 导出PDF</button>
   </div>
 
   <!-- lunar 库（CDN） -->
@@ -380,8 +387,8 @@
   <script src="js/data/gu-ji-pi-pei.js"></script>
   <script src="js/data/celebrities.js"></script>
   <script src="js/data/qi-ming-zi-ku.js"></script>
-  <script src="js/core/wuyun-liuqi.js"></script>
   <script src="js/core/bazi-engine.js"></script>
+  <script src="js/core/wuyun-liuqi.js"></script>
   <script src="js/core/extra-pillars.js"></script>
   <script src="js/core/harmony.js"></script>
   <script src="js/ui/pillar-diagram.js"></script>

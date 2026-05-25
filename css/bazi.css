@@ -206,13 +206,12 @@ body {
   line-height: 1.1;
   letter-spacing: 0;
 }
-.pillar-hidden, .pillar-shishen, .pillar-nayin, .pillar-chs {
+.pillar-shishen, .pillar-nayin, .pillar-chs {
   font-size: 10px;
   display: inline;
   padding: 1px 2px;
   line-height: 1.5;
 }
-.pillar-hidden { color: var(--text-light); }
 .pillar-shishen { color: #888; background: rgba(0,0,0,0.02); border-radius: 2px; }
 .pillar-nayin { color: var(--text-light); }
 .pillar-chs { color: var(--primary); font-weight: 600; }
@@ -239,9 +238,9 @@ body {
 .wx-jin { color: #ffb300 !important; }
 .wx-shui { color: #42a5f5 !important; }
 
-/* 八字排盘区：stem/branch 保留大字号 */
-.pillar-stem { font-size: 36px; font-weight: 800; line-height: 1.1; padding: 0; }
-.pillar-branch { font-size: 32px; font-weight: 800; line-height: 1.1; padding: 0; }
+/* 四柱天干地支大字 — 合并自原两处重复定义 */
+.pillar-stem { font-size: 36px; font-weight: 800; padding: 0; line-height: 1.1; letter-spacing: 0; }
+.pillar-branch { font-size: 32px; font-weight: 800; padding: 0; line-height: 1.1; letter-spacing: 0; }
 .pillar-hidden { color: var(--text-light); }
 
 /* 大运天干加大字号 */
@@ -409,7 +408,7 @@ body.dark-mode .wuxing-bar-track { background: #333340; }
 body.dark-mode .pattern-row { background: rgba(184,134,11,0.12); border-color: rgba(184,134,11,0.2); }
 body.dark-mode #patternContent .pattern-row strong { color: var(--primary-light); }
 body.dark-mode .compact-item .pattern-row { border-bottom-color: rgba(255,255,255,0.04); }
-body.dark-mode .analysis-grid .card { background: transparent; border: none; box-shadow: none; }
+body.dark-mode .analysis-grid .card { background: rgba(255,255,255,0.03); border: 1px solid #333340; box-shadow: none; }
 
 /* ===== 古籍引证 ===== */
 .gu-ji-item { padding: 6px 0; border-bottom: 1px solid var(--border); }
@@ -426,6 +425,15 @@ body.dark-mode .analysis-grid .card { background: transparent; border: none; box
   border: 1px solid var(--border);
   font-family: "Noto Sans SC", "Courier New", monospace;
   color: var(--text-light);
+}
+
+/* ===== 平板端适配 ===== */
+@media (max-width: 768px) {
+  .app-header { padding: 0 12px; }
+  .app-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab { font-size: 12px; padding: 0 8px; }
+  .pillars-grid { gap: 8px; }
+  .card h3 { font-size: 14px; }
 }
 
 /* ===== 移动端适配 ===== */
@@ -477,12 +485,17 @@ body.dark-mode .analysis-grid .card { background: transparent; border: none; box
   #celebrityList .dayun-ganzhi { font-size: 12px; }
 }
 
+/* ===== 加载遮罩 ===== */
+body.dark-mode #loadingOverlay { background: #1a1a22 !important; }
+body.dark-mode #loadingOverlay div:first-child { color: #daa520 !important; }
+body.dark-mode #loadingOverlay div:last-child { color: #888 !important; }
+
 /* ===== 打印样式 ===== */
 @media print {
   .app-header, .app-footer, .input-card, .actions, .tab, footer,
   button, #btnExport, .app-tabs { display: none !important; }
   .tab-content { display: block !important; }
-  .tab-content:not(#tab-bazi) { display: none !important; }
+  .tab-content:not(.active) { display: none !important; }
   .result-area { display: block !important; }
   #app { max-width: 100%; }
   .app-main { padding: 0; }

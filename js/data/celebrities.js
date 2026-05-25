@@ -110,6 +110,9 @@ const CELEBRITY_CITIES = {
   ulm: { name:'乌尔姆', lng:9.993, lat:48.401, tz:1 },
 };
 
+// 合并名人专用城市到主城市表，使太阳时矫正对名人生效
+Object.assign(CITIES, CELEBRITY_CITIES);
+
 /** 解析名人出生日期 */
 function parseCelebrityBirth(item) {
   // 格式: "公元年-月-日 时:分" 或 "公元前年-月-日 时:分"
