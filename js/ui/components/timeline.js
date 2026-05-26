@@ -121,9 +121,9 @@ function buildLiuriItems(result, year, month) {
     const solar = Solar.fromYmd(year, month, d)
     const lunar = solar.getLunar()
     const lunarDay = lunar.getDayInChinese()
-    const ganzhi = solar.getLiuNian() + solar.getLiuYue() + solar.getLiuRi()
-    const stem = solar.getLiuRiGan()
-    const branch = solar.getLiuRiZhi()
+    const dGZ = lunar.getDayInGanZhi()
+    const stem = dGZ.charAt(0)
+    const branch = dGZ.charAt(1)
     const ss = getShiShen(dayStem, stem)
     items.push({
       key: 'lr' + d,
@@ -133,7 +133,7 @@ function buildLiuriItems(result, year, month) {
         { text: stem, wx: getStemWuxing(stem), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
         { text: branch, wx: getBranchWuxing(branch), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
       ],
-      colData: { stem, branch, ganzhi: stem + branch, shishen: ss, stemWx: getStemWuxing(stem), branchWx: getBranchWuxing(branch) },
+      colData: { stem, branch, ganzhi: dGZ, shishen: ss, stemWx: getStemWuxing(stem), branchWx: getBranchWuxing(branch) },
     })
   }
   return items
