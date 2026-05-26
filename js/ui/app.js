@@ -133,6 +133,11 @@ document.addEventListener('DOMContentLoaded', function() {
   initCitySelector();
   initTimeSelectors();
 
+  document.querySelectorAll('.tab').forEach(el => {
+    el.addEventListener('click', () => BaziRouter.go(el.dataset.tab));
+  })
+  BaziRouter.init(['bazi','hepan','zeri','celebrities','wuyun','history','settings'])
+
   document.getElementById('btnCalc').addEventListener('click', doCalc);
 
   document.getElementById('timeNav').addEventListener('click', function(e) {

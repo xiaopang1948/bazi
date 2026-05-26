@@ -2,12 +2,12 @@ function renderLifeKLine(result) {
   const card = document.getElementById('lifeKLineCard')
   const container = document.getElementById('lifeKLineContent')
   if (!card || !container) return
-  if (!result.dayun || result.dayun.length === 0) { card.style.display = 'none'; return }
+  if (!result.dayun || !result.dayun.periods || result.dayun.periods.length === 0) { card.style.display = 'none'; return }
 
   card.style.display = 'block'
 
   const dayStem = result.pillars.day.stem
-  const periods = result.dayun.map(d => {
+  const periods = result.dayun.periods.map(d => {
     const stemWx = getStemWuxing(d.stem)
     const branchWx = getBranchWuxing(d.branch)
     const relation = getStemRelation(dayStem, d.stem)
@@ -23,9 +23,9 @@ function renderLifeKLine(result) {
     const branchRelation = getBranchRelation(dayStem, d.branch)
     baseScore += branchRelation
     const volatility = 20 + Math.abs(baseScore) * 0.3
+    const [ageStart, ageEnd] = d.ageRange.split('-').map(Number)
     return {
-      ageStart: d.startAge,
-      ageEnd: d.endAge,
+      ageStart, ageEnd,
       stem: d.stem,
       branch: d.branch,
       stemWx, branchWx,

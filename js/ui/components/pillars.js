@@ -1,6 +1,4 @@
-const BaziComponents = {}
-
-BaziComponents.renderInfoBar = function (name, result) {
+function renderInfoBar(name, result) {
   const r = result
   let solarInfo = ''
   if (r.solarTime && r.solarTime.adjusted) {
@@ -14,27 +12,21 @@ BaziComponents.renderInfoBar = function (name, result) {
   `
 }
 
-BaziComponents.renderPillars = function (result) {
+function renderPillars(result) {
   const grid = document.getElementById('pillarsGrid')
   const keys = ['year', 'month', 'day', 'hour']
   const labels = ['年柱', '月柱', '日柱', '时柱']
   const wxMap = { '木': 'mu', '火': 'huo', '土': 'tu', '金': 'jin', '水': 'shui' }
-
   grid.innerHTML = labels.map(l => `<div class="pillar-cell header-cell">${l}</div>`).join('')
-
   const dataRows = [
     { cls: 'stem', render: d => `<span class="wx-${wxMap[d.stemWuxing] || ''}">${d.stem}</span>` },
     { cls: 'branch', render: d => `<span class="wx-${wxMap[d.branchWuxing] || ''}">${d.branch}</span>` },
-    {
-      cls: 'wuxing', render: d =>
-        `<span class="pillar-wuxing wuxing-${d.stemWuxing === '木' ? 'wood' : d.stemWuxing === '火' ? 'fire' : d.stemWuxing === '土' ? 'earth' : d.stemWuxing === '金' ? 'metal' : 'water'}">${d.stemWuxing}</span>`
-    },
+    { cls: 'wuxing', render: d => `<span class="pillar-wuxing wuxing-${d.stemWuxing === '木' ? 'wood' : d.stemWuxing === '火' ? 'fire' : d.stemWuxing === '土' ? 'earth' : d.stemWuxing === '金' ? 'metal' : 'water'}">${d.stemWuxing}</span>` },
     { cls: 'shishen', render: d => d.shishen },
     { cls: 'hidden', render: d => d.hiddenShishen.map(h => `<span class="wx-${wxMap[h.wuxing] || ''}">${h.stem}</span>`).join(' ') },
     { cls: 'nayin', render: d => d.nayin },
     { cls: 'chs', render: d => d.changSheng },
   ]
-
   for (const row of dataRows) {
     for (const key of keys) {
       const d = result.details[key]
@@ -46,11 +38,10 @@ BaziComponents.renderPillars = function (result) {
   }
 }
 
-BaziComponents.renderWuxing = function (counts) {
+function renderWuxing(counts) {
   const container = document.getElementById('wuxingBars')
   const colors = { 木: 'var(--wood)', 火: 'var(--fire)', 土: 'var(--earth)', 金: 'var(--metal)', 水: 'var(--water)' }
   const maxVal = Math.max(...Object.values(counts), 1)
-
   container.innerHTML = ''
   for (const wx of ['木', '火', '土', '金', '水']) {
     const val = counts[wx] || 0
@@ -66,7 +57,7 @@ BaziComponents.renderWuxing = function (counts) {
   }
 }
 
-BaziComponents.renderStars = function (details) {
+function renderStars(details) {
   const container = document.getElementById('starsList')
   const allStars = new Map()
   for (const key of ['year', 'month', 'day', 'hour']) {
@@ -87,7 +78,7 @@ BaziComponents.renderStars = function (details) {
   }
 }
 
-BaziComponents.renderExtraPillars = function (extra) {
+function renderExtraPillars(extra) {
   const card = document.getElementById('extraPillarsCard')
   const container = document.getElementById('extraPillarsContent')
   if (!extra || !card) return
@@ -98,7 +89,7 @@ BaziComponents.renderExtraPillars = function (extra) {
     <div class="pattern-row"><span>身宫</span><strong>${extra.shenGong.ganzhi}</strong></div>`
 }
 
-BaziComponents.renderRenYuan = function (renYuan) {
+function renderRenYuan(renYuan) {
   const card = document.getElementById('renYuanCard')
   const container = document.getElementById('renYuanContent')
   if (!renYuan || Object.keys(renYuan).length === 0 || !card) return
@@ -110,7 +101,7 @@ BaziComponents.renderRenYuan = function (renYuan) {
     }).join('')
 }
 
-BaziComponents.renderQiMing = function (result) {
+function renderQiMing(result) {
   const card = document.getElementById('qiMingCard')
   const container = document.getElementById('qiMingContent')
   if (!card) return
@@ -130,7 +121,7 @@ BaziComponents.renderQiMing = function (result) {
   container.innerHTML = html
 }
 
-BaziComponents.renderGuJi = function (result) {
+function renderGuJi(result) {
   const card = document.getElementById('guJiCard')
   const container = document.getElementById('guJiContent')
   if (!card) return
@@ -140,11 +131,4 @@ BaziComponents.renderGuJi = function (result) {
   container.innerHTML = matches.map(m =>
     `<div class="gu-ji-item"><span class="gu-ji-source">${m.source} · ${m.title}</span><p class="gu-ji-text">${m.content}</p></div>`
   ).join('')
-}
-
-BaziComponents.renderDiagram = function (result) {
-  const canvas = document.getElementById('pillarDiagram')
-  if (!canvas) return
-  document.getElementById('diagramCard').style.display = 'block'
-  renderPillarDiagram('pillarDiagram', result)
 }
