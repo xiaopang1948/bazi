@@ -888,6 +888,11 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
   line-height: 1;
   margin-bottom: 2px;
 }
+.tp-xy-text {
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-serif);
+}
 
 /* ===== 起运/交运 ===== */
 #qiyunCard { padding: var(--space-sm) var(--space-md); }
