@@ -4,6 +4,12 @@ let timeSelectedDay = new Date().getDate();
 const WX_CLASS = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' };
 function wxSpan(wx, text) { return `<span class="wx-${WX_CLASS[wx] || ''}">${text}</span>`; }
 
+function getGender() {
+  return document.querySelector('#genderGroup .pill.active').dataset.value
+}
+function setGender(val) {
+  document.querySelectorAll('#genderGroup .pill').forEach(b => b.classList.toggle('active', b.dataset.value === val))
+}
 function showError(msg) {
   const result = document.getElementById('result');
   result.style.display = 'block';
@@ -44,14 +50,19 @@ function updateDays() {
 }
 
 function initCitySelector() {
-  const sel = document.getElementById('city');
-  sel.innerHTML = '';
-  for (const [key, city] of Object.entries(CITIES)) {
-    const opt = document.createElement('option');
-    opt.value = key;
-    opt.textContent = city.name;
-    sel.appendChild(opt);
+  const provinces = Object.keys(PROVINCE_CITIES);
+  const provSel = document.getElementById('province');
+  provSel.innerHTML = provinces.map(p => `<option value="${p}">${p}</option>`).join('');
+
+  function updateCities() {
+    const selProv = provSel.value;
+    const cityKeys = PROVINCE_CITIES[selProv] || [];
+    const citySel = document.getElementById('city');
+    citySel.innerHTML = cityKeys.map(k => `<option value="${k}">${CITIES[k].name}</option>`).join('');
   }
+
+  provSel.addEventListener('change', updateCities);
+  updateCities();
 }
 
 function initTimeSelectors() {
@@ -72,7 +83,7 @@ function initTimeSelectors() {
 function doCalc() {
   try {
   const name = document.getElementById('name').value || '未知';
-  const gender = document.querySelector('input[name="gender"]:checked').value;
+  const gender = getGender();
   const year = parseInt(document.getElementById('year').value);
   const month = parseInt(document.getElementById('month').value);
   const day = parseInt(document.getElementById('day').value);
@@ -83,11 +94,12 @@ function doCalc() {
 
   const result = calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime, name);
 
+  document.getElementById('inputView').style.display = 'none';
   document.getElementById('result').style.display = 'block';
   window.scrollTo({ top: document.getElementById('result').offsetTop - 80, behavior: 'smooth' });
 
   renderInfoBar(name, result);
-  renderPillars(result);
+  renderMainTable(result);
   renderGuKu(result);
   renderWuxing(result.wuxingCount);
   renderStars(result.details);
@@ -120,6 +132,12 @@ function doCalc() {
   }
 }
 
+function backToInput() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('inputView').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const overlay = document.getElementById('loadingOverlay');
   if (overlay) { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 300); }
@@ -139,6 +157,16 @@ document.addEventListener('DOMContentLoaded', function() {
   BaziRouter.init(['bazi','hepan','zeri','celebrities','wuyun','history','settings'])
 
   document.getElementById('btnCalc').addEventListener('click', doCalc);
+  document.getElementById('btnBack').addEventListener('click', backToInput);
+
+  document.querySelectorAll('.pill-group').forEach(group => {
+    group.addEventListener('click', function(e) {
+      const pill = e.target.closest('.pill');
+      if (!pill) return;
+      this.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    })
+  })
 
   document.getElementById('timeNav').addEventListener('click', function(e) {
     const btn = e.target.closest('.time-btn');

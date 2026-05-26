@@ -403,6 +403,10 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
   const lunar = solar.getLunar();
   const bazi = lunar.getBaZi();
 
+  const HOUR_BRANCH = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
+  const hourBranch = HOUR_BRANCH[Math.floor((calcHour + 1) / 2) % 12]
+  const lunarDate = `${lunar.getYearInChinese()}年${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}日 ${hourBranch}时`
+
   // 年柱
   const yGZ = bazi[0];
   const yStem = yGZ.charAt(0);
@@ -523,6 +527,7 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
 
   return {
     input: { year, month, day, hour, minute, gender, cityKey, name: personName || '' },
+    lunarDate,
     solarTime,
     pillars,
     details,

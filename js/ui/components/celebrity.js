@@ -49,7 +49,7 @@ function loadCelebrity(index) {
   document.getElementById('day').value = parsed.day;
   document.getElementById('hour').value = parsed.hour;
   document.getElementById('minute').value = parsed.minute;
-  document.querySelector('input[name="gender"][value="' + c.gender + '"]').checked = true;
+  setGender(c.gender);
 
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelector('.tab[data-tab="bazi"]').classList.add('active');

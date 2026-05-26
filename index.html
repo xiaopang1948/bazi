@@ -36,74 +36,78 @@
     <main class="app-main">
       <!-- ========== 排盘 TAB ========== -->
       <section class="tab-content active" id="tab-bazi">
-        <!-- 首页英雄区 -->
-        <div class="home-hero">
-          <div class="home-hero-bg"></div>
-          <div class="home-hero-icon">☯</div>
-          <h2 class="home-hero-title">八字排盘</h2>
-          <p class="home-hero-subtitle">知命而行，顺势而为</p>
-        </div>
-        <!-- 输入区 -->
-        <div class="input-card">
-          <div class="input-row">
-            <div class="input-group">
-              <label>姓名</label>
-              <input type="text" id="name" placeholder="选填" maxlength="10">
-            </div>
-            <div class="input-group">
-              <label>性别</label>
-              <div class="radio-group">
-                <label><input type="radio" name="gender" value="male" checked> 男</label>
-                <label><input type="radio" name="gender" value="female"> 女</label>
+        <!-- 输入视图 -->
+        <div id="inputView">
+          <!-- 首页英雄区 -->
+          <div class="home-hero">
+            <div class="home-hero-bg"></div>
+            <div class="home-hero-icon">☯</div>
+            <h2 class="home-hero-title">八字排盘</h2>
+            <p class="home-hero-subtitle">知命而行，顺势而为</p>
+          </div>
+          <!-- 输入区 -->
+          <div class="input-card">
+            <div class="input-row-5">
+              <span class="input-label">姓名</span>
+              <div class="input-right">
+                <input type="text" id="name" placeholder="请输入姓名" maxlength="10" class="name-input">
               </div>
             </div>
-          </div>
-          <div class="input-row">
-            <div class="input-group">
-              <label>出生日期</label>
-              <div class="date-group">
-                <select id="year"></select><span>年</span>
-                <select id="month"></select><span>月</span>
-                <select id="day"></select><span>日</span>
+            <div class="input-row-5">
+              <div class="input-left">
+                <div class="pill-group" id="genderGroup">
+                  <button class="pill active" data-value="male">男</button>
+                  <button class="pill" data-value="female">女</button>
+                </div>
+              </div>
+              <div class="input-right">
+                <div class="pill-group" id="calendarGroup">
+                  <button class="pill active" data-value="solar">公历</button>
+                  <button class="pill" data-value="lunar">农历</button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="input-row">
-            <div class="input-group">
-              <label>出生时间</label>
-              <div class="date-group">
-                <select id="hour"></select><span>时</span>
-                <select id="minute"></select><span>分</span>
+            <div class="input-row-5">
+              <span class="input-label">出生时间</span>
+              <div class="input-right">
+                <div class="date-group">
+                  <select id="year"></select><span>年</span>
+                  <select id="month"></select><span>月</span>
+                  <select id="day"></select><span>日</span>
+                  <select id="hour"></select><span>时</span>
+                  <select id="minute"></select><span>分</span>
+                  <label class="solar-toggle">
+                    <input type="checkbox" id="useSolarTime" checked> 真太阳时
+                  </label>
+                </div>
               </div>
             </div>
-            <div class="input-group">
-              <label>出生城市</label>
-              <select id="city">
-                <option value="beijing">北京</option>
-              </select>
+            <div class="input-row-5">
+              <span class="input-label">出生地区</span>
+              <div class="input-right">
+                <select id="province"></select>
+                <select id="city"></select>
+              </div>
             </div>
-          </div>
-          <div class="input-row actions">
-            <button class="btn-primary" id="btnCalc">开始排盘</button>
-            <label class="checkbox-label">
-              <input type="checkbox" id="useSolarTime" checked> 真太阳时校正
-            </label>
+            <div class="input-row-5 btn-row">
+              <button class="btn-primary" id="btnCalc">开始排盘</button>
+            </div>
           </div>
         </div>
 
         <!-- 结果区 -->
         <div id="result" class="result-area" style="display:none">
 
+          <!-- 结果顶部导航 -->
+          <div class="result-topbar">
+            <button class="btn-back" id="btnBack">← 重新排盘</button>
+          </div>
+
           <!-- 一级：基础信息 + 四柱 -->
           <div class="info-bar" id="infoBar"></div>
 
           <div class="pillars-card">
-            <div class="pillars-grid" id="pillarsGrid">
-              <div class="pillar-cell header-cell">年柱</div>
-              <div class="pillar-cell header-cell">月柱</div>
-              <div class="pillar-cell header-cell">日柱</div>
-              <div class="pillar-cell header-cell">时柱</div>
-            </div>
+            <div class="mg-grid" id="pillarsGrid"></div>
           </div>
 
           <!-- 一级：袁天罡称骨 -->

@@ -1,41 +1,148 @@
+const ZODIAC_EMOJI = { '子':'🐭','丑':'🐮','寅':'🐯','卯':'🐰','辰':'🐲','巳':'🐍','午':'🐴','未':'🐑','申':'🐵','酉':'🐔','戌':'🐶','亥':'🐷' }
+const ZODIAC_NAME = { '子':'鼠','丑':'牛','寅':'虎','卯':'兔','辰':'龙','巳':'蛇','午':'马','未':'羊','申':'猴','酉':'鸡','戌':'狗','亥':'猪' }
+
+function formatSolar(y, m, d, h, min) {
+  return `${y}年${m}月${d}日 ${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}`
+}
+
 function renderInfoBar(name, result) {
   const r = result
-  let solarInfo = ''
-  if (r.solarTime && r.solarTime.adjusted) {
-    solarInfo = ` | 真太阳时: ${String(r.solarTime.hour).padStart(2, '0')}:${String(r.solarTime.minute).padStart(2, '0')} (时差 ${r.solarTime.eot > 0 ? '+' : ''}${r.solarTime.eot}分)`
-  }
-  const cityName = r.input.cityKey && CITIES[r.input.cityKey] ? CITIES[r.input.cityKey].name : '未知'
+  const displayName = name || '未知'
+  const genderLabel = r.input.gender === 'male' ? '乾造' : '坤造'
+  const branch = r.details.year.branch
+  const emoji = ZODIAC_EMOJI[branch] || '?'
+  const animalName = ZODIAC_NAME[branch] || '?'
+
+  const lunarDate = r.lunarDate || '计算失败'
+  const solarDate = formatSolar(r.input.year, r.input.month, r.input.day, r.input.hour, r.input.minute)
+
   document.getElementById('infoBar').innerHTML = `
-    <span><strong>${name}</strong> · ${r.input.gender === 'male' ? '男' : '女'}</span>
-    <span>${r.input.year}-${String(r.input.month).padStart(2, '0')}-${String(r.input.day).padStart(2, '0')} ${String(r.input.hour).padStart(2, '0')}:${String(r.input.minute).padStart(2, '0')}</span>
-    <span>${cityName}${solarInfo}</span>
+    <div class="info-avatar" title="${branch}·${animalName}">${emoji}</div>
+    <div class="info-details">
+      <div class="info-row info-row-name"><span class="info-name">${displayName}</span><span class="info-gender">${genderLabel}</span></div>
+      <div class="info-row">农历：${lunarDate}</div>
+      <div class="info-row">阳历：${solarDate}</div>
+    </div>
   `
 }
 
-function renderPillars(result) {
-  const grid = document.getElementById('pillarsGrid')
-  const keys = ['year', 'month', 'day', 'hour']
-  const labels = ['年柱', '月柱', '日柱', '时柱']
-  const wxMap = { '木': 'mu', '火': 'huo', '土': 'tu', '金': 'jin', '水': 'shui' }
-  grid.innerHTML = labels.map(l => `<div class="pillar-cell header-cell">${l}</div>`).join('')
-  const dataRows = [
-    { cls: 'stem', render: d => `<span class="wx-${wxMap[d.stemWuxing] || ''}">${d.stem}</span>` },
-    { cls: 'branch', render: d => `<span class="wx-${wxMap[d.branchWuxing] || ''}">${d.branch}</span>` },
-    { cls: 'wuxing', render: d => `<span class="pillar-wuxing wuxing-${d.stemWuxing === '木' ? 'wood' : d.stemWuxing === '火' ? 'fire' : d.stemWuxing === '土' ? 'earth' : d.stemWuxing === '金' ? 'metal' : 'water'}">${d.stemWuxing}</span>` },
-    { cls: 'shishen', render: d => d.shishen },
-    { cls: 'hidden', render: d => d.hiddenShishen.map(h => `<span class="wx-${wxMap[h.wuxing] || ''}">${h.stem}</span>`).join(' ') },
-    { cls: 'nayin', render: d => d.nayin },
-    { cls: 'chs', render: d => d.changSheng },
+/* ===== 空亡计算 ===== */
+function calcXunKong(ganzhi) {
+  const s = STEMS.indexOf(ganzhi[0])
+  const b = BRANCHES.indexOf(ganzhi[1])
+  return BRANCHES[(b - s + 10) % 12] + BRANCHES[(b - s + 11) % 12]
+}
+
+/* ===== 当前大运 ===== */
+function getCurrentDayun(result) {
+  const currentYear = new Date().getFullYear()
+  const age = currentYear - result.input.year
+  const startAge = result.dayun.startAge
+  const idx = Math.max(0, Math.min(7, Math.floor((age - startAge) / 10)))
+  return { index: idx, data: result.dayun.periods[idx] }
+}
+
+/* ===== 构建列数据 ===== */
+function buildColData(raw, dayStem, pillars, colKey) {
+  const stem = raw.stem, branch = raw.branch
+  const ganzhi = raw.ganzhi || stem + branch
+  const stemWx = getStemWuxing(stem)
+  const branchWx = getBranchWuxing(branch)
+  const hiddenStems = getHiddenStems(branch)
+  const len = hiddenStems.length
+  const order = len === 3 ? [0, 2, 1] : len === 2 ? [1, 0] : [0]
+  const orderedHidden = order.map(i => ({
+    stem: hiddenStems[i],
+    wuxing: getStemWuxing(hiddenStems[i]),
+    shishen: getShiShen(dayStem, hiddenStems[i]),
+  }))
+  return {
+    stem, branch, ganzhi, shishen: raw.shishen,
+    stemWx, branchWx,
+    hidden: orderedHidden,
+    changSheng: getShiErChangSheng(dayStem, branch),
+    ziZuo: getShiErChangSheng(stem, branch),
+    xunKong: calcXunKong(ganzhi),
+    nayin: getNaYin(stem, branch),
+    stars: getStarsForPillar(ganzhi, stem, branch, pillars),
+  }
+}
+
+function renderMainTable(result) {
+  const WX = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' }
+  const dayStem = result.details.day.stem
+  const gender = result.input.gender
+  const dayShishen = gender === 'male' ? '元男' : '元女'
+
+  const currentDayun = getCurrentDayun(result)
+  const liuNianShishen = getShiShen(dayStem, result.liuNian.stem)
+  const daYunShishen = getShiShen(dayStem, currentDayun.data.stem)
+  const columns = {
+    liuNian: buildColData({ ...result.liuNian, shishen: liuNianShishen }, dayStem, result.pillars, 'liuNian'),
+    daYun: buildColData({ ...currentDayun.data, shishen: daYunShishen }, dayStem, result.pillars, 'daYun'),
+    year: buildColData({ ...result.details.year, shishen: result.details.year.shishen }, dayStem, result.pillars, 'year'),
+    month: buildColData({ ...result.details.month, shishen: result.details.month.shishen }, dayStem, result.pillars, 'month'),
+    day: buildColData({ ...result.details.day, shishen: dayShishen }, dayStem, result.pillars, 'day'),
+    hour: buildColData({ ...result.details.hour, shishen: result.details.hour.shishen }, dayStem, result.pillars, 'hour'),
+  }
+
+  const colKeys = ['liuNian', 'daYun', 'year', 'month', 'day', 'hour']
+  const colLabels = ['流年', '大运', '年柱', '月柱', '日柱', '时柱']
+  const rows = [
+    { key: 'shishen', label: '主星' },
+    { key: 'stem', label: '天干' },
+    { key: 'branch', label: '地支' },
+    { key: 'canggan', label: '藏干' },
+    { key: 'chs', label: '星运' },
+    { key: 'zizuo', label: '自坐' },
+    { key: 'xunkong', label: '空亡' },
+    { key: 'nayin', label: '纳音' },
+    { key: 'stars', label: '神煞' },
   ]
-  for (const row of dataRows) {
-    for (const key of keys) {
-      const d = result.details[key]
-      const cell = document.createElement('div')
-      cell.className = `pillar-cell pillar-${key}`
-      cell.innerHTML = `<div class="pillar-${row.cls}">${row.render(d)}</div>`
-      grid.appendChild(cell)
+
+  function colHtml(col, row) {
+    switch (row.key) {
+      case 'shishen': return `<span class="mg-shishen">${col.shishen}</span>`
+      case 'stem': return `<span class="wx-${WX[col.stemWx]||''}">${col.stem}</span>`
+      case 'branch': return `<span class="wx-${WX[col.branchWx]||''}">${col.branch}</span>`
+      case 'canggan':
+        return col.hidden.map(h =>
+          `<span class="mg-cg-item"><span class="wx-${WX[h.wuxing]||''} mg-cg-gan">${h.stem}</span><span class="mg-cg-ss">${h.shishen}</span></span>`
+        ).join('')
+      case 'chs': return col.changSheng
+      case 'zizuo': return col.ziZuo
+      case 'xunkong': return col.xunKong
+      case 'nayin': return col.nayin
+      case 'stars': return col.stars.map(s => `<span class="mg-star">${s.name}</span>`).join('')
     }
   }
+
+  function cellClass(row) {
+    switch (row.key) {
+      case 'stem': case 'branch': return 'mg-cell-ganzhi'
+      case 'canggan': return 'mg-cell-cg'
+      case 'stars': return 'mg-cell-star'
+      default: return ''
+    }
+  }
+
+  let html = `<div class="mg-row mg-row-hd">`
+  html += `<div class="mg-cell mg-cell-label">日期</div>`
+  for (const label of colLabels) {
+    html += `<div class="mg-cell mg-cell-hd">${label}</div>`
+  }
+  html += `</div>`
+
+  for (const row of rows) {
+    html += `<div class="mg-row mg-row-${row.key}">`
+    html += `<div class="mg-cell mg-cell-label">${row.label}</div>`
+    for (const key of colKeys) {
+      html += `<div class="mg-cell ${cellClass(row)}">${colHtml(columns[key], row)}</div>`
+    }
+    html += `</div>`
+  }
+
+  document.getElementById('pillarsGrid').innerHTML = html
 }
 
 function renderWuxing(counts) {

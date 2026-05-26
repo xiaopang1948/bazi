@@ -45,8 +45,7 @@ function loadHistory(index) {
   document.getElementById('day').value = d;
   document.getElementById('hour').value = hh;
   document.getElementById('minute').value = mi;
-  if (h.gender === 'male') document.querySelector('input[name="gender"][value="male"]').checked = true;
-  else document.querySelector('input[name="gender"][value="female"]').checked = true;
+  setGender(h.gender);
 
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelector('.tab[data-tab="bazi"]').classList.add('active');
