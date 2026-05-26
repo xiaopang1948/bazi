@@ -113,7 +113,6 @@ function doCalc() {
   renderQiYun(result);
   renderTimePanel(result);
   renderReport(result);
-  renderQiMing(result);
   renderLifeKLine(result);
   document.getElementById('compactInfo').style.display = 'grid';
 
