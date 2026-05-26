@@ -294,17 +294,17 @@ function updateMainTable(result) {
   const pillars = result.pillars
   const extraCols = []
 
-  if (ps.showLiuyue && ps.liuyueItemsCache) {
-    const item = ps.liuyueItemsCache[ps.liuyueMonth - 1]
-    if (item) extraCols.push({ key: 'extra_liuyue', label: '流月', data: buildTpColData(item, dayStem, pillars) })
+  if (ps.showLiushi && ps.liushiItemsCache) {
+    const item = ps.liushiItemsCache[ps.liushiIdx]
+    if (item) extraCols.push({ key: 'extra_liushi', label: '流时', data: buildTpColData(item, dayStem, pillars) })
   }
   if (ps.showLiuri && ps.liuriItemsCache) {
     const item = ps.liuriItemsCache[ps.liuriDay - 1]
     if (item) extraCols.push({ key: 'extra_liuri', label: '流日', data: buildTpColData(item, dayStem, pillars) })
   }
-  if (ps.showLiushi && ps.liushiItemsCache) {
-    const item = ps.liushiItemsCache[ps.liushiIdx]
-    if (item) extraCols.push({ key: 'extra_liushi', label: '流时', data: buildTpColData(item, dayStem, pillars) })
+  if (ps.showLiuyue && ps.liuyueItemsCache) {
+    const item = ps.liuyueItemsCache[ps.liuyueMonth - 1]
+    if (item) extraCols.push({ key: 'extra_liuyue', label: '流月', data: buildTpColData(item, dayStem, pillars) })
   }
 
   renderMainTable(result, extraCols, ps.dayunIdx, ps.liunianYear)
