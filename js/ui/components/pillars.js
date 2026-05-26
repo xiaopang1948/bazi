@@ -68,7 +68,18 @@ function buildColData(raw, dayStem, pillars, colKey) {
   }
 }
 
-function renderMainTable(result) {
+/*
+ * 十神缩写映射
+ */
+const SHI_SHEN_ABBR = {
+  '正印':'印', '偏印':'偏',
+  '正官':'官', '七杀':'杀',
+  '正财':'财', '偏财':'才',
+  '食神':'食', '伤官':'伤',
+  '比肩':'比', '劫财':'劫',
+}
+
+function renderMainTable(result, extraCols = []) {
   const WX = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' }
   const dayStem = result.details.day.stem
   const gender = result.input.gender
@@ -86,8 +97,15 @@ function renderMainTable(result) {
     hour: buildColData({ ...result.details.hour, shishen: result.details.hour.shishen }, dayStem, result.pillars, 'hour'),
   }
 
-  const colKeys = ['liuNian', 'daYun', 'year', 'month', 'day', 'hour']
-  const colLabels = ['流年', '大运', '年柱', '月柱', '日柱', '时柱']
+  const baseKeys = ['liuNian', 'daYun', 'year', 'month', 'day', 'hour']
+  const baseLabels = ['流年', '大运', '年柱', '月柱', '日柱', '时柱']
+  const extraKeys = extraCols.map(c => c.key)
+  const extraLabels = extraCols.map(c => c.label)
+  const colKeys = [...extraKeys, ...baseKeys]
+  const colLabels = [...extraLabels, ...baseLabels]
+  for (const ec of extraCols) {
+    columns[ec.key] = ec.data
+  }
   const rows = [
     { key: 'shishen', label: '主星' },
     { key: 'stem', label: '天干' },

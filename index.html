@@ -140,6 +140,32 @@
             <div id="guKuContent"></div>
           </div>
 
+          <!-- 大运/流年/流月/流日/流时 -->
+          <div class="card time-panel-card" id="timePanelCard" style="display:none">
+            <div class="time-panel" id="timePanel">
+              <div class="tp-row" data-level="dayun">
+                <div class="tp-label" data-label="大运">大<br>运</div>
+                <div class="tp-content" id="tpDayun"></div>
+              </div>
+              <div class="tp-row" data-level="liunian">
+                <div class="tp-label" data-label="流年">流<br>年</div>
+                <div class="tp-content" id="tpLiunian"></div>
+              </div>
+              <div class="tp-row" data-level="liuyue">
+                <div class="tp-label" data-label="流月">流<br>月</div>
+                <div class="tp-content" id="tpLiuyue"></div>
+              </div>
+              <div class="tp-row" data-level="liuri">
+                <div class="tp-label" data-label="流日">流<br>日</div>
+                <div class="tp-content" id="tpLiuri"></div>
+              </div>
+              <div class="tp-row" data-level="liushi">
+                <div class="tp-label" data-label="流时">流<br>时</div>
+                <div class="tp-content" id="tpLiushi"></div>
+              </div>
+            </div>
+          </div>
+
           <!-- 一级：格局 + 大运 -->
           <div class="card" id="patternCard">
             <h3>格局分析</h3>
@@ -151,31 +177,9 @@
             <div id="specialPatternContent"></div>
           </div>
 
-          <div class="card" id="dayunCard">
-            <h3>大运</h3>
-            <div class="dayun-timeline" id="dayunList"></div>
-          </div>
-
           <div class="card" id="lifeKLineCard" style="display:none">
             <h3>人生K线图</h3>
             <div id="lifeKLineContent" style="overflow-x:auto"></div>
-          </div>
-
-          <!-- 一级：时间轴切换（流年/流月/流日/流时/周趋势） -->
-          <div class="time-nav" id="timeNav" style="display:none">
-            <button class="time-btn active" data-time="nian">流年</button>
-            <button class="time-btn" data-time="yue">流月</button>
-            <button class="time-btn" data-time="ri">流日</button>
-            <button class="time-btn" data-time="shi">流时</button>
-            <button class="time-btn" data-time="week">周趋势</button>
-          </div>
-          <div class="card" id="timeContentCard" style="display:none">
-            <div id="timeContent"></div>
-          </div>
-          <div class="card" id="weekTrendCard" style="display:none">
-            <h3>日运评分 · 周趋势</h3>
-            <div id="weekTrendNav" style="display:flex;align-items:center;justify-content:center;margin-bottom:8px"></div>
-            <div id="weekTrendContent" style="width:100%"></div>
           </div>
 
           <!-- 二级：五行 + 神煞 -->
@@ -449,7 +453,6 @@
   <script src="js/ui/report.js"></script>
   <script src="js/ui/components/pillars.js"></script>
   <script src="js/ui/components/patterns.js"></script>
-  <script src="js/ui/components/dayun.js"></script>
   <script src="js/ui/components/timeline.js"></script>
   <script src="js/ui/components/hepan.js"></script>
   <script src="js/ui/components/zeri.js"></script>

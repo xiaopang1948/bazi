@@ -778,6 +778,112 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 /* ===== 流年 ===== */
 #currentYearContent { font-size: 14px; line-height: 1.8; font-family: var(--font-serif); }
 
+/* ===== 时间面板 ===== */
+.time-panel-card {
+  padding: var(--space-xs) 0;
+  overflow: hidden;
+}
+.time-panel {
+  display: flex;
+  flex-direction: column;
+}
+.tp-row {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+.tp-row + .tp-row {
+  border-top: 1px solid var(--border);
+}
+.tp-label {
+  width: 28px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(184,134,11,0.04);
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, color 0.15s;
+}
+.tp-label:hover {
+  background: rgba(184,134,11,0.08);
+}
+.tp-label-active {
+  background: var(--cinnabar) !important;
+  color: #fff !important;
+}
+.tp-content {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 6px 8px;
+  gap: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  min-height: 76px;
+  align-items: flex-start;
+}
+.tp-content::-webkit-scrollbar {
+  height: 4px;
+}
+.tp-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+.tp-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s;
+  min-width: 48px;
+  gap: 2px;
+}
+.tp-item:hover {
+  background: rgba(184,134,11,0.06);
+}
+.tp-item-active {
+  background: rgba(192,57,43,0.08);
+  outline: 1px solid rgba(192,57,43,0.25);
+}
+.tp-small {
+  font-size: 10px;
+  color: var(--ink-light);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.tp-faint {
+  color: #aaa;
+}
+.tp-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  line-height: 1.2;
+}
+.tp-line .wx-mu, .tp-line .wx-huo, .tp-line .wx-tu, .tp-line .wx-jin, .tp-line .wx-shui {
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-serif);
+}
+.tp-ss {
+  font-size: 10px;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
 /* ===== 起运/交运 ===== */
 #qiyunCard { padding: var(--space-sm) var(--space-md); }
 .qiyun-body {
@@ -1009,6 +1115,10 @@ body.dark-mode .btn-back { color: var(--ink-light); border-color: var(--border);
 body.dark-mode .btn-back:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,168,75,0.06); }
 body.dark-mode .qiyun-today { background: transparent; border-color: var(--border); color: var(--ink-light); }
 body.dark-mode .qiyun-today:hover { border-color: var(--cinnabar); color: var(--cinnabar); }
+body.dark-mode .tp-label { background: rgba(255,255,255,0.02); border-color: var(--border); }
+body.dark-mode .tp-label:hover { background: rgba(255,255,255,0.06); }
+body.dark-mode .tp-label-active { background: var(--cinnabar) !important; }
+body.dark-mode .tp-item-active { background: rgba(192,57,43,0.15); outline-color: rgba(192,57,43,0.4); }
 
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {

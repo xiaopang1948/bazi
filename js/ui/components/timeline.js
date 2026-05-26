@@ -1,142 +1,328 @@
-const _liuNianCache = new Map()
-
-function renderLiuNian(detail) {
-  const container = document.getElementById('currentYearContent');
-  if (!detail || !detail.analysis) { container.innerHTML = '<p>无法计算</p>'; return; }
-
-  const lnGanWx = getStemWuxing(detail.liuNianGan);
-  const lnZhiWx = getBranchWuxing(detail.liuNianZhi);
-  let html = `<p style="font-size:16px;font-weight:600;margin-bottom:8px">${detail.year} 年（${wxSpan(lnGanWx, detail.liuNianGan)}${wxSpan(lnZhiWx, detail.liuNianZhi)}）</p>`;
-  html += `<p style="font-size:14px;margin-bottom:10px;color:var(--text-light)">${detail.summary}</p>`;
-
-  html += `<table style="width:100%;border-collapse:collapse;font-size:13px">`;
-  html += `<tr style="background:var(--border);font-weight:600">
-    <td style="padding:4px 6px;width:90px">项目</td>
-    <td style="padding:4px 6px">详情</td>
-    <td style="padding:4px 6px;width:50px;text-align:center">吉凶</td>
-  </tr>`;
-  for (const a of detail.analysis) {
-    const color = a.effect === '吉' ? '#2e7d32' : a.effect === '凶' ? '#c62828' : '#888';
-    html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:4px 6px;font-weight:600">${a.item}</td>
-      <td style="padding:4px 6px;color:var(--text-light)">${a.detail}</td>
-      <td style="padding:4px 6px;text-align:center;color:${color}">${a.effect || '-'}</td>
-    </tr>`;
-  }
-  html += `</table>`;
-  container.innerHTML = html;
+const panelState = {
+  activeLevel: 'dayun',
+  dayunIdx: 0,
+  liunianYear: 0,
+  liuyueMonth: 1,
+  liuriDay: 1,
+  showLiuyue: false,
+  showLiuri: false,
+  showLiushi: false,
 }
 
-function switchTimeView(view, result) {
-  document.querySelectorAll('.time-btn').forEach(b => b.classList.toggle('active', b.dataset.time === view));
-  renderTimeContent(view, result);
-}
+const TP_WX = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' }
 
-function renderTimeContent(view, result) {
-  const container = document.getElementById('timeContent');
-  if (!container || !result) return;
-  const dayStem = result.pillars.day.stem;
-  const now = new Date();
-
-  const wc = document.getElementById('weekTrendCard')
-  if (wc) wc.style.display = view === 'week' ? 'block' : 'none'
-
-  switch (view) {
-    case 'nian': {
-      const _liuCacheKey = result.input.year + '-' + result.input.name
-      if (!_liuNianCache.has(_liuCacheKey)) {
-        _liuNianCache.set(_liuCacheKey, calcLiuNianDetail(result.pillars, result.dayun, dayStem, result.input.year))
-      }
-      const detail = _liuNianCache.get(_liuCacheKey)
-      const nGanWx = getStemWuxing(detail.liuNianGan);
-      const nZhiWx = getBranchWuxing(detail.liuNianZhi);
-      let html = `<p style="font-size:15px;font-weight:700;margin-bottom:6px">${detail.year} 年（${wxSpan(nGanWx, detail.liuNianGan)}${wxSpan(nZhiWx, detail.liuNianZhi)}）</p>`;
-      html += `<p style="font-size:13px;margin-bottom:10px;color:var(--text-light)">${detail.summary}</p>`;
-      html += '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px;width:90px">项目</td><td style="padding:4px 6px">详情</td><td style="padding:4px 6px;width:50px;text-align:center">吉凶</td></tr>';
-      for (const a of detail.analysis) {
-        const color = a.effect === '吉' ? '#2e7d32' : a.effect === '凶' ? '#c62828' : '#888';
-        html += `<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 6px;font-weight:600">${a.item}</td><td style="padding:4px 6px;color:var(--text-light)">${a.detail}</td><td style="padding:4px 6px;text-align:center;color:${color};font-weight:600">${a.effect || '-'}</td></tr>`;
-      }
-      html += '</table>';
-      container.innerHTML = html;
-      break;
-    }
-    case 'yue': {
-      if (!result.liuYue) break;
-      const currentMonth = now.getMonth() + 1;
-      let html = '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:var(--border);font-weight:600"><td style="padding:4px 6px">月</td><td style="padding:4px 6px">干支</td><td style="padding:4px 6px">十神</td><td style="padding:4px 6px">冲合</td></tr>';
-      for (const m of result.liuYue) {
-        const isCurrent = m.month === currentMonth;
-        const chongHe = calcChongXingHe('', m.branch, result.pillars).map(i => i.detail).join('、') || '-';
-        const mGanWx = getStemWuxing(m.stem);
-        const mZhiWx = getBranchWuxing(m.branch);
-        html += `<tr style="border-bottom:1px solid var(--border);${isCurrent ? 'background:rgba(184,134,11,0.08)' : ''}">
-          <td style="padding:4px 6px;font-weight:600">${m.month}月</td>
-          <td style="padding:4px 6px">${wxSpan(mGanWx, m.stem)}${wxSpan(mZhiWx, m.branch)}</td>
-          <td style="padding:4px 6px;color:var(--text-light)">${m.shishen}</td>
-          <td style="padding:4px 6px;font-size:11px;color:var(--text-light)">${chongHe}</td>
-        </tr>`;
-      }
-      html += '</table>';
-      container.innerHTML = html;
-      break;
-    }
-    case 'ri': {
-      if (!result.liuRi) break;
-      const currentDay = now.getDate();
-      let html = '<table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="background:var(--border);font-weight:600"><td style="padding:3px 4px">日</td><td style="padding:3px 4px">干支</td><td style="padding:3px 4px">十神</td><td style="padding:3px 4px">冲合</td></tr>';
-      for (const d of result.liuRi) {
-        const isToday = d.day === currentDay;
-        const chongHe = calcChongXingHe('', d.branch, result.pillars).map(i => i.detail).join('、') || '-';
-        const rGanWx = getStemWuxing(d.stem);
-        const rZhiWx = getBranchWuxing(d.branch);
-        html += `<tr style="border-bottom:1px solid var(--border);cursor:pointer${isToday ? ';background:rgba(184,134,11,0.08)' : ''}" data-day="${d.day}">
-          <td style="padding:3px 4px;font-weight:600">${d.day}日</td>
-          <td style="padding:3px 4px">${wxSpan(rGanWx, d.stem)}${wxSpan(rZhiWx, d.branch)}</td>
-          <td style="padding:3px 4px;color:var(--text-light)">${d.shishen}</td>
-          <td style="padding:3px 4px;font-size:11px;color:var(--text-light)">${chongHe}</td>
-        </tr>`;
-      }
-      html += '</table>';
-      container.innerHTML = html;
-      if (!container.dataset.listener) {
-        container.dataset.listener = '1';
-        container.addEventListener('click', function(ev) {
-          const tr = ev.target.closest('tr[data-day]');
-          if (tr) {
-            timeSelectedDay = parseInt(tr.dataset.day);
-            document.querySelector('.time-btn[data-time="shi"]').click();
-          }
-        });
-      }
-      break;
-    }
-    case 'week': {
-      renderWeeklyTrend(result)
-      break
-    }
-    case 'shi': {
-      const sy = result.input.year, sm = result.input.month;
-      const hours = calcLiuShi(dayStem, sy, sm, timeSelectedDay);
-      const currentHour = now.getHours();
-      let html = `<p style="font-size:12px;color:var(--text-light);margin-bottom:6px">${sy}年${sm}月${timeSelectedDay}日 · 十二时辰</p>`;
-      html += '<table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="background:var(--border);font-weight:600"><td style="padding:3px 4px">时辰</td><td style="padding:3px 4px">时间</td><td style="padding:3px 4px">干支</td><td style="padding:3px 4px">十神</td><td style="padding:3px 4px">冲合</td></tr>';
-      for (const h of hours) {
-        const isNow = currentHour >= parseInt(h.timeRange.split(':')[0]) && currentHour < parseInt(h.timeRange.split(':')[0].split('-')[1] || h.timeRange.split(':')[0]) + 2;
-        const chongHe = calcChongXingHe(h.stem, h.branch, result.pillars).map(i => i.detail).join('、') || '-';
-        const sGanWx = getStemWuxing(h.stem);
-        const sZhiWx = getBranchWuxing(h.branch);
-        html += `<tr style="border-bottom:1px solid var(--border);${isNow ? 'background:rgba(184,134,11,0.08)' : ''}">
-          <td style="padding:3px 4px;font-weight:600">${h.label}时</td>
-          <td style="padding:3px 4px;font-size:10px;color:var(--text-light)">${h.timeRange}</td>
-          <td style="padding:3px 4px">${wxSpan(sGanWx, h.stem)}${wxSpan(sZhiWx, h.branch)}</td>
-          <td style="padding:3px 4px;color:var(--text-light)">${h.shishen}</td>
-          <td style="padding:3px 4px;font-size:10px;color:var(--text-light)">${chongHe}</td>
-        </tr>`;
-      }
-      html += '</table>';
-      container.innerHTML = html;
-      break;
-    }
+/* ===== 节气日期 ===== */
+function getYearJieDates(year) {
+  try {
+    const terms = LunarYear.fromYear(year).getJieQi()
+    return terms.filter((_, i) => i % 2 === 0).map(jq => ({
+      name: jq.getName(),
+      solar: jq.getSolar(),
+    }))
+  } catch (e) {
+    return []
   }
 }
+
+const JIE_MAP = { '立春':0,'惊蛰':1,'清明':2,'立夏':3,'芒种':4,'小暑':5,'立秋':6,'白露':7,'寒露':8,'立冬':9,'大雪':10,'小寒':11 }
+
+/* ===== 月干计算 (五虎遁) ===== */
+function calcYueGan(year, month) {
+  const yearGanIdx = (year - 4) % 10
+  const startStem = [2, 4, 6, 8, 0][yearGanIdx % 5]
+  return STEMS[(startStem + month - 1) % 10]
+}
+
+/* ===== Item Builders ===== */
+
+function buildDayunItems(result) {
+  const birthYear = result.input.year
+  const dayun = result.dayun
+  const dayStem = result.pillars.day.stem
+  return dayun.periods.map((p, idx) => {
+    const startYear = birthYear + dayun.startAge + idx * 10
+    const age = dayun.startAge + idx * 10
+    const ss = getShiShen(dayStem, p.stem)
+    return {
+      key: 'dy' + idx,
+      idx,
+      lines: [
+        { text: String(startYear), cls: 'tp-small' },
+        { text: age + '岁', cls: 'tp-small' },
+        { text: p.stem, wx: p.stemWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: p.branch, wx: p.branchWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+      ],
+      colData: { stem: p.stem, branch: p.branch, ganzhi: p.stem + p.branch, shishen: ss, stemWx: p.stemWx, branchWx: p.branchWx },
+    }
+  })
+}
+
+function buildLiunianItems(result, dayunIdx) {
+  const birthYear = result.input.year
+  const dayun = result.dayun
+  const dayStem = result.pillars.day.stem
+  const startAge = dayun.startAge + dayunIdx * 10
+  const startYear = birthYear + startAge
+  const items = []
+  for (let i = 0; i < 10; i++) {
+    const y = startYear + i
+    const stem = STEMS[(y - 4) % 10]
+    const branch = BRANCHES[(y - 4) % 12]
+    const ss = getShiShen(dayStem, stem)
+    items.push({
+      key: 'ln' + y,
+      lines: [
+        { text: String(y), cls: 'tp-small' },
+        { text: stem, wx: getStemWuxing(stem), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: branch, wx: getBranchWuxing(branch), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+      ],
+      colData: { stem, branch, ganzhi: stem + branch, shishen: ss, stemWx: getStemWuxing(stem), branchWx: getBranchWuxing(branch) },
+    })
+  }
+  return items
+}
+
+function buildLiuyueItems(result, year) {
+  const dayStem = result.pillars.day.stem
+  const jieDates = getYearJieDates(year)
+  const items = []
+  for (let m = 1; m <= 12; m++) {
+    const stem = calcYueGan(year, m)
+    const branch = BRANCHES[(m + 1) % 12]
+    const ss = getShiShen(dayStem, stem)
+    let jieInfo = { name: '', date: '' }
+    if (jieDates.length > 0) {
+      const idx = m - 1
+      const jd = jieDates[idx]
+      if (jd) {
+        const s = jd.solar
+        jieInfo = { name: jd.name, date: `${s.getMonth()}-${s.getDay()}` }
+      }
+    }
+    items.push({
+      key: 'ly' + m,
+      lines: [
+        { text: jieInfo.name || (m + '月'), cls: 'tp-small' },
+        { text: jieInfo.date, cls: 'tp-small tp-faint' },
+        { text: stem, wx: getStemWuxing(stem), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: branch, wx: getBranchWuxing(branch), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+      ],
+      colData: { stem, branch, ganzhi: stem + branch, shishen: ss, stemWx: getStemWuxing(stem), branchWx: getBranchWuxing(branch) },
+    })
+  }
+  return items
+}
+
+function buildLiuriItems(result, year, month) {
+  const dayStem = result.pillars.day.stem
+  const daysInMonth = new Date(year, month, 0).getDate()
+  const items = []
+  for (let d = 1; d <= daysInMonth; d++) {
+    const solar = Solar.fromYmd(year, month, d)
+    const lunar = solar.getLunar()
+    const lunarDay = lunar.getDayInChinese()
+    const ganzhi = solar.getLiuNian() + solar.getLiuYue() + solar.getLiuRi()
+    const stem = solar.getLiuRiGan()
+    const branch = solar.getLiuRiZhi()
+    const ss = getShiShen(dayStem, stem)
+    items.push({
+      key: 'lr' + d,
+      lines: [
+        { text: String(d), cls: 'tp-small' },
+        { text: lunarDay, cls: 'tp-small tp-faint' },
+        { text: stem, wx: getStemWuxing(stem), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: branch, wx: getBranchWuxing(branch), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+      ],
+      colData: { stem, branch, ganzhi: stem + branch, shishen: ss, stemWx: getStemWuxing(stem), branchWx: getBranchWuxing(branch) },
+    })
+  }
+  return items
+}
+
+const SHI_CHEN = [
+  { label: '子', range: '23-1' },
+  { label: '丑', range: '1-3' },
+  { label: '寅', range: '3-5' },
+  { label: '卯', range: '5-7' },
+  { label: '辰', range: '7-9' },
+  { label: '巳', range: '9-11' },
+  { label: '午', range: '11-13' },
+  { label: '未', range: '13-15' },
+  { label: '申', range: '15-17' },
+  { label: '酉', range: '17-19' },
+  { label: '戌', range: '19-21' },
+  { label: '亥', range: '21-23' },
+]
+
+function buildLiushiItems(result, year, month, day) {
+  const dayStem = result.pillars.day.stem
+  const hours = calcLiuShi(dayStem, year, month, day)
+  return hours.map((h, idx) => {
+    const ss = getShiShen(dayStem, h.stem)
+    return {
+      key: 'ls' + idx,
+      lines: [
+        { text: h.label + '时', cls: 'tp-small' },
+        { text: h.timeRange, cls: 'tp-small tp-faint' },
+        { text: h.stem, wx: getStemWuxing(h.stem), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: h.branch, wx: getBranchWuxing(h.branch), ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+      ],
+      colData: { stem: h.stem, branch: h.branch, ganzhi: h.stem + h.branch, shishen: ss, stemWx: getStemWuxing(h.stem), branchWx: getBranchWuxing(h.branch) },
+    }
+  })
+}
+
+/* ===== Item HTML ===== */
+function tpItemHtml(item, isActive) {
+  let html = `<div class="tp-item${isActive ? ' tp-item-active' : ''}" data-key="${item.key}">`
+  for (const line of item.lines) {
+    if (line.cls === 'tp-ganzhi') {
+      html += `<div class="tp-line"><span class="wx-${TP_WX[line.wx] || ''}">${line.text}</span><span class="tp-ss">${line.ss}</span></div>`
+    } else {
+      html += `<div class="${line.cls}">${line.text}</div>`
+    }
+  }
+  html += '</div>'
+  return html
+}
+
+function buildTpColData(item, dayStem, pillars) {
+  const cd = item.colData
+  return buildColData({ ...cd, ganzhi: cd.stem + cd.branch }, dayStem, pillars, cd.stem + cd.branch)
+}
+
+/* ===== Render ===== */
+function renderTimePanel(result) {
+  const ps = panelState
+  const card = document.getElementById('timePanelCard')
+  if (!card) return
+  card.style.display = 'block'
+
+  const dayStem = result.pillars.day.stem
+  const now = new Date()
+  const currentYear = now.getFullYear()
+
+  const dayunItems = buildDayunItems(result)
+  if (ps.dayunIdx >= dayunItems.length) ps.dayunIdx = 0
+
+  const liunianItems = buildLiunianItems(result, ps.dayunIdx)
+  const firstLnYear = parseInt(liunianItems[0].lines[0].text)
+  const lastLnYear = parseInt(liunianItems[liunianItems.length - 1].lines[0].text)
+  if (!ps.liunianYear || ps.liunianYear < firstLnYear || ps.liunianYear > lastLnYear) {
+    ps.liunianYear = firstLnYear
+  }
+
+  const liuyueItems = buildLiuyueItems(result, ps.liunianYear)
+  if (ps.liuyueMonth < 1 || ps.liuyueMonth > 12) ps.liuyueMonth = now.getMonth() + 1
+
+  const liuriItems = buildLiuriItems(result, ps.liunianYear, ps.liuyueMonth)
+  if (ps.liuriDay < 1 || ps.liuriDay > liuriItems.length) ps.liuriDay = now.getDate()
+
+  const liushiItems = buildLiushiItems(result, ps.liunianYear, ps.liuyueMonth, ps.liuriDay)
+
+  function renderTpRow(containerId, items, activeKey, label, onClick) {
+    const row = document.querySelector(`[data-level="${label}"]`)
+    if (!row) return
+    const content = row.querySelector('.tp-content')
+    if (!content) return
+    const activeIdx = typeof activeKey === 'number' ? activeKey : items.findIndex(i => i.key === activeKey)
+    content.innerHTML = items.map((item, idx) => tpItemHtml(item, idx === activeIdx)).join('')
+    const labelEl = row.querySelector('.tp-label')
+    if (labelEl) {
+      labelEl.classList.toggle('tp-label-active', ps['show' + label.charAt(0).toUpperCase() + label.slice(1)] || label === 'dayun' || label === 'liunian')
+    }
+    const items_el = content.querySelectorAll('.tp-item')
+    items_el.forEach((el, idx) => {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation()
+        onClick(idx)
+      })
+    })
+  }
+
+  const dyActive = dayunItems.findIndex(i => i.idx === ps.dayunIdx)
+  const lnActive = liunianItems.findIndex(i => parseInt(i.lines[0].text) === ps.liunianYear)
+  const lyActive = ps.liuyueMonth - 1
+
+  renderTpRow('', dayunItems, dyActive, 'dayun', (idx) => {
+    ps.dayunIdx = idx
+    renderTimePanel(result)
+    updateMainTable(result)
+  })
+
+  renderTpRow('', liunianItems, lnActive, 'liunian', (idx) => {
+    ps.liunianYear = parseInt(liunianItems[idx].lines[0].text)
+    ps.liuyueMonth = now.getMonth() + 1
+    renderTimePanel(result)
+    updateMainTable(result)
+  })
+
+  renderTpRow('', liuyueItems, lyActive, 'liuyue', (idx) => {
+    ps.liuyueMonth = idx + 1
+    ps.liuriDay = 1
+    renderTimePanel(result)
+    updateMainTable(result)
+  })
+
+  renderTpRow('', liuriItems, ps.liuriDay - 1, 'liuri', (idx) => {
+    ps.liuriDay = idx + 1
+    renderTimePanel(result)
+    updateMainTable(result)
+  })
+
+  renderTpRow('', liushiItems, -1, 'liushi', () => {})
+
+  ps.dayunItemsCache = dayunItems
+  ps.liunianItemsCache = liunianItems
+  ps.liuyueItemsCache = liuyueItems
+  ps.liuriItemsCache = liuriItems
+  ps.liushiItemsCache = liushiItems
+  ps.resultCache = result
+}
+
+/* ===== 主表联动 ===== */
+function updateMainTable(result) {
+  const ps = panelState
+  const dayStem = result.pillars.day.stem
+  const pillars = result.pillars
+  const extraCols = []
+
+  if (ps.showLiuyue && ps.liuyueItemsCache) {
+    const item = ps.liuyueItemsCache[ps.liuyueMonth - 1]
+    if (item) extraCols.push({ key: 'extra_liuyue', label: '流月', data: buildTpColData(item, dayStem, pillars) })
+  }
+  if (ps.showLiuri && ps.liuriItemsCache) {
+    const item = ps.liuriItemsCache[ps.liuriDay - 1]
+    if (item) extraCols.push({ key: 'extra_liuri', label: '流日', data: buildTpColData(item, dayStem, pillars) })
+  }
+  if (ps.showLiushi && ps.liushiItemsCache) {
+    const item = ps.liushiItemsCache[0]
+    if (item) extraCols.push({ key: 'extra_liushi', label: '流时', data: buildTpColData(item, dayStem, pillars) })
+  }
+
+  renderMainTable(result, extraCols)
+}
+
+/* ===== 标签点击切换 ===== */
+document.addEventListener('click', function (e) {
+  const label = e.target.closest('.tp-label')
+  if (!label) return
+  const row = label.closest('.tp-row')
+  if (!row) return
+  const level = row.dataset.level
+  if (level === 'dayun' || level === 'liunian') return
+
+  const ps = panelState
+  const map = { liuyue: 'showLiuyue', liuri: 'showLiuri', liushi: 'showLiushi' }
+  ps[map[level]] = !ps[map[level]]
+
+  if (ps.resultCache) {
+    label.classList.toggle('tp-label-active', ps[map[level]])
+    updateMainTable(ps.resultCache)
+  }
+})
+
+/* ===== 兼容旧引用 ===== */
+function switchTimeView() {}
+function renderTimeContent() {}
+function renderLiuNian() {}

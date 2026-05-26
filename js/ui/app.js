@@ -111,18 +111,14 @@ function doCalc() {
   renderPillarDiagram('pillarDiagram', result);
   renderGuJi(result);
   renderQiYun(result);
+  renderTimePanel(result);
   renderReport(result);
   renderQiMing(result);
-  renderDaYun(result.dayun);
   renderLifeKLine(result);
   document.getElementById('compactInfo').style.display = 'grid';
 
   lastResult = result;
   timeSelectedDay = new Date().getDate();
-  document.getElementById('timeNav').style.display = 'flex';
-  document.getElementById('timeContentCard').style.display = 'block';
-  switchTimeView('nian', result);
-
   saveHistory(name, result);
   } catch(e) {
     console.error('排盘错误:', e);
@@ -169,11 +165,6 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   })
 
-  document.getElementById('timeNav').addEventListener('click', function(e) {
-    const btn = e.target.closest('.time-btn');
-    if (btn && lastResult) switchTimeView(btn.dataset.time, lastResult);
-  });
-
   document.getElementById('darkMode').addEventListener('change', function() {
     document.body.classList.toggle('dark-mode', this.checked);
   });
@@ -199,10 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
     lastResult = result
     renderMainTable(result)
     renderQiYun(result)
-    renderDaYun(result.dayun)
-    if (document.querySelector('.time-btn.active')) {
-      switchTimeView(document.querySelector('.time-btn.active').dataset.time, result)
-    }
+    renderTimePanel(result)
   });
 
   const now = new Date();
