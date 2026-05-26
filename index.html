@@ -8,6 +8,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>八字排盘 - 专业免费在线工具</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☯</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/bazi.css">
 </head>
 <body>
@@ -18,8 +21,18 @@
   <div id="app">
     <!-- 顶部导航 -->
     <header class="app-header">
-      <h1>八字排盘</h1>
-      <nav class="app-tabs">
+      <div class="app-header-left">
+        <h1>八字排盘</h1>
+        <span class="subtitle">知命而行，顺势而为</span>
+      </div>
+      <div class="app-header-right">
+        <label class="checkbox-label" style="margin:0">
+          <input type="checkbox" id="darkMode"> 暗色
+        </label>
+      </div>
+    </header>
+    <div class="tab-nav-wrap">
+      <nav class="tab-nav">
         <button class="tab active" data-tab="bazi">排盘</button>
         <button class="tab" data-tab="hepan">合盘</button>
         <button class="tab" data-tab="zeri">择日</button>
@@ -28,7 +41,7 @@
         <button class="tab" data-tab="history">历史</button>
         <button class="tab" data-tab="settings">设置</button>
       </nav>
-    </header>
+    </div>
 
     <main class="app-main">
       <!-- ========== 排盘 TAB ========== -->
@@ -378,9 +391,7 @@
       <section class="tab-content" id="tab-settings">
         <div class="placeholder">
           <h2>设置</h2>
-          <label class="checkbox-label">
-            <input type="checkbox" id="darkMode"> 暗黑模式
-          </label>
+          <p style="color:var(--ink-light);font-size:14px">暗色模式开关在页面右上角</p>
         </div>
       </section>
     </main>
