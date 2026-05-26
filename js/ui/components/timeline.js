@@ -43,16 +43,18 @@ function buildDayunItems(result) {
     const startYear = birthYear + dayun.startAge + idx * 10
     const age = dayun.startAge + idx * 10
     const ss = getShiShen(dayStem, p.stem)
+    const stemWx = getStemWuxing(p.stem)
+    const branchWx = getBranchWuxing(p.branch)
     return {
       key: 'dy' + idx,
       idx,
       lines: [
         { text: String(startYear), cls: 'tp-small' },
         { text: age + '岁', cls: 'tp-small' },
-        { text: p.stem, wx: p.stemWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
-        { text: p.branch, wx: p.branchWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: p.stem, wx: stemWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: p.branch, wx: branchWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
       ],
-      colData: { stem: p.stem, branch: p.branch, ganzhi: p.stem + p.branch, shishen: ss, stemWx: p.stemWx, branchWx: p.branchWx },
+      colData: { stem: p.stem, branch: p.branch, ganzhi: p.stem + p.branch, shishen: ss, stemWx, branchWx },
     }
   })
 }
