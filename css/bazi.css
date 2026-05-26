@@ -201,6 +201,83 @@ body {
   text-transform: uppercase;
 }
 
+/* ===== 首页英雄区 ===== */
+.home-hero {
+  position: relative;
+  text-align: center;
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-lg);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+}
+.home-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(184,153,71,0.08) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 40% at 30% 60%, rgba(192,57,43,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.home-hero-icon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+  opacity: 0.7;
+  filter: grayscale(0.3);
+}
+.home-hero-title {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 4px;
+  margin-bottom: var(--space-xs);
+}
+.home-hero-subtitle {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--ink-light);
+  letter-spacing: 6px;
+  margin-bottom: var(--space-lg);
+}
+.home-hero-features {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.hero-feature {
+  padding: 5px 16px;
+  border-radius: 100px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--ink-light);
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hero-feature:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: var(--cinnabar);
+  border-color: rgba(192,57,43,0.2);
+}
+
+body.dark-mode .home-hero-bg {
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(212,168,75,0.1) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 40% at 30% 60%, rgba(231,76,60,0.06) 0%, transparent 60%);
+}
+body.dark-mode .home-hero-icon { opacity: 0.5; }
+
+@media (max-width: 600px) {
+  .home-hero { padding: var(--space-lg) var(--space-sm) var(--space-md); }
+  .home-hero-icon { font-size: 36px; }
+  .home-hero-title { font-size: 24px; letter-spacing: 3px; }
+  .home-hero-subtitle { font-size: 13px; letter-spacing: 4px; margin-bottom: var(--space-md); }
+  .hero-feature { font-size: 12px; padding: 4px 12px; }
+}
+
 /* ===== 输入区 ===== */
 .input-row { display: flex; gap: var(--space-md); margin-bottom: var(--space-sm); flex-wrap: wrap; }
 .input-row:last-child { margin-bottom: 0; }
