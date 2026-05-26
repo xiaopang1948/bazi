@@ -850,8 +850,8 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
   background: rgba(184,134,11,0.06);
 }
 .tp-item-active {
-  background: rgba(192,57,43,0.08);
-  outline: 1px solid rgba(192,57,43,0.25);
+  background: var(--border);
+  outline: 1px solid var(--border);
 }
 .tp-small {
   font-size: 10px;
@@ -1118,7 +1118,7 @@ body.dark-mode .qiyun-today { background: transparent; border-color: var(--borde
 body.dark-mode .qiyun-today:hover { border-color: var(--cinnabar); color: var(--cinnabar); }
 body.dark-mode .tp-label { background: rgba(255,255,255,0.02); border-color: var(--border); }
 body.dark-mode .tp-label:hover { background: rgba(255,255,255,0.06); }
-body.dark-mode .tp-item-active { background: rgba(192,57,43,0.15); outline-color: rgba(192,57,43,0.4); }
+body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-color: rgba(255,255,255,0.1); }
 
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
