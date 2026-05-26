@@ -1,9 +1,9 @@
 const panelState = {
-  activeLevel: 'dayun',
   dayunIdx: 0,
   liunianYear: 0,
   liuyueMonth: 1,
   liuriDay: 1,
+  liushiIdx: 0,
   showLiuyue: false,
   showLiuri: false,
   showLiushi: false,
@@ -227,10 +227,6 @@ function renderTimePanel(result) {
     if (!content) return
     const activeIdx = typeof activeKey === 'number' ? activeKey : items.findIndex(i => i.key === activeKey)
     content.innerHTML = items.map((item, idx) => tpItemHtml(item, idx === activeIdx)).join('')
-    const labelEl = row.querySelector('.tp-label')
-    if (labelEl) {
-      labelEl.classList.toggle('tp-label-active', ps['show' + label.charAt(0).toUpperCase() + label.slice(1)] || label === 'dayun' || label === 'liunian')
-    }
     const items_el = content.querySelectorAll('.tp-item')
     items_el.forEach((el, idx) => {
       el.addEventListener('click', function (e) {
@@ -253,24 +249,33 @@ function renderTimePanel(result) {
   renderTpRow('', liunianItems, lnActive, 'liunian', (idx) => {
     ps.liunianYear = parseInt(liunianItems[idx].lines[0].text)
     ps.liuyueMonth = now.getMonth() + 1
+    ps.showLiuyue = false
+    ps.showLiuri = false
+    ps.showLiushi = false
     renderTimePanel(result)
     updateMainTable(result)
   })
 
   renderTpRow('', liuyueItems, lyActive, 'liuyue', (idx) => {
     ps.liuyueMonth = idx + 1
-    ps.liuriDay = 1
+    ps.showLiuyue = true
     renderTimePanel(result)
     updateMainTable(result)
   })
 
   renderTpRow('', liuriItems, ps.liuriDay - 1, 'liuri', (idx) => {
     ps.liuriDay = idx + 1
+    ps.showLiuri = true
     renderTimePanel(result)
     updateMainTable(result)
   })
 
-  renderTpRow('', liushiItems, -1, 'liushi', () => {})
+  renderTpRow('', liushiItems, ps.liushiIdx, 'liushi', (idx) => {
+    ps.liushiIdx = idx
+    ps.showLiushi = true
+    renderTimePanel(result)
+    updateMainTable(result)
+  })
 
   ps.dayunItemsCache = dayunItems
   ps.liunianItemsCache = liunianItems
@@ -296,31 +301,12 @@ function updateMainTable(result) {
     if (item) extraCols.push({ key: 'extra_liuri', label: '流日', data: buildTpColData(item, dayStem, pillars) })
   }
   if (ps.showLiushi && ps.liushiItemsCache) {
-    const item = ps.liushiItemsCache[0]
+    const item = ps.liushiItemsCache[ps.liushiIdx]
     if (item) extraCols.push({ key: 'extra_liushi', label: '流时', data: buildTpColData(item, dayStem, pillars) })
   }
 
-  renderMainTable(result, extraCols)
+  renderMainTable(result, extraCols, ps.dayunIdx)
 }
-
-/* ===== 标签点击切换 ===== */
-document.addEventListener('click', function (e) {
-  const label = e.target.closest('.tp-label')
-  if (!label) return
-  const row = label.closest('.tp-row')
-  if (!row) return
-  const level = row.dataset.level
-  if (level === 'dayun' || level === 'liunian') return
-
-  const ps = panelState
-  const map = { liuyue: 'showLiuyue', liuri: 'showLiuri', liushi: 'showLiushi' }
-  ps[map[level]] = !ps[map[level]]
-
-  if (ps.resultCache) {
-    label.classList.toggle('tp-label-active', ps[map[level]])
-    updateMainTable(ps.resultCache)
-  }
-})
 
 /* ===== 兼容旧引用 ===== */
 function switchTimeView() {}

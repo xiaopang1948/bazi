@@ -79,13 +79,18 @@ const SHI_SHEN_ABBR = {
   '比肩':'比', '劫财':'劫',
 }
 
-function renderMainTable(result, extraCols = []) {
+function renderMainTable(result, extraCols = [], dayunIdx = null) {
   const WX = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' }
   const dayStem = result.details.day.stem
   const gender = result.input.gender
   const dayShishen = gender === 'male' ? '元男' : '元女'
 
-  const currentDayun = getCurrentDayun(result)
+  let currentDayun
+  if (dayunIdx !== null) {
+    currentDayun = { index: dayunIdx, data: result.dayun.periods[dayunIdx] }
+  } else {
+    currentDayun = getCurrentDayun(result)
+  }
   const liuNianShishen = getShiShen(dayStem, result.liuNian.stem)
   const daYunShishen = getShiShen(dayStem, currentDayun.data.stem)
   const columns = {
@@ -160,7 +165,9 @@ function renderMainTable(result, extraCols = []) {
     html += `</div>`
   }
 
-  document.getElementById('pillarsGrid').innerHTML = html
+  const grid = document.getElementById('pillarsGrid')
+  grid.style.gridTemplateColumns = `48px repeat(${colKeys.length}, 1fr)`
+  grid.innerHTML = html
 }
 
 function renderWuxing(counts) {

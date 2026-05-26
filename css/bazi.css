@@ -495,7 +495,8 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
   grid-template-columns: 48px repeat(6, 1fr);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   background: var(--card-bg);
 }
 .mg-row {
@@ -808,16 +809,11 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
   color: var(--ink);
   background: rgba(184,134,11,0.04);
   border-right: 1px solid var(--border);
-  cursor: pointer;
   user-select: none;
   transition: background 0.15s, color 0.15s;
 }
 .tp-label:hover {
   background: rgba(184,134,11,0.08);
-}
-.tp-label-active {
-  background: var(--cinnabar) !important;
-  color: #fff !important;
 }
 .tp-content {
   flex: 1;
@@ -877,6 +873,11 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
   font-weight: 700;
   font-family: var(--font-serif);
 }
+.tp-line .wx-mu { color: var(--wood); }
+.tp-line .wx-huo { color: var(--fire); }
+.tp-line .wx-tu { color: var(--earth); }
+.tp-line .wx-jin { color: var(--metal); }
+.tp-line .wx-shui { color: var(--water); }
 .tp-ss {
   font-size: 10px;
   color: var(--ink);
@@ -1117,7 +1118,6 @@ body.dark-mode .qiyun-today { background: transparent; border-color: var(--borde
 body.dark-mode .qiyun-today:hover { border-color: var(--cinnabar); color: var(--cinnabar); }
 body.dark-mode .tp-label { background: rgba(255,255,255,0.02); border-color: var(--border); }
 body.dark-mode .tp-label:hover { background: rgba(255,255,255,0.06); }
-body.dark-mode .tp-label-active { background: var(--cinnabar) !important; }
 body.dark-mode .tp-item-active { background: rgba(192,57,43,0.15); outline-color: rgba(192,57,43,0.4); }
 
 /* ===== 响应式 ===== */
@@ -1170,8 +1170,7 @@ body.dark-mode .tp-item-active { background: rgba(192,57,43,0.15); outline-color
   .btn-primary { width: 100%; text-align: center; }
   .time-nav { padding: 4px; gap: 3px; }
   .time-btn { font-size: 12px; padding: 6px 8px; }
-  .mg-grid { grid-template-columns: 40px repeat(6, 1fr); }
-  .mg-cell { padding: 2px 3px; font-size: 11px; min-height: 22px; }
+  .mg-grid { grid-template-columns: 40px repeat(6, 1fr); }  .mg-cell { padding: 2px 3px; font-size: 11px; min-height: 22px; }
   .mg-cell-label { font-size: 10px; }
   .mg-row-hd .mg-cell { font-size: 11px; padding: 4px 3px; letter-spacing: 1px; }
   .mg-row-stem .mg-cell:not(.mg-cell-label),
