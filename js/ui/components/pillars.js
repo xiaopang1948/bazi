@@ -248,27 +248,28 @@ function renderQiYun(result) {
   const d = result.dayun
   const diffDays = d.diffDays || 0
   const totalHours = diffDays * 24
-  const qyYears = Math.floor(totalHours / (365.25 * 24))
-  let remain = totalHours % (365.25 * 24)
-  const qyMonths = Math.floor(remain / (30.44 * 24))
-  remain %= (30.44 * 24)
-  const qyDays = Math.floor(remain / 24)
-  const qyHours = Math.round(remain % 24)
+
+  // 3天 = 1岁, 1天 = 4个月, 1时辰(2小时) = 10天
+  const qyYears = Math.floor(totalHours / 72)
+  let remainHours = totalHours - qyYears * 72
+  const qyMonths = Math.floor(remainHours / 6)
+  remainHours -= qyMonths * 6
+  const qyShichen = Math.floor(remainHours / 2)
+  const qyDaysFromShichen = qyShichen * 10
 
   let startText = ''
   if (qyYears > 0) startText += `${qyYears}年`
   if (qyMonths > 0) startText += `${qyMonths}个月`
-  if (qyDays > 0) startText += `${qyDays}天`
-  if (qyHours > 0) startText += `${qyHours}时`
+  if (qyDaysFromShichen > 0) startText += `${qyDaysFromShichen}天`
   if (!startText) startText = '0时'
   startText += '起运'
   document.getElementById('qiyunStart').textContent = '出生后 ' + startText
 
   const jieName = d.jieName || ''
-  const startYear = result.input.year + d.startAge
+  const direction = d.direction || ''
+  const startYear = result.input.year + qyYears
   const startGan = STEMS[(startYear - 4) % 10]
-  const yearPattern = startGan + '庚年'
-  const jiaoText = jieName ? `${startGan}庚年 逢${yearPattern} ${jieName}后 ${diffDays.toFixed(1)}天交大运` : ''
+  const jiaoText = jieName ? `${startGan}年 立春后 ${jieName}交运` : ''
   document.getElementById('qiyunJiao').textContent = jiaoText
 
   const currentYear = new Date().getFullYear()

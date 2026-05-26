@@ -809,11 +809,9 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 }
 .qiyun-right {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  min-width: 60px;
+  gap: 8px;
 }
 .qiyun-age {
   font-family: var(--font-serif);
