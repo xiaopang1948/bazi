@@ -102,11 +102,21 @@ body {
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(192,57,43,0.3);
 }
+.sidebar-footer {
+  margin-top: auto;
+  font-size: 10px;
+  color: var(--ink-light);
+  padding: var(--space-sm) var(--space-md);
+  text-align: center;
+  line-height: 1.4;
+  opacity: 0.7;
+}
 
 body.dark-mode .sidebar {
   background: rgba(40,38,34,0.92);
   border-right-color: var(--border);
 }
+body.dark-mode .sidebar-footer { color: #555; }
 body.dark-mode .sidebar-nav .tab:hover { background: rgba(212,168,75,0.1); color: var(--ink); }
 
 /* ===== 主区域 ===== */
@@ -770,14 +780,7 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 .placeholder h2, .hepan-placeholder h2 { font-family: var(--font-serif); font-size: 22px; color: var(--ink); margin-bottom: var(--space-sm); }
 
 /* ===== 底部 ===== */
-.app-footer {
-  text-align: center;
-  padding: var(--space-md);
-  font-family: var(--font-serif);
-  font-size: 12px;
-  color: var(--ink-light);
-  border-top: 1px solid var(--border);
-}
+/* (moved to sidebar-footer) */
 
 /* ===== 紧凑信息区 ===== */
 .compact-grid {
