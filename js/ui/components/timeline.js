@@ -1,5 +1,6 @@
 const panelState = {
   dayunIdx: 0,
+  xiaoyunIdx: 0,
   liunianYear: 0,
   liuyueMonth: 1,
   liuriDay: 1,
@@ -57,6 +58,46 @@ function buildDayunItems(result) {
       colData: { stem: p.stem, branch: p.branch, ganzhi: p.stem + p.branch, shishen: ss, stemWx, branchWx },
     }
   })
+}
+
+function buildXiaoyunItems(result) {
+  const birthYear = result.input.year
+  const dayStem = result.pillars.day.stem
+  const hourStem = result.pillars.hour.stem
+  const hourBranch = result.pillars.hour.branch
+  const startAge = result.dayun.startAge
+  if (startAge <= 0) return []
+
+  const yearGan = result.pillars.year.stem
+  const isYang = STEMS.indexOf(yearGan) % 2 === 0
+  const isMale = result.input.gender === 'male'
+  const isForward = (isYang && isMale) || (!isYang && !isMale)
+
+  const items = []
+  for (let age = 0; age < startAge; age++) {
+    const offset = isForward ? age : -age
+    const ganIdx = ((STEMS.indexOf(hourStem) + offset) % 10 + 10) % 10
+    const zhiIdx = ((BRANCHES.indexOf(hourBranch) + offset) % 12 + 12) % 12
+    const stem = STEMS[ganIdx]
+    const branch = BRANCHES[zhiIdx]
+    const year = birthYear + age
+    const ss = getShiShen(dayStem, stem)
+    const stemWx = getStemWuxing(stem)
+    const branchWx = getBranchWuxing(branch)
+    items.push({
+      key: 'xy' + age,
+      age,
+      year,
+      lines: [
+        { text: String(year), cls: 'tp-small' },
+        { text: age + '岁', cls: 'tp-small' },
+        { text: stem, wx: stemWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+        { text: branch, wx: branchWx, ss: SHI_SHEN_ABBR[ss] || ss, cls: 'tp-ganzhi' },
+      ],
+      colData: { stem, branch, ganzhi: stem + branch, shishen: ss, stemWx, branchWx },
+    })
+  }
+  return items
 }
 
 function buildLiunianItems(result, dayunIdx) {
@@ -207,8 +248,12 @@ function renderTimePanel(result) {
   const dayunItems = buildDayunItems(result)
   if (ps.dayunIdx >= dayunItems.length) ps.dayunIdx = 0
 
+  const xiaoyunItems = buildXiaoyunItems(result)
+  if (ps.xiaoyunIdx >= xiaoyunItems.length) ps.xiaoyunIdx = 0
+
   const liunianItems = buildLiunianItems(result, ps.dayunIdx)
-  const firstLnYear = parseInt(liunianItems[0].lines[0].text)
+  const xiaoyunYears = xiaoyunItems.map(i => i.year)
+  const firstLnYear = xiaoyunYears.length > 0 ? Math.min(xiaoyunYears[0], parseInt(liunianItems[0].lines[0].text)) : parseInt(liunianItems[0].lines[0].text)
   const lastLnYear = parseInt(liunianItems[liunianItems.length - 1].lines[0].text)
   if (!ps.liunianYear || ps.liunianYear < firstLnYear || ps.liunianYear > lastLnYear) {
     ps.liunianYear = firstLnYear
@@ -253,6 +298,18 @@ function renderTimePanel(result) {
     updateMainTable(result)
   })
 
+  const xyActive = xiaoyunItems.findIndex(i => i.age === ps.xiaoyunIdx)
+  renderTpRow('', xiaoyunItems, xyActive, 'xiaoyun', (idx) => {
+    ps.xiaoyunIdx = xiaoyunItems[idx].age
+    ps.liunianYear = xiaoyunItems[idx].year
+    ps.liuyueMonth = now.getMonth() + 1
+    ps.showLiuyue = false
+    ps.showLiuri = false
+    ps.showLiushi = false
+    renderTimePanel(result)
+    updateMainTable(result)
+  })
+
   renderTpRow('', liunianItems, lnActive, 'liunian', (idx) => {
     ps.liunianYear = parseInt(liunianItems[idx].lines[0].text)
     ps.liuyueMonth = now.getMonth() + 1
@@ -285,6 +342,7 @@ function renderTimePanel(result) {
   })
 
   ps.dayunItemsCache = dayunItems
+  ps.xiaoyunItemsCache = xiaoyunItems
   ps.liunianItemsCache = liunianItems
   ps.liuyueItemsCache = liuyueItems
   ps.liuriItemsCache = liuriItems
