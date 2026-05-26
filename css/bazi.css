@@ -778,6 +778,71 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 /* ===== 流年 ===== */
 #currentYearContent { font-size: 14px; line-height: 1.8; font-family: var(--font-serif); }
 
+/* ===== 起运/交运 ===== */
+#qiyunCard { padding: var(--space-sm) var(--space-md); }
+.qiyun-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+.qiyun-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.qiyun-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.qiyun-label {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  min-width: 2em;
+}
+.qiyun-value {
+  font-size: 11px;
+  color: var(--ink-light);
+  line-height: 1.4;
+}
+.qiyun-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 60px;
+}
+.qiyun-age {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cinnabar);
+  line-height: 1.1;
+}
+.qiyun-today {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.qiyun-today:hover {
+  border-color: var(--cinnabar);
+  color: var(--cinnabar);
+  background: rgba(192,57,43,0.06);
+}
+
 /* ===== 占位 ===== */
 .placeholder, .hepan-placeholder { padding: 40px 20px; text-align: center; color: var(--ink-light); }
 .placeholder h2, .hepan-placeholder h2 { font-family: var(--font-serif); font-size: 22px; color: var(--ink); margin-bottom: var(--space-sm); }
@@ -944,6 +1009,8 @@ body.dark-mode #loadingOverlay { background: var(--paper) !important; }
 body.dark-mode .report-text { background: rgba(212,168,75,0.03); }
 body.dark-mode .btn-back { color: var(--ink-light); border-color: var(--border); }
 body.dark-mode .btn-back:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,168,75,0.06); }
+body.dark-mode .qiyun-today { background: transparent; border-color: var(--border); color: var(--ink-light); }
+body.dark-mode .qiyun-today:hover { border-color: var(--cinnabar); color: var(--cinnabar); }
 
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
@@ -1019,6 +1086,9 @@ body.dark-mode .btn-back:hover { border-color: var(--gold); color: var(--gold); 
   .dayun-age { font-size: 10px; }
   .dayun-ganzhi { font-size: 14px; }
   .dayun-shishen { font-size: 10px; }
+  .qiyun-age { font-size: 18px; }
+  .qiyun-label { font-size: 12px; }
+  .qiyun-value { font-size: 10px; }
   #app { max-width: 100%; }
   .wuxing-bar-label { width: 24px; font-size: 12px; }
   #zeriMonthView { font-size: 10px !important; }

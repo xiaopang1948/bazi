@@ -239,3 +239,39 @@ function renderGuJi(result) {
     `<div class="gu-ji-item"><span class="gu-ji-source">${m.source} · ${m.title}</span><p class="gu-ji-text">${m.content}</p></div>`
   ).join('')
 }
+
+function renderQiYun(result) {
+  const card = document.getElementById('qiyunCard')
+  if (!card) return
+  card.style.display = 'block'
+
+  const d = result.dayun
+  const diffDays = d.diffDays || 0
+  const totalHours = diffDays * 24
+  const qyYears = Math.floor(totalHours / (365.25 * 24))
+  let remain = totalHours % (365.25 * 24)
+  const qyMonths = Math.floor(remain / (30.44 * 24))
+  remain %= (30.44 * 24)
+  const qyDays = Math.floor(remain / 24)
+  const qyHours = Math.round(remain % 24)
+
+  let startText = ''
+  if (qyYears > 0) startText += `${qyYears}年`
+  if (qyMonths > 0) startText += `${qyMonths}个月`
+  if (qyDays > 0) startText += `${qyDays}天`
+  if (qyHours > 0) startText += `${qyHours}时`
+  if (!startText) startText = '0时'
+  startText += '起运'
+  document.getElementById('qiyunStart').textContent = '出生后 ' + startText
+
+  const jieName = d.jieName || ''
+  const startYear = result.input.year + d.startAge
+  const startGan = STEMS[(startYear - 4) % 10]
+  const yearPattern = startGan + '庚年'
+  const jiaoText = jieName ? `${startGan}庚年 逢${yearPattern} ${jieName}后 ${diffDays.toFixed(1)}天交大运` : ''
+  document.getElementById('qiyunJiao').textContent = jiaoText
+
+  const currentYear = new Date().getFullYear()
+  const age = currentYear - result.input.year
+  document.getElementById('qiyunAge').textContent = age + '岁'
+}

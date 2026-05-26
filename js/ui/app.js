@@ -110,6 +110,7 @@ function doCalc() {
   renderRenYuan(result.renYuan);
   renderPillarDiagram('pillarDiagram', result);
   renderGuJi(result);
+  renderQiYun(result);
   renderReport(result);
   renderQiMing(result);
   renderDaYun(result.dayun);
@@ -182,6 +183,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('btnExport').addEventListener('click', function() {
     window.print();
+  });
+
+  document.getElementById('btnToday').addEventListener('click', function() {
+    if (!lastResult) return
+    const now = new Date()
+    const y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate()
+    const h = now.getHours(), min = now.getMinutes()
+    const name = document.getElementById('name').value
+    const gender = getGender()
+    const useSolarTime = document.getElementById('useSolarTime').checked
+    const citySelect = document.getElementById('city')
+    const cityKey = citySelect.value || 'beijing'
+    const result = calcBaZi(y, m, d, h, min, gender, cityKey, useSolarTime, name)
+    lastResult = result
+    renderMainTable(result)
+    renderQiYun(result)
+    renderDaYun(result.dayun)
+    if (document.querySelector('.time-btn.active')) {
+      switchTimeView(document.querySelector('.time-btn.active').dataset.time, result)
+    }
   });
 
   const now = new Date();

@@ -754,15 +754,18 @@ function calcDaYun(pillars, gender, year, month, day, hour, minute) {
 
   // 起运年龄：从出生日到下一个/上一个节气的天数 ÷ 3
   let startAge = 8;
+  let diffDays = 0;
+  let jieName = '';
   try {
     const solar = Solar.fromYmdHms(year, month, day, hour, minute, 0);
     const lunar = solar.getLunar();
     const jie = isForward ? lunar.getNextJie() : lunar.getPrevJie();
     if (jie) {
       const js = jie.getSolar();
+      jieName = jie.getName();
       const birthDt = new Date(year, month - 1, day, hour, minute);
       const jieDt = new Date(js.getYear(), js.getMonth() - 1, js.getDay(), js.getHour(), js.getMinute());
-      const diffDays = Math.abs(jieDt - birthDt) / (1000 * 60 * 60 * 24);
+      diffDays = Math.abs(jieDt - birthDt) / (1000 * 60 * 60 * 24);
       startAge = Math.round(diffDays / 3);
       if (startAge < 0) startAge = 0;
     }
@@ -790,6 +793,8 @@ function calcDaYun(pillars, gender, year, month, day, hour, minute) {
 
   return {
     startAge,
+    diffDays,
+    jieName,
     direction: isForward ? '顺排' : '逆排',
     periods,
   };
