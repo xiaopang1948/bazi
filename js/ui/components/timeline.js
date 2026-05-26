@@ -320,9 +320,9 @@ function renderTimePanel(result) {
       const xyAgeEnd = xiaoyunItems.length - 1
       html += `<div class="tp-item tp-item-xy${ps.showXiaoyun ? ' tp-item-active' : ''}" data-key="xy">`
       html += `<div class="tp-small">${xyFirst}年</div>`
+      html += `<div class="tp-small">0~${xyAgeEnd}岁</div>`
       html += `<div class="tp-line"><span style="font-size:11px;font-weight:600">小</span></div>`
       html += `<div class="tp-line"><span style="font-size:11px;font-weight:600">运</span></div>`
-      html += `<div class="tp-small">0~${xyAgeEnd}岁</div>`
       html += `</div>`
     }
     html += dayunItems.map((item, idx) => tpItemHtml(item, idx === dyIdx)).join('')
