@@ -79,7 +79,7 @@ const SHI_SHEN_ABBR = {
   '比肩':'比', '劫财':'劫',
 }
 
-function renderMainTable(result, extraCols = [], dayunIdx = null) {
+function renderMainTable(result, extraCols = [], dayunIdx = null, liunianYear = null) {
   const WX = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' }
   const dayStem = result.details.day.stem
   const gender = result.input.gender
@@ -91,10 +91,20 @@ function renderMainTable(result, extraCols = [], dayunIdx = null) {
   } else {
     currentDayun = getCurrentDayun(result)
   }
-  const liuNianShishen = getShiShen(dayStem, result.liuNian.stem)
+
+  let liuNianData, liuNianShishen
+  if (liunianYear !== null) {
+    const stem = STEMS[(liunianYear - 4) % 10]
+    const branch = BRANCHES[(liunianYear - 4) % 12]
+    liuNianShishen = getShiShen(dayStem, stem)
+    liuNianData = { stem, branch, ganzhi: stem + branch, shishen: liuNianShishen }
+  } else {
+    liuNianShishen = getShiShen(dayStem, result.liuNian.stem)
+    liuNianData = { ...result.liuNian, shishen: liuNianShishen }
+  }
   const daYunShishen = getShiShen(dayStem, currentDayun.data.stem)
   const columns = {
-    liuNian: buildColData({ ...result.liuNian, shishen: liuNianShishen }, dayStem, result.pillars, 'liuNian'),
+    liuNian: buildColData(liuNianData, dayStem, result.pillars, 'liuNian'),
     daYun: buildColData({ ...currentDayun.data, shishen: daYunShishen }, dayStem, result.pillars, 'daYun'),
     year: buildColData({ ...result.details.year, shishen: result.details.year.shishen }, dayStem, result.pillars, 'year'),
     month: buildColData({ ...result.details.month, shishen: result.details.month.shishen }, dayStem, result.pillars, 'month'),

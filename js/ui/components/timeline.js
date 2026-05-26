@@ -307,7 +307,7 @@ function updateMainTable(result) {
     if (item) extraCols.push({ key: 'extra_liushi', label: '流时', data: buildTpColData(item, dayStem, pillars) })
   }
 
-  renderMainTable(result, extraCols, ps.dayunIdx)
+  renderMainTable(result, extraCols, ps.dayunIdx, ps.liunianYear)
 }
 
 /* ===== 兼容旧引用 ===== */
