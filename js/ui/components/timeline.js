@@ -244,6 +244,11 @@ function renderTimePanel(result) {
 
   renderTpRow('', dayunItems, dyActive, 'dayun', (idx) => {
     ps.dayunIdx = idx
+    ps.liunianYear = result.input.year + result.dayun.startAge + idx * 10
+    ps.liuyueMonth = now.getMonth() + 1
+    ps.showLiuyue = false
+    ps.showLiuri = false
+    ps.showLiushi = false
     renderTimePanel(result)
     updateMainTable(result)
   })
