@@ -1106,38 +1106,41 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
 
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
-  #app { flex-direction: column; max-width: 100%; }
+  body { overflow-x: hidden; }
+  #app { flex-direction: column; max-width: 100%; overflow-x: hidden; }
   .sidebar {
     width: 100%;
     height: auto;
     position: sticky; top: 0;
-    flex-direction: row;
-    padding: var(--space-sm) var(--space-sm);
+    flex-direction: column;
+    padding: 6px 8px;
     border-right: none;
     border-bottom: 1px solid var(--border);
-    gap: var(--space-sm);
+    gap: 4px;
     z-index: 100;
-    overflow: hidden;
+    min-width: 0;
   }
-  .sidebar-logo { font-size: 20px; margin-bottom: 0; flex-shrink: 0; }
+  .sidebar-logo { display: none; }
   .sidebar-nav {
     flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: visible;
     padding: 0;
-    gap: 2px;
+    gap: 3px;
     flex: 1;
-    -webkit-overflow-scrolling: touch;
+    min-width: 0;
   }
-  .sidebar-nav::-webkit-scrollbar { display: none; }
   .sidebar-nav .tab {
-    padding: 6px 14px;
-    font-size: 13px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 12px;
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 0;
   }
   .sidebar-footer { display: none; }
+  .app-main { max-width: 100%; overflow-x: hidden; padding: var(--space-sm); }
+  .card, .card-secondary, .input-card { max-width: 100%; overflow-wrap: break-word; overflow-x: hidden; }
   .app-header h1 { font-size: 17px; }
   .home-hero { padding: var(--space-xl) var(--space-md) var(--space-lg); }
   .zeri-yi-ji { flex-direction: column; }
@@ -1145,58 +1148,58 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
 }
 
 @media (max-width: 600px) {
-  .sidebar { padding: 4px var(--space-sm); gap: 4px; }
-  .sidebar-logo { font-size: 14px; display: none; }
-  .sidebar-nav .tab { padding: 5px 10px; font-size: 12px; }
-  .app-main { padding: var(--space-sm); }
-  .tab-nav { border-radius: var(--radius-md); }
-  .tab { font-size: 12px; padding: 5px 12px; }
+  .sidebar { padding: 4px 6px; gap: 3px; }
+  .sidebar-logo { display: none; }
+  .sidebar-nav .tab { padding: 4px 8px; font-size: 12px; }
+  .app-main { padding: 8px; max-width: 100%; overflow-x: hidden; }
   .input-row { flex-direction: column; gap: var(--space-sm); }
   .input-row-5 { flex-wrap: wrap; gap: var(--space-xs); }
   .input-group { min-width: 100%; }
   .date-group { flex-wrap: wrap; }
-  .date-group select#year { width: 64px; }
-  .date-group select#month, .date-group select#day { width: 48px; }
-  .date-group select#hour, .date-group select#minute { width: 56px; }
-  .name-input { width: 120px; }
+  .date-group select#year { width: 60px; }
+  .date-group select#month, .date-group select#day { width: 44px; }
+  .date-group select#hour, .date-group select#minute { width: 52px; }
+  .name-input { width: 100%; }
   .actions { flex-direction: column; align-items: stretch; gap: var(--space-sm); }
   .btn-primary { width: 100%; text-align: center; }
   .time-nav { padding: 4px; gap: 3px; }
-  .time-btn { font-size: 12px; padding: 6px 8px; }
-  .mg-grid { grid-template-columns: 40px repeat(6, 1fr); }  .mg-cell { padding: 2px 3px; font-size: 11px; min-height: 22px; }
+  .time-btn { font-size: 11px; padding: 5px 6px; }
+  .mg-grid { grid-template-columns: 36px repeat(6, 1fr); }  .mg-cell { padding: 2px 2px; font-size: 11px; min-height: 20px; }
   .mg-cell-label { font-size: 10px; }
-  .mg-row-hd .mg-cell { font-size: 11px; padding: 4px 3px; letter-spacing: 1px; }
+  .mg-row-hd .mg-cell { font-size: 11px; padding: 4px 2px; letter-spacing: 1px; }
   .mg-row-stem .mg-cell:not(.mg-cell-label),
-  .mg-row-branch .mg-cell:not(.mg-cell-label) { font-size: 22px; }
+  .mg-row-branch .mg-cell:not(.mg-cell-label) { font-size: 20px; }
   .mg-row-stem .mg-cell:not(.mg-cell-label) span,
-  .mg-row-branch .mg-cell:not(.mg-cell-label) span { font-size: 22px; }
+  .mg-row-branch .mg-cell:not(.mg-cell-label) span { font-size: 20px; }
   .mg-cg-gan { font-size: 10px; }
   .mg-cg-ss { font-size: 10px; }
+  .mg-cell-shishen { font-size: 9px; }
   .analysis-grid { grid-template-columns: 1fr; gap: var(--space-sm); }
-  .info-bar { padding: 8px 10px; gap: 8px; flex-wrap: wrap; }
-  .info-avatar { width: 40px; height: 40px; font-size: 20px; }
-  .info-row { font-size: 11px; white-space: normal; }
+  .info-bar { padding: 8px 10px; gap: 6px; flex-wrap: wrap; }
+  .info-avatar { width: 36px; height: 36px; font-size: 18px; flex-shrink: 0; }
+  .info-row { font-size: 11px; white-space: normal; word-break: break-all; }
   .info-row-name { font-size: 13px; }
   .info-gender { font-size: 11px; }
-  .card, .card-secondary { padding: var(--space-sm); }
+  .card, .card-secondary { padding: 8px; max-width: 100%; overflow-x: hidden; }
   .card h3 { font-size: 13px; }
-  .dayun-item { grid-template-columns: 56px 1fr auto; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); }
+  .dayun-item { grid-template-columns: 56px 1fr auto; gap: var(--space-xs); padding: var(--space-xs) 8px; }
   .dayun-age { font-size: 10px; }
   .dayun-ganzhi { font-size: 14px; }
   .dayun-shishen { font-size: 10px; }
+  .qiyun-body { flex-direction: column; gap: 6px; }
   .qiyun-age { font-size: 18px; }
   .qiyun-label { font-size: 12px; }
   .qiyun-value { font-size: 10px; }
-  #app { max-width: 100%; }
+  #app { max-width: 100%; overflow-x: hidden; }
   .wuxing-bar-label { width: 24px; font-size: 12px; }
   #zeriMonthView { font-size: 10px !important; }
   .report-text { font-size: 12px; padding: var(--space-sm); }
   #btnExport { bottom: 10px !important; right: 10px !important; font-size: 11px !important; padding: 4px 12px !important; }
-  .input-card { padding: var(--space-md); }
+  .input-card { padding: 10px; max-width: 100%; overflow-x: hidden; }
   .yunshi-toolbar { flex-direction: column; gap: 6px; }
   .ys-btn-group { flex-wrap: wrap; }
-  .ys-btn { font-size: 11px; padding: 4px 10px; }
-  .zeri-header { padding: 12px 14px; }
+  .ys-btn { font-size: 11px; padding: 4px 8px; }
+  .zeri-header { padding: 10px 12px; }
   .zeri-solar { font-size: 15px; }
   .zeri-lunar-row { font-size: 13px; }
   .zeri-ganzhi { font-size: 12px; }
@@ -1214,32 +1217,42 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
 }
 
 @media (max-width: 480px) {
-  .sidebar { padding: 2px var(--space-xs); gap: 2px; }
-  .sidebar-nav .tab { padding: 4px 7px; font-size: 11px; }
-  .app-main { padding: 6px; }
-  .input-card { padding: var(--space-sm); }
-  .card { padding: var(--space-sm); }
-  .mg-grid { border-radius: var(--radius-sm); }
-  .mg-cell { padding: 1px 2px; font-size: 10px; min-height: 18px; }
+  body { overflow-x: hidden; }
+  .sidebar { padding: 3px 4px; gap: 2px; }
+  .sidebar-nav .tab { padding: 4px 6px; font-size: 11px; }
+  .app-main { padding: 6px; max-width: 100%; overflow-x: hidden; }
+  .tab-content { overflow-x: hidden; }
+  .input-card { padding: 8px; }
+  .card, .card-secondary { padding: 6px; }
+  .mg-grid { border-radius: var(--radius-sm); grid-template-columns: 30px repeat(6, 1fr); }
+  .mg-cell { padding: 1px 2px; font-size: 10px; min-height: 16px; }
   .mg-row-stem .mg-cell:not(.mg-cell-label),
-  .mg-row-branch .mg-cell:not(.mg-cell-label) { font-size: 18px; }
+  .mg-row-branch .mg-cell:not(.mg-cell-label) { font-size: 16px; }
   .mg-row-stem .mg-cell:not(.mg-cell-label) span,
-  .mg-row-branch .mg-cell:not(.mg-cell-label) span { font-size: 18px; }
+  .mg-row-branch .mg-cell:not(.mg-cell-label) span { font-size: 16px; }
   .mg-cell-label { font-size: 9px; }
   .mg-row-hd .mg-cell { font-size: 10px; padding: 3px 2px; }
-  .mg-grid { grid-template-columns: 34px repeat(6, 1fr); }
-  .zeri-yi { padding: 8px 10px; }
-  .zeri-ji { padding: 8px 10px; }
-  .zeri-yi-item { font-size: 11px; padding: 1px 6px; }
-  .zeri-ji-item { font-size: 11px; padding: 1px 6px; }
+  .mg-cell-shishen { font-size: 8px; }
+  .zeri-yi { padding: 6px 8px; }
+  .zeri-ji { padding: 6px 8px; }
+  .zeri-yi-item { font-size: 10px; padding: 1px 5px; }
+  .zeri-ji-item { font-size: 10px; padding: 1px 5px; }
   .zeri-info-row { font-size: 11px; }
-  .ys-btn { font-size: 10px; padding: 3px 8px; }
+  .ys-btn { font-size: 10px; padding: 3px 6px; }
 }
 
 @media (max-width: 380px) {
-  .sidebar-nav .tab { padding: 3px 5px; font-size: 10px; }
-  .mg-grid { grid-template-columns: 30px repeat(6, 1fr); }
+  body { overflow-x: hidden; }
+  .sidebar { padding: 2px 2px; }
+  .sidebar-nav .tab { padding: 3px 4px; font-size: 10px; }
+  .mg-grid { grid-template-columns: 26px repeat(6, 1fr); }
+  .mg-cell { font-size: 9px; }
+  .mg-row-stem .mg-cell:not(.mg-cell-label),
+  .mg-row-branch .mg-cell:not(.mg-cell-label) { font-size: 14px; }
+  .mg-row-stem .mg-cell:not(.mg-cell-label) span,
+  .mg-row-branch .mg-cell:not(.mg-cell-label) span { font-size: 14px; }
   .zeri-cal-day-num { font-size: 10px; }
+  .zeri-info-label { min-width: 36px; font-size: 11px; }
 }
 
 /* ===== 运势分析 ===== */
