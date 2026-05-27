@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.tab').forEach(el => {
     el.addEventListener('click', () => BaziRouter.go(el.dataset.tab))
   })
-  BaziRouter.init(['bazi','yunshi','hepan','zeri','celebrities','wuyun','history','settings'])
+  BaziRouter.init(['bazi','yunshi','zeri','hepan','celebrities','history','settings'])
   const origGo = BaziRouter.go
   BaziRouter.go = function(tab, pushState) {
     origGo.call(this, tab, pushState)

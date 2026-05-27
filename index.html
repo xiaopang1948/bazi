@@ -25,10 +25,9 @@
       <nav class="sidebar-nav">
         <button class="tab active" data-tab="bazi">排盘</button>
         <button class="tab" data-tab="yunshi">运势分析</button>
-        <button class="tab" data-tab="hepan">合盘</button>
         <button class="tab" data-tab="zeri">择日</button>
+        <button class="tab" data-tab="hepan">合盘</button>
         <button class="tab" data-tab="celebrities">名人</button>
-        <button class="tab" data-tab="wuyun">五运六气</button>
         <button class="tab" data-tab="history">历史</button>
         <button class="tab" data-tab="settings">设置</button>
       </nav>
@@ -228,17 +227,42 @@
       </section>
 
       <!-- ========== 合盘 TAB ========== -->
+      <section class="tab-content" id="tab-zeri">
+        <div class="input-card">
+          <div class="input-row">
+            <div class="input-group">
+              <label>选择日期</label>
+              <div class="date-group">
+                <select id="zeriYear"></select><span>年</span>
+                <select id="zeriMonth"></select><span>月</span>
+                <select id="zeriDay"></select><span>日</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>&nbsp;</label>
+              <button class="btn-primary" id="btnZeri">查黄历</button>
+            </div>
+          </div>
+        </div>
+        <div id="zeriResult" style="display:none">
+          <div class="card">
+            <h3>黄历</h3>
+            <div id="zeriContent"></div>
+          </div>
+          <div class="card">
+            <h3>本月概况</h3>
+            <div id="zeriMonthView" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:12px"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="tab-content" id="tab-hepan">
         <div class="input-card">
-          <h3 style="margin-bottom:12px;color:var(--primary)">婚姻合盘</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <!-- 甲方 -->
-            <div style="border:1px solid var(--border);border-radius:8px;padding:12px">
-              <h4 style="margin-bottom:8px;color:var(--text)">甲方</h4>
-              <div class="input-group">
-                <label>姓名</label>
-                <input type="text" id="hp1Name" placeholder="选填" maxlength="10">
-              </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label>输入对方信息</label>
+            </div>
+          </div>
               <div class="input-group">
                 <label>性别</label>
                 <div class="radio-group">
@@ -300,14 +324,12 @@
                 <select id="hp2City"></select>
               </div>
             </div>
-          </div>
           <div class="input-row actions" style="margin-top:12px">
             <button class="btn-primary" id="btnHarmony">开始合盘</button>
             <label class="checkbox-label">
               <input type="checkbox" id="hpUseSolar" checked> 真太阳时校正
             </label>
           </div>
-        </div>
 
         <!-- 合盘结果 -->
         <div id="harmonyResult" style="display:none">
@@ -318,36 +340,6 @@
           <div class="card" id="harmonyDetailsCard">
             <h3>详细分析</h3>
             <div id="harmonyDetails"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ========== 择日 TAB ========== -->
-      <section class="tab-content" id="tab-zeri">
-        <div class="input-card">
-          <div class="input-row">
-            <div class="input-group">
-              <label>选择日期</label>
-              <div class="date-group">
-                <select id="zeriYear"></select><span>年</span>
-                <select id="zeriMonth"></select><span>月</span>
-                <select id="zeriDay"></select><span>日</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label>&nbsp;</label>
-              <button class="btn-primary" id="btnZeri">查黄历</button>
-            </div>
-          </div>
-        </div>
-        <div id="zeriResult" style="display:none">
-          <div class="card">
-            <h3>黄历</h3>
-            <div id="zeriContent" style="font-size:14px;line-height:1.8"></div>
-          </div>
-          <div class="card">
-            <h3>本月概况</h3>
-            <div id="zeriMonthView" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:12px"></div>
           </div>
         </div>
       </section>
@@ -378,28 +370,6 @@
           </div>
         </div>
         <div id="celebrityList"></div>
-      </section>
-
-      <!-- ========== 五运六气 TAB ========== -->
-      <section class="tab-content" id="tab-wuyun">
-        <div class="input-card">
-          <div class="input-row">
-            <div class="input-group">
-              <label>选择年份</label>
-              <select id="wuyunYear"></select>
-            </div>
-            <div class="input-group">
-              <label>&nbsp;</label>
-              <button class="btn-primary" id="btnWuYun">查看五运六气</button>
-            </div>
-          </div>
-        </div>
-        <div id="wuyunResult" style="display:none">
-          <div class="card"><h3>岁运 · 司天 · 在泉</h3><div id="wuyunOverview"></div></div>
-          <div class="card"><h3>客运</h3><div id="wuyunKeYun"></div></div>
-          <div class="card"><h3>客气</h3><div id="wuyunKeQi"></div></div>
-          <div class="card"><h3>客主加临</h3><div id="wuyunJiaLin"></div></div>
-        </div>
       </section>
 
       <!-- ========== 历史记录 TAB ========== -->
@@ -438,7 +408,6 @@
   <script src="js/data/celebrities.js"></script>
   <script src="js/core/guku.js"></script>
   <script src="js/core/bazi-engine.js"></script>
-  <script src="js/core/wuyun-liuqi.js"></script>
   <script src="js/core/extra-pillars.js"></script>
   <script src="js/core/harmony.js"></script>
   <script src="js/store.js"></script>
@@ -451,7 +420,6 @@
   <script src="js/ui/components/zeri.js"></script>
   <script src="js/ui/components/celebrity.js"></script>
   <script src="js/ui/components/history.js"></script>
-  <script src="js/ui/components/wuyun.js"></script>
   <script src="js/ui/components/daily-score.js"></script>
   <script src="js/ui/components/yunshi.js"></script>
   <script src="js/ui/app.js"></script>
