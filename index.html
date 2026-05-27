@@ -24,6 +24,7 @@
       <div class="sidebar-logo">☯</div>
       <nav class="sidebar-nav">
         <button class="tab active" data-tab="bazi">排盘</button>
+        <button class="tab" data-tab="yunshi">运势分析</button>
         <button class="tab" data-tab="hepan">合盘</button>
         <button class="tab" data-tab="zeri">择日</button>
         <button class="tab" data-tab="celebrities">名人</button>
@@ -180,25 +181,49 @@
             </div>
           </div>
 
-          <!-- 运势报告 -->
-          <div class="card" id="reportCard" style="display:none">
-            <h3>运势报告</h3>
-            <div id="reportContent" class="report-text"></div>
-            <button class="btn-primary copy-report-btn" id="btnCopyReport" style="margin-top:10px;font-size:13px;padding:6px 16px">📋 复制报告</button>
-          </div>
-
-          <!-- 人生K线图 -->
-          <div class="card" id="lifeKLineCard" style="display:none">
-            <h3>人生K线图</h3>
-            <div id="lifeKLineContent" style="overflow-x:auto"></div>
-          </div>
-
           <!-- 四柱图示 · 干支流通 -->
           <div class="card" id="diagramCard" style="display:none">
             <h3>四柱图示 · 干支流通</h3>
             <div style="overflow-x:auto"><canvas id="pillarDiagram" style="display:block;width:100%"></canvas></div>
           </div>
 
+        </div>
+      </section>
+
+      <!-- ========== 运势分析 TAB ========== -->
+      <section class="tab-content" id="tab-yunshi">
+        <div class="yunshi-toolbar">
+          <div class="ys-btn-group">
+            <span>视角</span>
+            <button class="ys-btn active" data-view="life">终身</button>
+            <button class="ys-btn" data-view="year">年</button>
+            <button class="ys-btn" data-view="month">月</button>
+            <button class="ys-btn" data-view="week">周</button>
+            <button class="ys-btn" data-view="day">日</button>
+          </div>
+          <div class="ys-btn-group">
+            <span>维度</span>
+            <button class="ys-btn active" data-dim="overall">综合</button>
+            <button class="ys-btn" data-dim="love">感情</button>
+            <button class="ys-btn" data-dim="health">健康</button>
+            <button class="ys-btn" data-dim="career">事业</button>
+            <button class="ys-btn" data-dim="wealth">财运</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>运势K线图</h3>
+          <div id="yunshiKLineContent" style="overflow-x:auto"></div>
+        </div>
+
+        <div class="card" id="yunshiReportCard" style="display:none">
+          <h3>运势报告</h3>
+          <div id="yunshiReportContent"></div>
+        </div>
+
+        <div class="card" id="yunshiAdviceCard" style="display:none">
+          <h3>每日宜忌</h3>
+          <div id="yunshiAdviceContent"></div>
         </div>
       </section>
 
@@ -419,7 +444,6 @@
   <script src="js/store.js"></script>
   <script src="js/router.js"></script>
   <script src="js/ui/pillar-diagram.js"></script>
-  <script src="js/ui/report.js"></script>
   <script src="js/ui/components/pillars.js"></script>
   <script src="js/ui/components/patterns.js"></script>
   <script src="js/ui/components/timeline.js"></script>
@@ -429,7 +453,7 @@
   <script src="js/ui/components/history.js"></script>
   <script src="js/ui/components/wuyun.js"></script>
   <script src="js/ui/components/daily-score.js"></script>
-  <script src="js/ui/components/life-kline.js"></script>
+  <script src="js/ui/components/yunshi.js"></script>
   <script src="js/ui/app.js"></script>
 </body>
 </html>

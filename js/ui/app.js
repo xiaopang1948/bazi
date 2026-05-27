@@ -108,8 +108,6 @@ function doCalc() {
   renderGuKu(result);
   renderQiYun(result);
   renderTimePanel(result);
-  renderReport(result);
-  renderLifeKLine(result);
 
   lastResult = result;
   timeSelectedDay = new Date().getDate();
@@ -143,9 +141,15 @@ document.addEventListener('DOMContentLoaded', function() {
   initTimeSelectors();
 
   document.querySelectorAll('.tab').forEach(el => {
-    el.addEventListener('click', () => BaziRouter.go(el.dataset.tab));
+    el.addEventListener('click', () => BaziRouter.go(el.dataset.tab))
   })
-  BaziRouter.init(['bazi','hepan','zeri','celebrities','wuyun','history','settings'])
+  BaziRouter.init(['bazi','yunshi','hepan','zeri','celebrities','wuyun','history','settings'])
+  const origGo = BaziRouter.go
+  BaziRouter.go = function(tab, pushState) {
+    origGo.call(this, tab, pushState)
+    if (tab === 'yunshi') setTimeout(renderYunshi, 100)
+  }
+  if (location.hash === '#yunshi') setTimeout(renderYunshi, 150)
 
   document.getElementById('btnCalc').addEventListener('click', doCalc);
   document.getElementById('btnBack').addEventListener('click', backToInput);
