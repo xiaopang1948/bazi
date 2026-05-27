@@ -1117,15 +1117,18 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
     border-bottom: 1px solid var(--border);
     gap: var(--space-sm);
     z-index: 100;
+    overflow: hidden;
   }
   .sidebar-logo { font-size: 20px; margin-bottom: 0; flex-shrink: 0; }
   .sidebar-nav {
     flex-direction: row;
     overflow-x: auto;
+    overflow-y: hidden;
     scrollbar-width: none;
     padding: 0;
     gap: 2px;
     flex: 1;
+    -webkit-overflow-scrolling: touch;
   }
   .sidebar-nav::-webkit-scrollbar { display: none; }
   .sidebar-nav .tab {
@@ -1134,6 +1137,7 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
     white-space: nowrap;
     flex-shrink: 0;
   }
+  .sidebar-footer { display: none; }
   .app-header h1 { font-size: 17px; }
   .home-hero { padding: var(--space-xl) var(--space-md) var(--space-lg); }
   .zeri-yi-ji { flex-direction: column; }
@@ -1141,17 +1145,20 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
 }
 
 @media (max-width: 600px) {
-  .sidebar { padding: var(--space-xs) var(--space-sm); gap: var(--space-xs); }
-  .sidebar-logo { font-size: 16px; }
+  .sidebar { padding: 4px var(--space-sm); gap: 4px; }
+  .sidebar-logo { font-size: 14px; display: none; }
   .sidebar-nav .tab { padding: 5px 10px; font-size: 12px; }
   .app-main { padding: var(--space-sm); }
   .tab-nav { border-radius: var(--radius-md); }
   .tab { font-size: 12px; padding: 5px 12px; }
   .input-row { flex-direction: column; gap: var(--space-sm); }
+  .input-row-5 { flex-wrap: wrap; gap: var(--space-xs); }
   .input-group { min-width: 100%; }
-  .date-group select#year { width: 68px; }
-  .date-group select#month, .date-group select#day { width: 52px; }
-  .date-group select#hour, .date-group select#minute { width: 60px; }
+  .date-group { flex-wrap: wrap; }
+  .date-group select#year { width: 64px; }
+  .date-group select#month, .date-group select#day { width: 48px; }
+  .date-group select#hour, .date-group select#minute { width: 56px; }
+  .name-input { width: 120px; }
   .actions { flex-direction: column; align-items: stretch; gap: var(--space-sm); }
   .btn-primary { width: 100%; text-align: center; }
   .time-nav { padding: 4px; gap: 3px; }
@@ -1166,9 +1173,9 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
   .mg-cg-gan { font-size: 10px; }
   .mg-cg-ss { font-size: 10px; }
   .analysis-grid { grid-template-columns: 1fr; gap: var(--space-sm); }
-  .info-bar { padding: 10px 12px; gap: 10px; }
-  .info-avatar { width: 48px; height: 48px; font-size: 24px; }
-  .info-row { font-size: 11px; }
+  .info-bar { padding: 8px 10px; gap: 8px; flex-wrap: wrap; }
+  .info-avatar { width: 40px; height: 40px; font-size: 20px; }
+  .info-row { font-size: 11px; white-space: normal; }
   .info-row-name { font-size: 13px; }
   .info-gender { font-size: 11px; }
   .card, .card-secondary { padding: var(--space-sm); }
@@ -1188,12 +1195,51 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
   .input-card { padding: var(--space-md); }
   .yunshi-toolbar { flex-direction: column; gap: 6px; }
   .ys-btn-group { flex-wrap: wrap; }
+  .ys-btn { font-size: 11px; padding: 4px 10px; }
+  .zeri-header { padding: 12px 14px; }
+  .zeri-solar { font-size: 15px; }
+  .zeri-lunar-row { font-size: 13px; }
+  .zeri-ganzhi { font-size: 12px; }
+  .zeri-info-row { font-size: 12px; flex-wrap: wrap; gap: 4px; }
+  .zeri-cal-day { padding: 4px 1px; }
+  .zeri-cal-day-num { font-size: 11px; }
+  .zeri-cal-day-lunar { font-size: 8px; }
+  .zeri-cal-good { font-size: 7px; top: 1px; right: 1px; padding: 0 2px; }
 }
 
 @media (max-width: 600px) {
   #tab-hepan > div > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
   #celebrityList .dayun-item { flex-wrap: wrap; }
   #celebrityList .dayun-ganzhi { font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .sidebar { padding: 2px var(--space-xs); gap: 2px; }
+  .sidebar-nav .tab { padding: 4px 7px; font-size: 11px; }
+  .app-main { padding: 6px; }
+  .input-card { padding: var(--space-sm); }
+  .card { padding: var(--space-sm); }
+  .mg-grid { border-radius: var(--radius-sm); }
+  .mg-cell { padding: 1px 2px; font-size: 10px; min-height: 18px; }
+  .mg-row-stem .mg-cell:not(.mg-cell-label),
+  .mg-row-branch .mg-cell:not(.mg-cell-label) { font-size: 18px; }
+  .mg-row-stem .mg-cell:not(.mg-cell-label) span,
+  .mg-row-branch .mg-cell:not(.mg-cell-label) span { font-size: 18px; }
+  .mg-cell-label { font-size: 9px; }
+  .mg-row-hd .mg-cell { font-size: 10px; padding: 3px 2px; }
+  .mg-grid { grid-template-columns: 34px repeat(6, 1fr); }
+  .zeri-yi { padding: 8px 10px; }
+  .zeri-ji { padding: 8px 10px; }
+  .zeri-yi-item { font-size: 11px; padding: 1px 6px; }
+  .zeri-ji-item { font-size: 11px; padding: 1px 6px; }
+  .zeri-info-row { font-size: 11px; }
+  .ys-btn { font-size: 10px; padding: 3px 8px; }
+}
+
+@media (max-width: 380px) {
+  .sidebar-nav .tab { padding: 3px 5px; font-size: 10px; }
+  .mg-grid { grid-template-columns: 30px repeat(6, 1fr); }
+  .zeri-cal-day-num { font-size: 10px; }
 }
 
 /* ===== 运势分析 ===== */
