@@ -113,18 +113,28 @@ function renderGuKu(result) {
 
   card.style.display = 'block'
 
-  let html = `<div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">`
-  html += `<div style="font-size:36px;font-weight:800;color:var(--primary);line-height:1">${gu.liang}<span style="font-size:16px">两</span>`
-  if (gu.qian > 0) html += ` ${gu.qian}<span style="font-size:16px">钱</span>`
+  let html = `<div class="guku-weight">${gu.liang}<span class="guku-unit">两</span>`
+  if (gu.qian > 0) html += ` ${gu.qian}<span class="guku-unit">钱</span>`
   html += `</div>`
-  html += `<div style="font-size:12px;color:var(--text-light)">`
-  html += `<div>年干 ${gu.yearGZ}：${fw(gu.weights.year)}</div>`
-  html += `<div>月 ${gu.month}月：${fw(gu.weights.month)}</div>`
-  html += `<div>日 ${gu.day}日：${fw(gu.weights.day)}</div>`
-  html += `<div>时 ${gu.hourLabel}时：${fw(gu.weights.hour)}</div>`
-  html += `</div></div>`
-  html += `<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">${poem.title}</div>`
-  html += `<div style="font-size:12px;color:var(--text-light);line-height:1.7">${poem.poem}</div>`
+  html += `<div class="guku-divider"></div>`
+  html += `<div class="guku-details">`
+  html += `<div class="gu-detail-row">`
+  html += `<span class="gu-det-year">年 <b>${gu.yearGZ}</b> ${fw(gu.weights.year)}</span>`
+  html += `<span class="gu-det-month">月 <b>${gu.month}月</b> ${fw(gu.weights.month)}</span>`
+  html += `</div>`
+  html += `<div class="gu-detail-row">`
+  html += `<span class="gu-det-day">日 <b>${gu.day}日</b> ${fw(gu.weights.day)}</span>`
+  html += `<span class="gu-det-hour">时 <b>${gu.hourLabel}时</b> ${fw(gu.weights.hour)}</span>`
+  html += `</div>`
+  html += `</div>`
+  html += `<div class="guku-divider"></div>`
+  html += `<div class="guku-poem">`
+  html += `<div class="guku-poem-title">称骨歌</div>`
+  html += `<div class="guku-poem-body">`
+  const verses = poem.poem.replace(/[。，]/g, '|').split('|').filter(s => s.trim())
+  verses.forEach(v => { html += `<div>${v}</div>` })
+  html += `</div>`
+  html += `</div>`
 
   container.innerHTML = html
 }

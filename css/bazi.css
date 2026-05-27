@@ -634,9 +634,16 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 /* 五行色（保留通用） */
 .wuxing-wood { background: var(--wood); }
 .wuxing-fire { background: var(--fire); }
-.wuxing-earth { background: var(--earth); color: #fff; }
-.wuxing-metal { background: var(--metal); color: #333; }
+.wuxing-earth { background: var(--earth); }
+.wuxing-metal { background: var(--metal); }
 .wuxing-water { background: var(--water); }
+
+/* 五行字色 */
+.wx-mu { color: var(--wood) !important; }
+.wx-huo { color: var(--fire) !important; }
+.wx-tu { color: var(--earth) !important; }
+.wx-jin { color: var(--metal) !important; }
+.wx-shui { color: var(--water) !important; }
 
 .dayun-ganzhi .wx-mu,
 .dayun-ganzhi .wx-huo,
@@ -681,7 +688,8 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 }
 
 /* ===== 分析网格 ===== */
-.analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+.analysis-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-md); }
+.analysis-grid .card { overflow: hidden; }
 
 /* ===== 五行统计 ===== */
 .wuxing-bars { display: flex; flex-direction: column; gap: var(--space-sm); }
@@ -722,6 +730,23 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 .geju-special-name { color: var(--gold); font-weight: 600; white-space: nowrap; font-family: var(--font-serif); }
 .geju-special-desc { color: var(--ink-light); }
 .geju-gu-ji-divider { height: 1px; background: var(--border); margin: 10px 0 8px; }
+
+/* ===== 称骨 ===== */
+#guKuCard { display: flex; flex-direction: column; }
+#guKuCard #guKuContent { display: flex; flex-direction: column; flex: 1; }
+#guKuCard .guku-weight { font-size: 32px; font-weight: 800; color: var(--primary); line-height: 1; text-align: center; padding: 6px 0; }
+#guKuCard .guku-poem { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+#guKuCard .guku-unit { font-size: 14px; font-weight: 600; }
+#guKuCard .guku-divider { height: 1px; background: var(--border); margin: 8px 0; }
+#guKuCard .guku-details { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; }
+#guKuCard .gu-detail-row { display: flex; gap: 14px; justify-content: center; }
+#guKuCard .guku-details b { font-weight: 700; }
+#guKuCard .gu-det-year { color: var(--gold); }
+#guKuCard .gu-det-month { color: var(--wood, #2e7d32); }
+#guKuCard .gu-det-day { color: var(--cinnabar); }
+#guKuCard .gu-det-hour { color: var(--water, #1565c0); }
+#guKuCard .guku-poem-title { font-size: 14px; font-weight: 700; color: var(--ink); text-align: center; margin: 6px 0 4px; }
+#guKuCard .guku-poem-body { font-size: 16px; color: var(--ink-light); line-height: 2; text-align: center; padding: 0 4px; }
 
 /* ===== 大运 ===== */
 .dayun-timeline { display: flex; flex-direction: column; gap: var(--space-xs); }
@@ -955,10 +980,10 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 /* (moved to sidebar-footer) */
 
 /* ===== 古籍引证 ===== */
-#guJiCompact .gu-ji-card { padding: 2px 6px; margin-bottom: 0; border-bottom: 0; background: transparent; border: 0; border-left: 3px solid var(--gold); border-radius: 0; }
+#guJiCompact .gu-ji-card { padding: 2px 6px; margin: 0; border-bottom: 0; background: transparent; border: 0; border-left: 2px solid var(--gold); border-radius: 0; line-height: 1.4; }
 #guJiCompact .gu-ji-card:last-child { border-bottom: 0; }
-#guJiCompact .gu-ji-source { font-size: 10px; font-weight: 600; color: var(--cinnabar); margin-right: 4px; white-space: nowrap; font-family: var(--font-sans); }
-#guJiCompact .gu-ji-body { font-family: var(--font-serif); font-size: 11px; line-height: 1.4; color: var(--ink); }
+#guJiCompact .gu-ji-source { font-size: 9px; font-weight: 600; color: var(--cinnabar); margin-right: 4px; white-space: nowrap; font-family: var(--font-sans); }
+#guJiCompact .gu-ji-body { font-family: var(--font-serif); font-size: 9px; color: var(--ink); }
 
 /* ===== 运势报告 ===== */
 .report-text {

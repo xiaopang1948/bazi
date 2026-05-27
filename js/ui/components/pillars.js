@@ -82,14 +82,15 @@ function renderWuxingText(result) {
   const t = result.tiaoHou
   if (!p) return
   const WX_CLASS = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' };
-  const wx = (s) => `<span class="wx-${WX_CLASS[s] || ''}">${s}</span>`
+  const toWx = (c) => WX_CLASS[c] || (typeof getStemWuxing === 'function' && WX_CLASS[getStemWuxing(c)]) || (typeof getBranchWuxing === 'function' && WX_CLASS[getBranchWuxing(c)]) || ''
+  const wx = (s) => { if (!s) return ''; return [...s].map(c => `<span class="wx-${toWx(c)}">${c}</span>`).join('') }
   let html = `<div class="wuxing-desc-row"><span>日主五行</span><strong>${wx(p.dayStemWuxing)}</strong></div>`
   html += `<div class="wuxing-desc-row"><span>月令状态</span><strong>${p.monthPower}</strong></div>`
   html += `<div class="wuxing-desc-row"><span>综合判断</span><strong>${p.isStrong}</strong></div>`
-  html += `<div class="wuxing-desc-row"><span>用神</span><strong style="color:var(--good-star)">${wx(p.yongShen)}</strong></div>`
-  html += `<div class="wuxing-desc-row"><span>忌神</span><strong style="color:#888">${wx(p.jiShen)}</strong></div>`
+  html += `<div class="wuxing-desc-row"><span>用神</span><strong>${wx(p.yongShen)}</strong></div>`
+  html += `<div class="wuxing-desc-row"><span>忌神</span><strong>${wx(p.jiShen)}</strong></div>`
   if (t) {
-    html += `<div class="wuxing-desc-row tiaohou-desc-row"><span>调候用神</span><strong style="color:var(--gold)">${t.yong}</strong></div>`
+    html += `<div class="wuxing-desc-row tiaohou-desc-row"><span>调候用神</span><strong>${t.yong ? wx(t.yong) : t.yong}</strong></div>`
   }
   container.innerHTML = html
 }
@@ -165,6 +166,7 @@ function renderQiYun(result) {
 
 function renderWuxing(counts) {
   const container = document.getElementById('wuxingBars')
+  const WX_CLS = { 木:'mu', 火:'huo', 土:'tu', 金:'jin', 水:'shui' }
   const colors = { 木: 'var(--wood)', 火: 'var(--fire)', 土: 'var(--earth)', 金: 'var(--metal)', 水: 'var(--water)' }
   const maxVal = Math.max(...Object.values(counts), 1)
   container.innerHTML = ''
@@ -173,7 +175,7 @@ function renderWuxing(counts) {
     const pct = Math.round(val / maxVal * 100)
     container.innerHTML += `
       <div class="wuxing-bar-row">
-        <div class="wuxing-bar-label">${wx}</div>
+        <div class="wuxing-bar-label"><span class="wx-${WX_CLS[wx]}">${wx}</span></div>
         <div class="wuxing-bar-track">
           <div class="wuxing-bar-fill" style="width:${pct}%;background:${colors[wx]}"></div>
         </div>
