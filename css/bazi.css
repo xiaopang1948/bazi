@@ -699,39 +699,29 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 
 .wuxing-bar-count { width: 22px; font-family: var(--font-sans); font-size: 11px; color: var(--ink-light); text-align: center; font-weight: 600; }
 
-/* ===== 神煞 ===== */
-.stars-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
-.star-tag {
-  padding: 3px 12px;
-  border-radius: 20px;
-  font-family: var(--font-serif);
-  font-size: 12px;
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  font-weight: 500;
-  transition: transform 0.15s ease;
-}
-.star-tag:hover { transform: translateY(-1px); }
-.star-tag.good { border-color: var(--good-star); color: var(--good-star); background: rgba(192,57,43,0.05); }
-.star-tag.bad { border-color: var(--bad-star); color: var(--bad-star); background: rgba(117,117,117,0.05); }
+/* ===== 五行文字描述 ===== */
+.wuxing-desc { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.wuxing-desc-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 12px; }
+.wuxing-desc-row span { color: var(--ink-light); font-family: var(--font-serif); }
+.wuxing-desc-row strong { font-weight: 700; font-family: var(--font-serif); font-size: 14px; }
+.tiaohou-desc-row { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 6px; }
 
 /* ===== 格局分析 ===== */
-#patternContent {
-  display: flex; flex-wrap: wrap; gap: var(--space-xs);
-  font-size: 13px; line-height: 1.8;
-}
-#patternContent strong { color: var(--cinnabar); font-family: var(--font-serif); }
-.pattern-row {
-  display: inline-flex; align-items: center; gap: var(--space-xs);
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: rgba(184,153,71,0.06);
-  border: 1px solid rgba(184,153,71,0.15);
-  font-family: var(--font-serif);
-  font-size: 12px;
-}
-.pattern-row span { color: var(--ink-light); }
-.pattern-row strong { color: var(--ink); font-weight: 700; font-family: var(--font-serif); }
+.geju-header { display: flex; flex-direction: column; gap: 6px; }
+.geju-name-row { display: flex; align-items: center; gap: 8px; }
+.geju-name { font-family: var(--font-serif); font-size: 17px; font-weight: 700; letter-spacing: 1.5px; }
+.geju-name-zheng { color: var(--primary); }
+.geju-name-special { color: var(--gold); }
+.geju-yong { font-size: 10px; padding: 1px 8px; border-radius: 8px; background: rgba(184,134,11,0.1); color: var(--ink-light); font-weight: 600; }
+.geju-desc { font-size: 11px; line-height: 1.45; color: var(--ink-light); font-family: var(--font-serif); }
+.geju-guidance { background: rgba(184,153,71,0.05); border-left: 3px solid var(--gold); padding: 6px 8px; border-radius: 0 4px 4px 0; }
+.geju-guidance-label { font-size: 9px; font-weight: 600; color: var(--gold); display: block; margin-bottom: 2px; letter-spacing: 1px; }
+.geju-guidance-text { font-size: 11px; line-height: 1.45; color: var(--ink-light); font-family: var(--font-serif); }
+.geju-special-divider { height: 1px; background: var(--border); margin: 6px 0 4px; }
+.geju-special-item { display: flex; align-items: center; gap: 6px; padding: 2px 0; font-size: 11px; }
+.geju-special-name { color: var(--gold); font-weight: 600; white-space: nowrap; font-family: var(--font-serif); }
+.geju-special-desc { color: var(--ink-light); }
+.geju-gu-ji-divider { height: 1px; background: var(--border); margin: 10px 0 8px; }
 
 /* ===== 大运 ===== */
 .dayun-timeline { display: flex; flex-direction: column; gap: var(--space-xs); }
@@ -964,43 +954,11 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 /* ===== 底部 ===== */
 /* (moved to sidebar-footer) */
 
-/* ===== 紧凑信息区 ===== */
-.compact-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-.compact-item {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: var(--space-sm) var(--space-sm);
-}
-.compact-label {
-  font-family: var(--font-sans);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--ink-light);
-  letter-spacing: 0.5px;
-  margin-bottom: var(--space-xs);
-  text-transform: uppercase;
-}
-.compact-item .pattern-row {
-  font-family: var(--font-serif);
-  font-size: 11px;
-  padding: 2px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-}
-.compact-item .pattern-row:last-child { border-bottom: none; }
-.compact-item .pattern-row span { color: var(--ink-light); font-size: 10px; }
-.compact-item .pattern-row strong { font-size: 12px; }
-
 /* ===== 古籍引证 ===== */
-.gu-ji-item { padding: 6px 0; border-bottom: 1px solid var(--border); }
-.gu-ji-item:last-child { border-bottom: none; }
-.gu-ji-source { font-family: var(--font-sans); font-size: 10px; color: var(--cinnabar); font-weight: 600; }
-.gu-ji-text { font-family: var(--font-serif); font-size: 13px; line-height: 1.6; margin-top: 2px; color: var(--ink); font-style: italic; }
+#guJiCompact .gu-ji-card { padding: 2px 6px; margin-bottom: 0; border-bottom: 0; background: transparent; border: 0; border-left: 3px solid var(--gold); border-radius: 0; }
+#guJiCompact .gu-ji-card:last-child { border-bottom: 0; }
+#guJiCompact .gu-ji-source { font-size: 10px; font-weight: 600; color: var(--cinnabar); margin-right: 4px; white-space: nowrap; font-family: var(--font-sans); }
+#guJiCompact .gu-ji-body { font-family: var(--font-serif); font-size: 11px; line-height: 1.4; color: var(--ink); }
 
 /* ===== 运势报告 ===== */
 .report-text {
@@ -1045,7 +1003,6 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
   body { background: #fff; }
   .mg-cell { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .wuxing-bar-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .star-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 
 /* ===== 暗黑模式 ===== */
@@ -1075,7 +1032,6 @@ body.dark-mode .tab:hover { background: rgba(212,168,75,0.1); color: var(--ink);
 body.dark-mode .input-card,
 body.dark-mode .card,
 body.dark-mode .card-secondary,
-body.dark-mode .compact-item,
 body.dark-mode .info-bar {
   background: var(--card-bg);
 }
@@ -1098,13 +1054,7 @@ body.dark-mode .solar-toggle { color: var(--ink-light); }
 body.dark-mode .date-group select { background: rgba(60,56,50,0.8); color: var(--ink); border-color: var(--border); }
 body.dark-mode #province,
 body.dark-mode #city { background: rgba(60,56,50,0.8); color: var(--ink); border-color: var(--border); }
-body.dark-mode .star-tag { background: var(--card-bg); }
-body.dark-mode .star-tag.good { background: rgba(231,76,60,0.08); }
-body.dark-mode .star-tag.bad { background: rgba(117,117,117,0.08); }
 body.dark-mode .wuxing-bar-track { background: var(--border); }
-body.dark-mode .pattern-row { background: rgba(212,168,75,0.08); border-color: rgba(212,168,75,0.2); }
-body.dark-mode #patternContent .pattern-row strong { color: var(--gold); }
-body.dark-mode .compact-item .pattern-row { border-bottom-color: rgba(255,255,255,0.04); }
 body.dark-mode .analysis-grid .card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); box-shadow: none; }
 body.dark-mode .info-bar { background: linear-gradient(135deg, rgba(212,168,75,0.06), rgba(30,28,26,0.8)); }
 body.dark-mode .info-name { color: var(--ink); }
@@ -1196,8 +1146,6 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
   .info-gender { font-size: 11px; }
   .card, .card-secondary { padding: var(--space-sm); }
   .card h3 { font-size: 13px; }
-  .compact-grid { grid-template-columns: 1fr; gap: var(--space-xs); }
-  .compact-item { padding: var(--space-xs) var(--space-sm); }
   .dayun-item { grid-template-columns: 56px 1fr auto; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); }
   .dayun-age { font-size: 10px; }
   .dayun-ganzhi { font-size: 14px; }
@@ -1209,8 +1157,6 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
   .wuxing-bar-label { width: 24px; font-size: 12px; }
   #zeriMonthView { font-size: 10px !important; }
   #zeriMonthView > div { padding: 3px 1px !important; }
-  .stars-list { gap: var(--space-xs); }
-  .star-tag { font-size: 11px; padding: 2px 8px; }
   .report-text { font-size: 12px; padding: var(--space-sm); }
   #btnExport { bottom: 10px !important; right: 10px !important; font-size: 11px !important; padding: 4px 12px !important; }
   .input-card { padding: var(--space-md); }

@@ -258,6 +258,62 @@ function calcLiuQin(pillars, details, gender) {
   return liuQin;
 }
 
+/** 八格（正格）判断 — 基于月令藏干 */
+const GEJU_INFO = {
+  '正官': { yong: '顺用', desc: '正官为贵气之星，代表官禄、地位、名誉。月令正官，为人正直端庄，有领导才能。', guidance: '喜印绶生扶以固其本，忌伤官克制以损其贵。喜食神暗合以制杀存官，忌七杀混杂以浊其格。' },
+  '七杀': { yong: '逆用', desc: '七杀为权柄之星，代表胆识、威严、魄力。月令七杀，人果断刚毅，有将帅之风。', guidance: '喜食神制杀以显其威，忌财星生杀以助其凶。喜印绶化杀以生身，忌比劫抗杀以招祸。' },
+  '正财': { yong: '顺用', desc: '正财为养命之源，代表财富、稳定、务实。月令正财，人勤俭守成，善于理财。', guidance: '喜食神生财以裕其源，忌比劫夺财以损其福。喜官星护财以守成，忌印绶耗财以败业。' },
+  '偏财': { yong: '顺用', desc: '偏财为众人之财，代表横财、交际、慷慨。月令偏财，人豪爽大方，善经营得财。', guidance: '喜食神生财以增其势，忌比劫夺财以分其福。偏财格若身旺，可任财求富贵。' },
+  '正印': { yong: '顺用', desc: '正印为护身之神，代表学识、慈爱、贵人。月令正印，人聪慧仁慈，有书卷之气。', guidance: '喜官星生印以增其荣，忌财星坏印以损其名。喜比劫护印以固其基，忌食伤泄印以耗其气。' },
+  '偏印': { yong: '顺用', desc: '偏印为偏门之学，代表特殊才华、悟性、灵感。月令偏印，人思维独特，有创造性。', guidance: '喜官杀生印以显其能，忌财星破印以败其格。偏印逢食神为"枭神夺食"，需有制化。' },
+  '食神': { yong: '顺用', desc: '食神为福寿之星，代表才能、享受、口福。月令食神，人温和厚道，有艺术天赋。', guidance: '喜身旺生食以显其才，忌偏印夺食以损其福。食神格喜逢财星，食神生财富贵齐来。' },
+  '伤官': { yong: '逆用', desc: '伤官为才华之星，代表聪明、傲气、叛逆。月令伤官，人思维敏捷，有创新精神。', guidance: '喜印绶制伤以归其正，忌比劫助伤以增其逆。伤官格见官星为"伤官见官"，需仔细推敲。' },
+};
+
+function calcBaGe(result) {
+  const dayStem = result.pillars.day.stem;
+  const monthBranch = result.pillars.month.branch;
+  const hiddenStems = getHiddenStems(monthBranch);
+  const ganIdx = STEMS.indexOf(dayStem);
+  const isYang = ganIdx % 2 === 0;
+
+  const LIN_GUAN = { 甲:'寅',乙:'卯',丙:'巳',丁:'午',戊:'巳',己:'午',庚:'申',辛:'酉',壬:'亥',癸:'子' };
+  const DI_WANG = { 甲:'卯',乙:'寅',丙:'午',丁:'巳',戊:'午',己:'巳',庚:'酉',辛:'申',壬:'子',癸:'亥' };
+
+  if (LIN_GUAN[dayStem] === monthBranch) {
+    return {
+      name: '建禄格', type: 'special', yong: '依格神论',
+      desc: '建禄者，月令为日主临官旺地。身旺之象，若非太过，则堪任财官。',
+      guidance: '建禄格喜财官透干以成格，忌印绶过重以增旺。身旺太过宜食伤泄秀，或官杀制身。'
+    };
+  }
+
+  if (isYang && DI_WANG[dayStem] === monthBranch) {
+    return {
+      name: '月刃格', type: 'special', yong: '逆用',
+      desc: '月刃者，阳干月令帝旺之位。身极旺，刚强过人，胆气雄壮。',
+      guidance: '月刃格喜七杀制刃以成贵格，或食伤泄秀以显才华。忌印绶生身以增其旺，旺极则刚必折。'
+    };
+  }
+
+  const mainStem = hiddenStems[0];
+  const ss = getShiShen(dayStem, mainStem);
+  const geInfo = GEJU_INFO[ss];
+
+  if (geInfo) {
+    return {
+      name: ss + '格', type: 'zheng', yong: geInfo.yong,
+      desc: geInfo.desc, guidance: geInfo.guidance, originStem: mainStem,
+    };
+  }
+
+  return {
+    name: '无明确格局', type: 'none', yong: '视局而定',
+    desc: '月令藏干与日主关系不明确，需综合全局判断。',
+    guidance: '此格非常格，需看整体八字配合，或以调候为先。'
+  };
+}
+
 /** 特殊格局判断 */
 function calcSpecialPattern(pillars, details, wuxingCount, pattern) {
   const specials = [];
@@ -498,6 +554,9 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
   // 特殊格局
   const specialPatterns = calcSpecialPattern(pillars, details, wuxingCount, pattern);
 
+  // 八格（正格）判断
+  const geJu = calcBaGe({ pillars, details });
+
   // 当前流年（先定义 currentYear，后续依赖它）
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -531,6 +590,7 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
     solarTime,
     pillars,
     details,
+    geJu,
     wuxingCount,
     pattern,
     tiaoHou,

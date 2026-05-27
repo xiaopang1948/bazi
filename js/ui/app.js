@@ -100,21 +100,16 @@ function doCalc() {
 
   renderInfoBar(name, result);
   renderMainTable(result);
-  renderGuKu(result);
   renderWuxing(result.wuxingCount);
-  renderStars(result.details);
+  renderWuxingText(result);
   renderPattern(result);
-  if (result.specialPatterns && result.specialPatterns.length > 0) renderSpecialPatterns(result.specialPatterns);
-  renderLiuQin(result.liuQin);
-  renderExtraPillars(result.extraPillars);
-  renderRenYuan(result.renYuan);
-  renderPillarDiagram('pillarDiagram', result);
+  renderSpecialPatterns(result.specialPatterns);
   renderGuJi(result);
+  renderGuKu(result);
   renderQiYun(result);
   renderTimePanel(result);
   renderReport(result);
   renderLifeKLine(result);
-  document.getElementById('compactInfo').style.display = 'grid';
 
   lastResult = result;
   timeSelectedDay = new Date().getDate();

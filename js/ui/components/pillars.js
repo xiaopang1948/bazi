@@ -1,5 +1,12 @@
 const ZODIAC_EMOJI = { '子':'🐭','丑':'🐮','寅':'🐯','卯':'🐰','辰':'🐲','巳':'🐍','午':'🐴','未':'🐑','申':'🐵','酉':'🐔','戌':'🐶','亥':'🐷' }
 const ZODIAC_NAME = { '子':'鼠','丑':'牛','寅':'虎','卯':'兔','辰':'龙','巳':'蛇','午':'马','未':'羊','申':'猴','酉':'鸡','戌':'狗','亥':'猪' }
+const SHI_SHEN_ABBR = {
+  '正印':'印', '偏印':'偏',
+  '正官':'官', '七杀':'杀',
+  '正财':'财', '偏财':'才',
+  '食神':'食', '伤官':'伤',
+  '比肩':'比', '劫财':'劫',
+}
 
 function formatSolar(y, m, d, h, min) {
   return `${y}年${m}月${d}日 ${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}`
@@ -68,15 +75,111 @@ function buildColData(raw, dayStem, pillars, colKey) {
   }
 }
 
-/*
- * 十神缩写映射
- */
-const SHI_SHEN_ABBR = {
-  '正印':'印', '偏印':'偏',
-  '正官':'官', '七杀':'杀',
-  '正财':'财', '偏财':'才',
-  '食神':'食', '伤官':'伤',
-  '比肩':'比', '劫财':'劫',
+function renderWuxingText(result) {
+  const container = document.getElementById('wuxingDesc')
+  if (!container) return
+  const p = result.pattern
+  const t = result.tiaoHou
+  if (!p) return
+  const WX_CLASS = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' };
+  const wx = (s) => `<span class="wx-${WX_CLASS[s] || ''}">${s}</span>`
+  let html = `<div class="wuxing-desc-row"><span>日主五行</span><strong>${wx(p.dayStemWuxing)}</strong></div>`
+  html += `<div class="wuxing-desc-row"><span>月令状态</span><strong>${p.monthPower}</strong></div>`
+  html += `<div class="wuxing-desc-row"><span>综合判断</span><strong>${p.isStrong}</strong></div>`
+  html += `<div class="wuxing-desc-row"><span>用神</span><strong style="color:var(--good-star)">${wx(p.yongShen)}</strong></div>`
+  html += `<div class="wuxing-desc-row"><span>忌神</span><strong style="color:#888">${wx(p.jiShen)}</strong></div>`
+  if (t) {
+    html += `<div class="wuxing-desc-row tiaohou-desc-row"><span>调候用神</span><strong style="color:var(--gold)">${t.yong}</strong></div>`
+  }
+  container.innerHTML = html
+}
+
+function renderQiMing(result) {
+  const card = document.getElementById('qiMingCard')
+  const container = document.getElementById('qiMingContent')
+  if (!card) return
+  const p = result.pattern
+  if (!p || !p.yongShen) return
+  card.style.display = 'block'
+  const suggestions = calcNameSuggestions(p.dayStemWuxing, p.yongShen, 8)
+  let html = `<p style="font-size:13px;margin-bottom:8px;color:var(--text-light)">根据八字，宜补五行【${p.yongShen}】，以下推荐名字供参考：</p>`
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px">'
+  for (const s of suggestions) {
+    html += `<div style="padding:8px 14px;background:rgba(184,134,11,0.06);border:1px solid var(--border);border-radius:6px;text-align:center">
+      <div style="font-size:18px;font-weight:700;color:var(--primary)">${s.name}</div>
+      <div style="font-size:11px;color:var(--text-light);margin-top:2px">${s.reason}</div>
+    </div>`
+  }
+  html += '</div>'
+  container.innerHTML = html
+}
+
+function renderGuJi(result) {
+  const container = document.getElementById('guJiCompact')
+  const divider = document.getElementById('guJiDivider')
+  if (!container) return
+  const matches = calcGuJiMatches(result)
+  if (matches.length === 0) return
+  if (divider) divider.style.display = 'block'
+  container.innerHTML = matches.map(m =>
+    `<div class="gu-ji-card"><span class="gu-ji-source">${m.source}</span><span class="gu-ji-body">${m.content}</span></div>`
+  ).join('')
+}
+
+function renderQiYun(result) {
+  const card = document.getElementById('qiyunCard')
+  if (!card) return
+  card.style.display = 'block'
+
+  const d = result.dayun
+  const diffDays = d.diffDays || 0
+  const totalHours = diffDays * 24
+
+  // 3天 = 1岁, 1天 = 4个月, 1时辰(2小时) = 10天
+  const qyYears = Math.floor(totalHours / 72)
+  let remainHours = totalHours - qyYears * 72
+  const qyMonths = Math.floor(remainHours / 6)
+  remainHours -= qyMonths * 6
+  const qyShichen = Math.floor(remainHours / 2)
+  const qyDaysFromShichen = qyShichen * 10
+
+  let startText = ''
+  if (qyYears > 0) startText += `${qyYears}年`
+  if (qyMonths > 0) startText += `${qyMonths}个月`
+  if (qyDaysFromShichen > 0) startText += `${qyDaysFromShichen}天`
+  if (!startText) startText = '0时'
+  startText += '起运'
+  document.getElementById('qiyunStart').textContent = '出生后 ' + startText
+
+  const jieName = d.jieName || ''
+  const direction = d.direction || ''
+  const startYear = result.input.year + qyYears
+  const startGan = STEMS[(startYear - 4) % 10]
+  const jiaoText = jieName ? `${startGan}年 立春后 ${jieName}交运` : ''
+  document.getElementById('qiyunJiao').textContent = jiaoText
+
+  const currentYear = new Date().getFullYear()
+  const age = currentYear - result.input.year
+  document.getElementById('qiyunAge').textContent = age + '岁'
+}
+
+function renderWuxing(counts) {
+  const container = document.getElementById('wuxingBars')
+  const colors = { 木: 'var(--wood)', 火: 'var(--fire)', 土: 'var(--earth)', 金: 'var(--metal)', 水: 'var(--water)' }
+  const maxVal = Math.max(...Object.values(counts), 1)
+  container.innerHTML = ''
+  for (const wx of ['木', '火', '土', '金', '水']) {
+    const val = counts[wx] || 0
+    const pct = Math.round(val / maxVal * 100)
+    container.innerHTML += `
+      <div class="wuxing-bar-row">
+        <div class="wuxing-bar-label">${wx}</div>
+        <div class="wuxing-bar-track">
+          <div class="wuxing-bar-fill" style="width:${pct}%;background:${colors[wx]}"></div>
+        </div>
+        <div class="wuxing-bar-count">${val}</div>
+      </div>`
+  }
 }
 
 function renderMainTable(result, extraCols = [], dayunIdx = null, liunianYear = null) {
@@ -178,136 +281,4 @@ function renderMainTable(result, extraCols = [], dayunIdx = null, liunianYear = 
   const grid = document.getElementById('pillarsGrid')
   grid.style.gridTemplateColumns = `48px repeat(${colKeys.length}, 1fr)`
   grid.innerHTML = html
-}
-
-function renderWuxing(counts) {
-  const container = document.getElementById('wuxingBars')
-  const colors = { 木: 'var(--wood)', 火: 'var(--fire)', 土: 'var(--earth)', 金: 'var(--metal)', 水: 'var(--water)' }
-  const maxVal = Math.max(...Object.values(counts), 1)
-  container.innerHTML = ''
-  for (const wx of ['木', '火', '土', '金', '水']) {
-    const val = counts[wx] || 0
-    const pct = Math.round(val / maxVal * 100)
-    container.innerHTML += `
-      <div class="wuxing-bar-row">
-        <div class="wuxing-bar-label">${wx}</div>
-        <div class="wuxing-bar-track">
-          <div class="wuxing-bar-fill" style="width:${pct}%;background:${colors[wx]}"></div>
-        </div>
-        <div class="wuxing-bar-count">${val}</div>
-      </div>`
-  }
-}
-
-function renderStars(details) {
-  const container = document.getElementById('starsList')
-  const allStars = new Map()
-  for (const key of ['year', 'month', 'day', 'hour']) {
-    for (const star of details[key].stars) {
-      if (!allStars.has(star.name)) allStars.set(star.name, star)
-    }
-  }
-  if (allStars.size === 0) {
-    container.innerHTML = '<span style="color:var(--text-light)">无特殊神煞</span>'
-    return
-  }
-  container.innerHTML = ''
-  for (const [, star] of allStars) {
-    const tag = document.createElement('span')
-    tag.className = `star-tag ${star.type}`
-    tag.textContent = star.name
-    container.appendChild(tag)
-  }
-}
-
-function renderExtraPillars(extra) {
-  const card = document.getElementById('extraPillarsCard')
-  const container = document.getElementById('extraPillarsContent')
-  if (!extra || !card) return
-  card.style.display = 'block'
-  container.innerHTML = `
-    <div class="pattern-row"><span>胎元</span><strong>${extra.taiYuan.ganzhi}</strong></div>
-    <div class="pattern-row"><span>命宫</span><strong>${extra.mingGong.ganzhi}</strong></div>
-    <div class="pattern-row"><span>身宫</span><strong>${extra.shenGong.ganzhi}</strong></div>`
-}
-
-function renderRenYuan(renYuan) {
-  const card = document.getElementById('renYuanCard')
-  const container = document.getElementById('renYuanContent')
-  if (!renYuan || Object.keys(renYuan).length === 0 || !card) return
-  card.style.display = 'block'
-  container.innerHTML = Object.entries(renYuan)
-    .map(([stem, days]) => {
-      const wx = getStemWuxing(stem)
-      return `<div class="pattern-row"><span><span class="pillar-wuxing wuxing-${wx}" style="font-size:11px;padding:0 6px;display:inline-block;color:#fff;border-radius:3px">${stem}</span> 主事 ${days} 日</span><strong style="color:var(--text-light)">${wx}</strong></div>`
-    }).join('')
-}
-
-function renderQiMing(result) {
-  const card = document.getElementById('qiMingCard')
-  const container = document.getElementById('qiMingContent')
-  if (!card) return
-  const p = result.pattern
-  if (!p || !p.yongShen) return
-  card.style.display = 'block'
-  const suggestions = calcNameSuggestions(p.dayStemWuxing, p.yongShen, 8)
-  let html = `<p style="font-size:13px;margin-bottom:8px;color:var(--text-light)">根据八字，宜补五行【${p.yongShen}】，以下推荐名字供参考：</p>`
-  html += '<div style="display:flex;flex-wrap:wrap;gap:8px">'
-  for (const s of suggestions) {
-    html += `<div style="padding:8px 14px;background:rgba(184,134,11,0.06);border:1px solid var(--border);border-radius:6px;text-align:center">
-      <div style="font-size:18px;font-weight:700;color:var(--primary)">${s.name}</div>
-      <div style="font-size:11px;color:var(--text-light);margin-top:2px">${s.reason}</div>
-    </div>`
-  }
-  html += '</div>'
-  container.innerHTML = html
-}
-
-function renderGuJi(result) {
-  const card = document.getElementById('guJiCard')
-  const container = document.getElementById('guJiContent')
-  if (!card) return
-  const matches = calcGuJiMatches(result)
-  if (matches.length === 0) return
-  card.style.display = 'block'
-  container.innerHTML = matches.map(m =>
-    `<div class="gu-ji-item"><span class="gu-ji-source">${m.source} · ${m.title}</span><p class="gu-ji-text">${m.content}</p></div>`
-  ).join('')
-}
-
-function renderQiYun(result) {
-  const card = document.getElementById('qiyunCard')
-  if (!card) return
-  card.style.display = 'block'
-
-  const d = result.dayun
-  const diffDays = d.diffDays || 0
-  const totalHours = diffDays * 24
-
-  // 3天 = 1岁, 1天 = 4个月, 1时辰(2小时) = 10天
-  const qyYears = Math.floor(totalHours / 72)
-  let remainHours = totalHours - qyYears * 72
-  const qyMonths = Math.floor(remainHours / 6)
-  remainHours -= qyMonths * 6
-  const qyShichen = Math.floor(remainHours / 2)
-  const qyDaysFromShichen = qyShichen * 10
-
-  let startText = ''
-  if (qyYears > 0) startText += `${qyYears}年`
-  if (qyMonths > 0) startText += `${qyMonths}个月`
-  if (qyDaysFromShichen > 0) startText += `${qyDaysFromShichen}天`
-  if (!startText) startText = '0时'
-  startText += '起运'
-  document.getElementById('qiyunStart').textContent = '出生后 ' + startText
-
-  const jieName = d.jieName || ''
-  const direction = d.direction || ''
-  const startYear = result.input.year + qyYears
-  const startGan = STEMS[(startYear - 4) % 10]
-  const jiaoText = jieName ? `${startGan}年 立春后 ${jieName}交运` : ''
-  document.getElementById('qiyunJiao').textContent = jiaoText
-
-  const currentYear = new Date().getFullYear()
-  const age = currentYear - result.input.year
-  document.getElementById('qiyunAge').textContent = age + '岁'
 }

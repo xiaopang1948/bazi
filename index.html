@@ -160,70 +160,45 @@
             </div>
           </div>
 
-          <!-- 袁天罡称骨 -->
-          <div class="card" id="guKuCard" style="display:none">
-            <h3>袁天罡称骨</h3>
-            <div id="guKuContent"></div>
-          </div>
-
-          <!-- 一级：格局 + 大运 -->
-          <div class="card" id="patternCard">
-            <h3>格局分析</h3>
-            <div id="patternContent"></div>
-          </div>
-
-          <div class="card" id="specialPatternCard" style="display:none">
-            <h3>特殊格局</h3>
-            <div id="specialPatternContent"></div>
-          </div>
-
-          <div class="card" id="lifeKLineCard" style="display:none">
-            <h3>人生K线图</h3>
-            <div id="lifeKLineContent" style="overflow-x:auto"></div>
-          </div>
-
-          <!-- 二级：五行 + 神煞 -->
+          <!-- 并行：五行统计 | 格局分析 -->
           <div class="analysis-grid">
             <div class="card" id="wuxingCard">
               <h3>五行统计</h3>
               <div class="wuxing-bars" id="wuxingBars"></div>
+              <div id="wuxingDesc" class="wuxing-desc"></div>
             </div>
-            <div class="card" id="starsCard">
-              <h3>神煞</h3>
-              <div id="starsList" class="stars-list"></div>
+            <div class="card" id="patternCard">
+              <h3>格局分析 · 古籍引证</h3>
+              <div id="patternContent"></div>
+              <div id="specialPatternContent" style="display:none"></div>
+              <div class="geju-gu-ji-divider" id="guJiDivider" style="display:none"></div>
+              <div id="guJiCompact"></div>
             </div>
           </div>
 
-          <!-- 二级：运势报告 + 四柱图示 -->
+          <!-- 运势报告 -->
           <div class="card" id="reportCard" style="display:none">
             <h3>运势报告</h3>
             <div id="reportContent" class="report-text"></div>
             <button class="btn-primary copy-report-btn" id="btnCopyReport" style="margin-top:10px;font-size:13px;padding:6px 16px">📋 复制报告</button>
           </div>
 
+          <!-- 人生K线图 -->
+          <div class="card" id="lifeKLineCard" style="display:none">
+            <h3>人生K线图</h3>
+            <div id="lifeKLineContent" style="overflow-x:auto"></div>
+          </div>
+
+          <!-- 四柱图示 · 干支流通 -->
           <div class="card" id="diagramCard" style="display:none">
             <h3>四柱图示 · 干支流通</h3>
             <div style="overflow-x:auto"><canvas id="pillarDiagram" style="display:block;width:100%"></canvas></div>
           </div>
 
-          <!-- 三级：紧凑信息 -->
-          <div class="compact-grid" id="compactInfo" style="display:none">
-            <div class="compact-item" id="liuQinCard" style="display:none">
-              <div class="compact-label">六亲</div>
-              <div id="liuQinContent"></div>
-            </div>
-            <div class="compact-item" id="extraPillarsCard" style="display:none">
-              <div class="compact-label">胎元 · 命宫 · 身宫</div>
-              <div id="extraPillarsContent"></div>
-            </div>
-            <div class="compact-item" id="renYuanCard" style="display:none">
-              <div class="compact-label">人元司令</div>
-              <div id="renYuanContent"></div>
-            </div>
-            <div class="compact-item" id="guJiCard" style="display:none">
-              <div class="compact-label">古籍引证</div>
-              <div id="guJiContent"></div>
-            </div>
+          <!-- 袁天罡称骨 -->
+          <div class="card" id="guKuCard" style="display:none">
+            <h3>袁天罡称骨</h3>
+            <div id="guKuContent"></div>
           </div>
         </div>
       </section>
