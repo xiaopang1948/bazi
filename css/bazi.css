@@ -4,6 +4,7 @@
   --paper: #f4f1ea;
   --ink: #1a1a1a;
   --ink-light: #6b6560;
+  --ink-muted: #8c8680;
   --cinnabar: #c0392b;
   --cinnabar-light: #e74c3c;
   --gold: #b89947;
@@ -747,6 +748,8 @@ body.dark-mode .home-hero::after { opacity: 0.08; }
 #guKuCard .gu-det-hour { color: var(--water, #1565c0); }
 #guKuCard .guku-poem-title { font-size: 14px; font-weight: 700; color: var(--ink); text-align: center; margin: 6px 0 4px; }
 #guKuCard .guku-poem-body { font-size: 16px; color: var(--ink-light); line-height: 2; text-align: center; padding: 0 4px; }
+#guKuCard .guku-annotation { font-size: 12px; color: var(--ink-muted); line-height: 1.7; text-align: left; padding: 8px 4px 0; border-top: 1px solid var(--border); margin-top: 6px; }
+#guKuCard .guku-unknown { font-size: 14px; color: var(--ink-muted); font-style: italic; }
 
 /* ===== 大运 ===== */
 .dayun-timeline { display: flex; flex-direction: column; gap: var(--space-xs); }
@@ -1035,6 +1038,7 @@ body.dark-mode {
   --paper: #1e1c1a;
   --ink: #e8e2d8;
   --ink-light: #9a948a;
+  --ink-muted: #7a746e;
   --card-bg: rgba(40,38,34,0.92);
   --border: #3a3630;
   --gold: #d4a84b;
@@ -1291,6 +1295,7 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
 .ys-yi-ji-label { font-weight: 700; font-size: 12px; min-width: 20px; }
 .ys-yi .ys-yi-ji-label { color: var(--wood, #43a047); }
 .ys-ji .ys-yi-ji-label { color: var(--cinnabar); }
+.version-tag { font-size: 12px; font-weight: 400; color: var(--ink-light, #999); vertical-align: middle; margin-left: 6px; }
 
 /* ===== 择日黄历 ===== */
 .zeri-header { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; text-align: center; margin-bottom: var(--space-md); }

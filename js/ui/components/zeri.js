@@ -141,7 +141,8 @@ function doZeri() {
     zResult.style.display = 'block';
 
     try {
-      const lunar = Lunar.fromYmd(y, m, d);
+      const solar = Solar.fromYmd(y, m, d);
+      const lunar = solar.getLunar();
       zContent.innerHTML = zeriHtml(lunar, y, m, d);
     } catch (e) {
       console.error('zeriHtml error:', e);
@@ -171,7 +172,8 @@ function renderMonthCalendar(year, month) {
   for (let day = 1; day <= daysInMonth; day++) {
     const isToday = year === today.getFullYear() && month === today.getMonth() + 1 && day === today.getDate();
     try {
-      const lunar = Lunar.fromYmd(year, month, day);
+      const solar2 = Solar.fromYmd(year, month, day);
+      const lunar = solar2.getLunar();
       const yi = toList(safeGet(() => lunar.getDayYi()));
       const ji = toList(safeGet(() => lunar.getDayJi()));
       const twelveGod = safeGet(() => lunar.getDayTwelveDayGod());

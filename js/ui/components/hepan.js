@@ -64,7 +64,7 @@ function initHepanSelectors() {
 }
 
 function readHpInput(prefix) {
-  const name = document.getElementById(prefix + 'Name').value || (prefix === 'hp1' ? '甲方' : '乙方');
+  const name = document.getElementById(prefix + 'Name')?.value || (prefix === 'hp1' ? '甲方' : '乙方');
   const gender = document.querySelector(`input[name="${prefix}Gender"]:checked`).value;
   const year = parseInt(document.getElementById(prefix + 'Year').value);
   const month = parseInt(document.getElementById(prefix + 'Month').value);
