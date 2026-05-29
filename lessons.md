@@ -14,3 +14,7 @@
 
 - **`buildAdvice` 中全局结构层代码（运岁生克、能量评级）必须放在 `dim === 'overall'` 条件内**，非综合维度不展示
 - **死代码不要留** — 函数确认无外部引用后直接删除，不要注释保留
+
+## 版本号管理
+
+- **每次 git commit 前必须更新版本号** — index.html 3 处（title、loading overlay、hero title）从 Vx.y 升到下一版，同时在 memory/progress.md 顶部同步

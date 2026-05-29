@@ -35,8 +35,17 @@ function initZeriSelectors() {
 }
 
 const SHENG_XIAO = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+const ZHI_LIST = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const TWELVE_GODS = ['青龙','明堂','天刑','朱雀','金匮','天德','白虎','玉堂','天牢','玄武','司命','勾陈'];
 const TWELVE_GOD_GOOD = ['青龙','明堂','金匮','天德','玉堂','司命'];
 const TWELVE_GOD_BAD = ['天刑','朱雀','白虎','天牢','玄武','勾陈'];
+let zeriSelectedDay = new Date().getDate();
+
+function getDayTwelveGod(lunar) {
+  const zhi = safeGet(() => lunar.getDayZhi());
+  const idx = ZHI_LIST.indexOf(zhi);
+  return idx >= 0 ? TWELVE_GODS[idx] : '';
+}
 
 function toList(val) {
   if (!val) return [];
@@ -65,7 +74,7 @@ function zeriHtml(lunar, y, m, d) {
 
   const shengXiao = yearGz ? SHENG_XIAO[['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'].indexOf(yearGz[1])] || '' : '';
 
-const twelveGod = safeGet(() => lunar.getDayTwelveDayGod());
+const twelveGod = getDayTwelveGod(lunar);
 const isGoodDay = TWELVE_GOD_GOOD.includes(twelveGod);
 
 const jiShen = toList(safeGet(() => lunar.getDayJiShen()));
@@ -149,6 +158,7 @@ function doZeri() {
       zContent.innerHTML = '<p style="color:var(--text-light);padding:12px">无法获取该日黄历</p>';
     }
 
+    zeriSelectedDay = parseInt(dEl.value);
     renderMonthCalendar(y, m);
   } catch (e) {
     console.error('doZeri error:', e);
@@ -176,14 +186,15 @@ function renderMonthCalendar(year, month) {
       const lunar = solar2.getLunar();
       const yi = toList(safeGet(() => lunar.getDayYi()));
       const ji = toList(safeGet(() => lunar.getDayJi()));
-      const twelveGod = safeGet(() => lunar.getDayTwelveDayGod());
-      const isGood = TWELVE_GOD_GOOD.includes(twelveGod) || yi.length >= 3;
+      const twelveGod = getDayTwelveGod(lunar);
+      const isGood = TWELVE_GOD_GOOD.includes(twelveGod);
+      const isBad = TWELVE_GOD_BAD.includes(twelveGod);
       const dayName = lunar.getDayInChinese();
 
-      html += `<div class="zeri-cal-day ${isToday ? 'zeri-cal-today' : ''}" onclick="(function(){document.getElementById('zeriDay').value=${day};doZeri()})()">
+      html += `<div class="zeri-cal-day ${isToday ? 'zeri-cal-today' : ''} ${day === zeriSelectedDay ? 'zeri-cal-selected' : ''}" onclick="(function(){zeriSelectedDay=${day};document.getElementById('zeriDay').value=${day};doZeri()})()">
         <div class="zeri-cal-day-num">${day}</div>
-        <div class="zeri-cal-day-lunar ${isToday ? '' : ''}">${dayName}</div>
-        ${isGood ? '<div class="zeri-cal-good">吉</div>' : ''}
+        <div class="zeri-cal-day-lunar">${dayName}</div>
+        ${isGood ? '<div class="zeri-cal-good">吉</div>' : isBad ? '<div class="zeri-cal-bad">凶</div>' : ''}
       </div>`;
     } catch (e) {
       html += `<div class="zeri-cal-day"><div class="zeri-cal-day-num">${day}</div></div>`;
