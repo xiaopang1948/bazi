@@ -18,3 +18,4 @@
 ## 版本号管理
 
 - **每次 git commit 前必须更新版本号** — index.html 3 处（title、loading overlay、hero title）从 Vx.y 升到下一版，同时在 memory/progress.md 顶部同步
+- **版本号同步时同时更新 `js/data/version-history.js`** — 新增当前版本的 entry（version/label/date/tag/items），按倒序插入到数组最前面

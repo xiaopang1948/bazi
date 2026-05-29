@@ -1341,4 +1341,32 @@ body.dark-mode .tp-item-active { background: rgba(255,255,255,0.06); outline-col
 .zeri-cal-selected { outline: 2px solid var(--cinnabar); outline-offset: -2px; border-radius: 6px; }
 .zeri-cal-today.zeri-cal-selected { outline: 2px solid #fff; outline-offset: -2px; }
 
+/* ===== 设置 ===== */
+.checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); cursor: pointer; }
+.checkbox-label input { width: 16px; height: 16px; cursor: pointer; }
+
+/* ===== 版本更新历史 ===== */
+#versionHistoryCard h3 { margin-bottom: var(--space-md); }
+.vh-version { margin-bottom: 16px; }
+.vh-version:last-child { margin-bottom: 0; }
+.vh-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.vh-tag { font-size: 10px; padding: 1px 8px; border-radius: 8px; font-weight: 600; letter-spacing: 0.5px; }
+.vh-tag-feat { background: #e8f5e9; color: #2e7d32; }
+.vh-tag-fix { background: #fff3e0; color: #e65100; }
+.vh-tag-ui { background: #e3f2fd; color: #1565c0; }
+.vh-tag-refactor { background: #f3e5f5; color: #7b1fa2; }
+.vh-version-label { font-size: 15px; font-weight: 700; color: var(--cinnabar); }
+.vh-label { font-size: 12px; color: var(--ink-light); }
+.vh-date { font-size: 11px; color: var(--ink-muted); }
+.vh-items { list-style: none; padding: 0; margin: 0; }
+.vh-items li { padding: 3px 0 3px 16px; position: relative; font-size: 13px; color: var(--ink-light); line-height: 1.6; }
+.vh-items li::before { content: '▸'; position: absolute; left: 0; color: var(--gold); }
+
+body.dark-mode .vh-tag-feat { background: rgba(46,125,50,0.2); color: #81c784; }
+body.dark-mode .vh-tag-fix { background: rgba(230,81,0,0.2); color: #ff8a65; }
+body.dark-mode .vh-tag-ui { background: rgba(21,101,192,0.2); color: #64b5f6; }
+body.dark-mode .vh-tag-refactor { background: rgba(123,31,162,0.2); color: #ce93d8; }
+body.dark-mode .vh-label { color: var(--ink-muted); }
+body.dark-mode .vh-items li { color: var(--ink-muted); }
+
 
