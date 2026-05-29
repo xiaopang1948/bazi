@@ -7,13 +7,14 @@
 | 仓库 | https://github.com/xiaopang1948/bazi |
 | 在线地址 | https://xiaopang1948.github.io/bazi/ |
 | 部署方式 | GitHub Pages（master 分支 / 根目录） |
-| 部署日期 | 2026-05-15 |
+| 部署日期 | 2026-05-28 (V2.0) |
+| 项目位置 | E:\bazi（从桌面移入） |
 
 ## 部署命令
 
 ```powershell
 # 创建仓库并推送
-cd C:\Users\bl\Desktop\bazi
+cd E:\bazi
 gh repo create bazi --public --push --source=. --remote=origin
 
 # 启用 GitHub Pages（用 API）

@@ -1,21 +1,24 @@
 # 项目进度
 
-## 当前版本 v3.2 (component-refactor)
-上次工作: 2026-05-25
+## 当前版本 V2.0
+上次工作: 2026-05-29
 
-### v3.2 组件重构 + v3.5 新功能 (2026-05-25)
-- **重构**: app.js 从 4500 行瘦身至 177 行（纯初始化入口），所有渲染逻辑拆分为 8 个独立组件文件
-- **组件拆分**: patterns.js / dayun.js / timeline.js / hepan.js / zeri.js / celebrity.js / history.js / wuyun.js
-- **CDN fallback**: lunar-javascript CDN 加载失败自动 fallback 到 cdnjs
-- **合盘city**: 增加 disabled 默认提示选项 "— 请选择城市 —"
-- **名人库**: alert() 改为 inline error div，4秒自动消失
-- **流年缓存**: _liuNianCache (Map) 避免重复计算，keyed by birthYear+name，新排盘时清空
-- **compactInfo**: doCalc 中增加 `display:grid` 确保显示
+### V2.0 (2026-05-29)
+- **运势5段文案唯一性**: 三合一方案（时段副词前缀 + 5变体轮选 + 藏干支附加句），彻底消除同人同日刷新文案重复
+- **DIM_SS_TEXT扩展**: 100条→500条（每十神good/bad各5变体），配合seed散列让不同人看到不同变体
+- **calcPersonSeed**: 用`(year*3 + month*7 + day*11 + hour*19) % 5`做个性散列，同人同天结果不变，换人则不同
+- **20人自动化测试验证**: 流日/大运100%唯一，流月/流年唯一率从45%提升至85%
+- **新常量体系**: PERIOD_ADVERB(5时段副词), PERIOD_IDX(时段索引), HIDDEN_SS_NOTE(10十神藏干短评)
+- **git push**: 已推送至 GitHub
 
-### v3.5 新功能
-- **袁天罡称骨**: 60甲子+月+日+时全套权重表 + 51首判词，排盘结果首张卡片展示
-- **日运评分 + 周趋势图**: Canvas 折线图，基于干支生克合冲计算每日0-100评分，支持上周/下周切换
-- **人生K线图**: 基于大运的 Canvas 蜡烛图，每步大运一个蜡烛（含最高/最低/开盘/收盘运势），颜色区分吉凶
+### V2.0 (2026-05-28)
+- **运势维度窜修复**: buildAdvice 全局内容仅 dim==='overall' 时显示，消除"收缩战线"等不相关文案
+- **死代码清理**: 删除6个未引用函数(struct+5func)，yunshi.js 从677行减至529行
+- **合盘bug修复**: 甲方缺 hp1Name 输入框，readHpInput 静默崩溃；补上 + ?. 可选链防御
+- **版本号**: 内测版 V1.0 → V2.0 (index.html 3处)
+- **git push**: commit c34ed8a → origin/master
+- **迁移**: 项目从桌面移至 E:\bazi
+- **GitHub Pages**: 自动部署，访问 https://xiaopang1948.github.io/bazi/
 
 ### 已知未完成
 - v4: AI解读 / 紫微斗数 / 云端存储（需后端，暂缓）
