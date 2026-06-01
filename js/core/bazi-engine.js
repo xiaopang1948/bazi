@@ -461,7 +461,6 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
 
   const HOUR_BRANCH = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
   const hourBranch = HOUR_BRANCH[Math.floor((calcHour + 1) / 2) % 12]
-  const lunarDate = `${lunar.getYearInChinese()}年${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}日 ${hourBranch}时`
 
   // 年柱
   const yGZ = bazi[0];
@@ -473,15 +472,28 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
   const mStem = mGZ.charAt(0);
   const mBranch = mGZ.charAt(1);
 
-  // 日柱
-  const dGZ = bazi[2];
+  // 日柱：夜子时（23:00-23:59）进到次日，匹配问真
+  const isNightZiShi = calcHour >= 23;
+  let dGZ, lunarRef;
+  if (isNightZiShi) {
+    const dt = new Date(year, month - 1, day);
+    dt.setDate(dt.getDate() + 1);
+    const solarRef = Solar.fromYmdHms(dt.getFullYear(), dt.getMonth() + 1, dt.getDate(), 12, 0, 0);
+    lunarRef = solarRef.getLunar();
+    dGZ = lunarRef.getDayInGanZhi();
+  } else {
+    lunarRef = lunar;
+    dGZ = bazi[2];
+  }
   const dStem = dGZ.charAt(0);
   const dBranch = dGZ.charAt(1);
 
-  // 时柱
+  // 时柱：库已正确实现早晚子时
   const hGZ = bazi[3];
   const hStem = hGZ.charAt(0);
   const hBranch = hGZ.charAt(1);
+
+  const lunarDate = `${lunarRef.getYearInChinese()}年${lunarRef.getMonthInChinese()}月${lunarRef.getDayInChinese()}日 ${hourBranch}时`
 
   const pillars = {
     year: { stem: yStem, branch: yBranch },
