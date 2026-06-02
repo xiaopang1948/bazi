@@ -1,0 +1,14 @@
+<script src="js/lib/lunar.min.js"></script>
+<script>
+const days = [];
+for (let d = 1; d <= 31; d++) {
+  try {
+    const s = Solar.fromYmd(2026, 5, d);
+    const l = s.getLunar();
+    days.push({d, god: l.getDayTwelveDayGod()});
+  } catch(e) {}
+}
+document.body.innerHTML = '<pre>' + JSON.stringify(days, null, 2) + '</pre>' +
+  '<hr>GOOD: ' + JSON.stringify(['青龙','明堂','金匮','天德','玉堂','司命']) +
+  '<hr>BAD: ' + JSON.stringify(['天刑','朱雀','白虎','天牢','玄武','勾陈']);
+</script>

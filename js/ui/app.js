@@ -52,13 +52,17 @@ function updateDays() {
 function initCitySelector() {
   const provinces = Object.keys(PROVINCE_CITIES);
   const provSel = document.getElementById('province');
-  provSel.innerHTML = provinces.map(p => `<option value="${p}">${p}</option>`).join('');
+  provSel.innerHTML = '<option value="">请选择省份</option>' + provinces.map(p => `<option value="${p}">${p}</option>`).join('');
 
   function updateCities() {
     const selProv = provSel.value;
-    const cityKeys = PROVINCE_CITIES[selProv] || [];
     const citySel = document.getElementById('city');
-    citySel.innerHTML = cityKeys.map(k => `<option value="${k}">${CITIES[k].name}</option>`).join('');
+    if (!selProv) {
+      citySel.innerHTML = '<option value="">请选择城市</option>';
+      return;
+    }
+    const cityKeys = PROVINCE_CITIES[selProv] || [];
+    citySel.innerHTML = '<option value="">请选择城市</option>' + cityKeys.map(k => `<option value="${k}">${CITIES[k].name}</option>`).join('');
   }
 
   provSel.addEventListener('change', updateCities);
@@ -127,6 +131,21 @@ function backToInput() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Hero ↔ App transitions
+function enterApp() {
+  localStorage.setItem('bazi_visited', '1')
+  gsap.to('#heroSection', { opacity: 0, duration: 0.35, ease: 'power2.in',
+    onComplete: () => document.documentElement.classList.add('visited')
+  })
+  gsap.fromTo('#app', { opacity: 0, display: 'block' }, { opacity: 1, duration: 0.35, ease: 'power2.out' })
+}
+function showHero() {
+  localStorage.removeItem('bazi_visited')
+  document.documentElement.classList.remove('visited')
+  gsap.fromTo('#heroSection', { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' })
+  gsap.to('#app', { opacity: 0, duration: 0.3, ease: 'power2.in' })
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const overlay = document.getElementById('loadingOverlay');
   if (overlay) { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 300); }
@@ -140,16 +159,21 @@ document.addEventListener('DOMContentLoaded', function() {
   initCitySelector();
   initTimeSelectors();
 
-  document.querySelectorAll('.tab').forEach(el => {
-    el.addEventListener('click', () => BaziRouter.go(el.dataset.tab))
-  })
-  BaziRouter.init(['bazi','yunshi','zeri','hepan','celebrities','history','settings'])
+  BaziRouter.init(['bazi','yunshi','zeri','hepan','history','settings'])
   const origGo = BaziRouter.go
   BaziRouter.go = function(tab, pushState) {
     origGo.call(this, tab, pushState)
     if (tab === 'yunshi') setTimeout(renderYunshi, 100)
+    if (tab === 'bazi' && !window._baziKeepResult) setTimeout(backToInput, 50)
+    if (tab === 'hepan' && typeof backToHepanInput === 'function') setTimeout(backToHepanInput, 50)
+    window._baziKeepResult = false
   }
   if (location.hash === '#yunshi') setTimeout(renderYunshi, 150)
+
+  document.getElementById('btnExplore').addEventListener('click', enterApp);
+  document.getElementById('logoArea').addEventListener('click', function() {
+    if (document.documentElement.classList.contains('visited')) showHero()
+  })
 
   document.getElementById('btnCalc').addEventListener('click', doCalc);
   document.getElementById('btnBack').addEventListener('click', backToInput);
@@ -163,33 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   })
 
-  document.getElementById('darkMode').addEventListener('change', function() {
-    document.body.classList.toggle('dark-mode', this.checked);
-  });
-
   const copyBtn = document.getElementById('btnCopyReport');
   if (copyBtn) copyBtn.addEventListener('click', copyReport);
-
-  document.getElementById('btnExport').addEventListener('click', function() {
-    window.print();
-  });
-
-  document.getElementById('btnToday').addEventListener('click', function() {
-    if (!lastResult) return
-    const now = new Date()
-    const y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate()
-    const h = now.getHours(), min = now.getMinutes()
-    const name = document.getElementById('name').value
-    const gender = getGender()
-    const useSolarTime = document.getElementById('useSolarTime').checked
-    const citySelect = document.getElementById('city')
-    const cityKey = citySelect.value || 'beijing'
-    const result = calcBaZi(y, m, d, h, min, gender, cityKey, useSolarTime, name)
-    lastResult = result
-    renderMainTable(result)
-    renderQiYun(result)
-    renderTimePanel(result)
-  });
 
   const now = new Date();
   document.getElementById('year').value = now.getFullYear();

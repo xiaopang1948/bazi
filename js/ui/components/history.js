@@ -47,9 +47,8 @@ function loadHistory(index) {
   document.getElementById('minute').value = mi;
   setGender(h.gender);
 
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.tab[data-tab="bazi"]').classList.add('active');
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  window._baziKeepResult = true;
+  BaziRouter.go('bazi');
   document.getElementById('tab-bazi').classList.add('active');
 
   doCalc();

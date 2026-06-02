@@ -20,9 +20,6 @@ const BaziRouter = {
     if (!this._tabs.includes(tab)) return
     this._current = tab
 
-    document.querySelectorAll('.tab').forEach(el => {
-      el.classList.toggle('active', el.dataset.tab === tab)
-    })
     document.querySelectorAll('.tab-content').forEach(el => {
       el.classList.toggle('active', el.id === 'tab-' + tab)
     })

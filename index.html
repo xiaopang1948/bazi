@@ -2,119 +2,127 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="专业八字排盘工具 - 支持四柱十神、大运流年、合盘择日、五运六气、名人库等功能，纯前端离线可用">
-  <meta name="theme-color" content="#b8860b">
+  <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>八字排盘 · 内测版 V2.3</title>
+  <title>卦卦 · 八字排盘</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☯</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/bazi.css">
+  <script>if (localStorage.bazi_visited) document.documentElement.classList.add('visited')</script>
 </head>
 <body>
-  <div id="loadingOverlay" style="position:fixed;inset:0;background:#f5f0eb;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;transition:opacity 0.3s">
-    <div style="font-size:28px;color:#b8860b;font-weight:800">八字排盘 <span style="font-size:12px;font-weight:400;color:#999;vertical-align:middle">内测版 V2.3</span></div>
-    <div style="font-size:13px;color:#8a8580">加载中...</div>
-  </div>
-  <div id="app">
-    <!-- 侧边栏导航 -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">☯</div>
-      <nav class="sidebar-nav">
-        <button class="tab active" data-tab="bazi">排盘</button>
-        <button class="tab" data-tab="yunshi">运势分析</button>
-        <button class="tab" data-tab="zeri">择日</button>
-        <button class="tab" data-tab="hepan">合盘</button>
-        <button class="tab" data-tab="celebrities">名人</button>
-        <button class="tab" data-tab="history">历史</button>
-        <button class="tab" data-tab="settings">设置</button>
-      </nav>
-      <div class="sidebar-footer">
-        <span>基于 lunar-javascript 引擎</span>
-        <span>数据仅供娱乐参考</span>
-      </div>
-    </aside>
+  <canvas id="bg-rain"></canvas>
 
+  <div id="loadingOverlay" style="position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;transition:opacity 0.3s">
+    <div style="display:flex;align-items:center;gap:8px"><img src="logo.png" alt="卦卦" style="height:24px;width:auto"><div style="font-size:28px;color:#00E676;font-weight:800">卦卦 <span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.7);vertical-align:middle">v2.4 内测版</span></div></div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.25)">加载中...</div>
+  </div>
+
+  <!-- ===== Top bar ===== -->
+  <div class="top-bar">
+    <div class="logo" id="logoArea">
+      <img src="logo.png" alt="卦卦" style="height:20px;width:auto;margin-right:6px">
+      <span style="font-size:16px;font-weight:700;color:#fff;letter-spacing:0.04em;">卦卦</span>
+      <span style="font-size:11px;color:rgba(255,255,255,0.7);margin-left:4px;font-weight:400;">v2.4 内测版</span>
+    </div>
+    <button class="menu-btn" id="menuBtn">⠿ 菜单</button>
+    <div class="menu-overlay" id="menuOverlay">
+    <a href="#" data-tab="bazi" style="color:var(--green);">排盘</a>
+    <a href="#" data-tab="yunshi">运势分析</a>
+    <a href="#" data-tab="zeri">择日</a>
+    <a href="#" data-tab="hepan">合盘</a>
+    <a href="#" data-tab="history">排盘历史</a>
+    <a href="#" data-tab="settings">成长记</a>
+    </div>
+  </div>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="heroSection">
+    <svg class="hero-taiji" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="48" fill="#fff" stroke="#fff" stroke-width="1"/>
+      <path d="M50,2 a24,24 0 0,1 0,48 a24,24 0 0,0 0,48 a48,48 0 0,1 0,-96z" fill="#000" stroke="#fff" stroke-width="0.5"/>
+      <circle cx="50" cy="26" r="8" fill="#fff"/>
+      <circle cx="50" cy="74" r="8" fill="#000"/>
+    </svg>
+    <h1>知命 · 顺势 · 择机</h1>
+    <button class="btn-primary" id="btnExplore">开始探索</button>
+  </section>
+
+  <div id="app">
     <main class="app-main">
       <!-- ========== 排盘 TAB ========== -->
       <section class="tab-content active" id="tab-bazi">
         <!-- 输入视图 -->
         <div id="inputView">
-          <!-- 首页英雄区 -->
-          <div class="home-hero">
-            <div class="home-hero-bg"></div>
-            <div class="home-hero-icon">☯</div>
-            <h2 class="home-hero-title">八字排盘 <span class="version-tag">内测版 V2.3</span></h2>
-            <p class="home-hero-subtitle">知命而行，顺势而为</p>
-          </div>
-          <!-- 输入区 -->
-          <div class="input-card">
-            <div class="input-row-5">
-              <span class="input-label">姓名</span>
-              <div class="input-right">
-                <input type="text" id="name" placeholder="请输入姓名" maxlength="10" class="name-input">
+          <div class="demo-card">
+            <div class="form-row-top">
+              <div class="form-row-top-left">
+                <span class="form-label-inline"><span>姓</span><span>名</span></span>
+                <input class="form-input" type="text" id="name" placeholder="请输入姓名" maxlength="10">
               </div>
-            </div>
-            <div class="input-row-5">
-              <div class="input-left">
+              <div class="form-row-top-right">
                 <div class="pill-group" id="genderGroup">
                   <button class="pill active" data-value="male">男</button>
                   <button class="pill" data-value="female">女</button>
                 </div>
-              </div>
-              <div class="input-right">
                 <div class="pill-group" id="calendarGroup">
                   <button class="pill active" data-value="solar">公历</button>
                   <button class="pill" data-value="lunar">农历</button>
                 </div>
               </div>
             </div>
-            <div class="input-row-5">
-              <span class="input-label">出生时间</span>
-              <div class="input-right">
+            <div class="form-row">
+              <div class="form-label">出生时间</div>
+              <div class="form-field">
                 <div class="date-group">
                   <select id="year"></select><span>年</span>
                   <select id="month"></select><span>月</span>
                   <select id="day"></select><span>日</span>
                   <select id="hour"></select><span>时</span>
                   <select id="minute"></select><span>分</span>
-                  <label class="solar-toggle">
-                    <input type="checkbox" id="useSolarTime" checked> 真太阳时
-                  </label>
                 </div>
               </div>
             </div>
-            <div class="input-row-5">
-              <span class="input-label">出生地区</span>
-              <div class="input-right">
-                <select id="province"></select>
-                <select id="city"></select>
+            <div class="form-row">
+              <div class="form-label">出生地区</div>
+              <div class="form-field">
+                <div class="location-row">
+                  <select id="province"></select>
+                  <select id="city"></select>
+                </div>
               </div>
             </div>
-            <div class="input-row-5 btn-row">
-              <button class="btn-primary" id="btnCalc">开始排盘</button>
+            <div class="form-row">
+              <div class="form-label">真太阳时</div>
+              <div class="form-field">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="useSolarTime" checked>
+                  <span class="toggle-track">
+                    <span class="toggle-thumb"></span>
+                  </span>
+                  <span class="toggle-state">启用</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-row form-row-btn">
+              <button class="btn btn-primary" id="btnCalc">开始排盘</button>
             </div>
           </div>
         </div>
 
-        <!-- 结果区 -->
+        <!-- 结果区（保持原样） -->
         <div id="result" class="result-area" style="display:none">
-
-          <!-- 结果顶部导航 -->
           <div class="result-topbar">
             <button class="btn-back" id="btnBack">← 重新排盘</button>
           </div>
-
-          <!-- 一级：基础信息 + 四柱 -->
           <div class="info-bar" id="infoBar"></div>
-
           <div class="pillars-card">
             <div class="mg-grid" id="pillarsGrid"></div>
           </div>
-
-          <!-- 起运/交运 -->
           <div class="card" id="qiyunCard" style="display:none">
             <div class="qiyun-body">
               <div class="qiyun-left">
@@ -129,12 +137,9 @@
               </div>
               <div class="qiyun-right">
                 <div class="qiyun-age" id="qiyunAge"></div>
-                <button class="qiyun-today" id="btnToday">今</button>
               </div>
             </div>
           </div>
-
-          <!-- 大运/流年/流月/流日/流时 -->
           <div class="card time-panel-card" id="timePanelCard" style="display:none">
             <div class="time-panel" id="timePanel">
               <div class="tp-row" data-level="dayun">
@@ -159,8 +164,6 @@
               </div>
             </div>
           </div>
-
-          <!-- 并行：五行统计 | 格局分析 · 古籍引证 | 袁天罡称骨 -->
           <div class="analysis-grid">
             <div class="card" id="wuxingCard">
               <h3>五行统计</h3>
@@ -179,13 +182,10 @@
               <div id="guKuContent"></div>
             </div>
           </div>
-
-          <!-- 四柱图示 · 干支流通 -->
           <div class="card" id="diagramCard" style="display:none">
             <h3>四柱图示 · 干支流通</h3>
             <div style="overflow-x:auto"><canvas id="pillarDiagram" style="display:block;width:100%"></canvas></div>
           </div>
-
         </div>
       </section>
 
@@ -209,24 +209,21 @@
             <button class="ys-btn" data-dim="wealth">财运</button>
           </div>
         </div>
-
         <div class="card">
           <h3>运势K线图</h3>
           <div id="yunshiKLineContent" style="overflow-x:auto"></div>
         </div>
-
         <div class="card" id="yunshiReportCard" style="display:none">
           <h3>运势报告</h3>
           <div id="yunshiReportContent"></div>
         </div>
-
         <div class="card" id="yunshiAdviceCard" style="display:none">
           <h3>每日宜忌</h3>
           <div id="yunshiAdviceContent"></div>
         </div>
       </section>
 
-      <!-- ========== 合盘 TAB ========== -->
+      <!-- ========== 择日 TAB ========== -->
       <section class="tab-content" id="tab-zeri">
         <div class="input-card">
           <div class="input-row">
@@ -256,22 +253,23 @@
         </div>
       </section>
 
+      <!-- ========== 合盘 TAB ========== -->
       <section class="tab-content" id="tab-hepan">
-        <div class="input-card">
-          <div class="input-row">
-            <div class="input-group">
-              <label>输入对方信息</label>
-            </div>
-          </div>
+        <div class="input-card" style="padding:var(--space-md)">
+          <h3 style="font-family:var(--font-serif);font-size:18px;color:#fff;margin-bottom:4px">合盘分析</h3>
+          <p style="font-size:13px;color:var(--white-dim);margin-bottom:var(--space-md)">输入双方信息，查看八字合盘评分</p>
+          <div class="hepan-grid">
+            <div class="card hepan-person">
+              <h4>甲方</h4>
               <div class="input-group">
                 <label>姓名</label>
                 <input type="text" id="hp1Name" placeholder="选填" maxlength="10">
               </div>
               <div class="input-group">
                 <label>性别</label>
-                <div class="radio-group">
-                  <label><input type="radio" name="hp1Gender" value="male" checked> 男</label>
-                  <label><input type="radio" name="hp1Gender" value="female"> 女</label>
+                <div class="pill-group" id="hp1Gender">
+                  <button class="pill active" data-value="male">男</button>
+                  <button class="pill" data-value="female">女</button>
                 </div>
               </div>
               <div class="input-group">
@@ -294,18 +292,17 @@
                 <select id="hp1City"></select>
               </div>
             </div>
-            <!-- 乙方 -->
-            <div style="border:1px solid var(--border);border-radius:8px;padding:12px">
-              <h4 style="margin-bottom:8px;color:var(--text)">乙方</h4>
+            <div class="card hepan-person">
+              <h4>乙方</h4>
               <div class="input-group">
                 <label>姓名</label>
                 <input type="text" id="hp2Name" placeholder="选填" maxlength="10">
               </div>
               <div class="input-group">
                 <label>性别</label>
-                <div class="radio-group">
-                  <label><input type="radio" name="hp2Gender" value="male"> 男</label>
-                  <label><input type="radio" name="hp2Gender" value="female" checked> 女</label>
+                <div class="pill-group" id="hp2Gender">
+                  <button class="pill" data-value="male">男</button>
+                  <button class="pill active" data-value="female">女</button>
                 </div>
               </div>
               <div class="input-group">
@@ -328,58 +325,33 @@
                 <select id="hp2City"></select>
               </div>
             </div>
-          <div class="input-row actions" style="margin-top:12px">
-            <button class="btn-primary" id="btnHarmony">开始合盘</button>
-            <label class="checkbox-label">
-              <input type="checkbox" id="hpUseSolar" checked> 真太阳时校正
-            </label>
+          </div>
+          <div style="display:flex;justify-content:center;margin-top:var(--space-md)">
+            <button class="btn btn-primary" id="btnHarmony">开始合盘</button>
           </div>
 
-        <!-- 合盘结果 -->
+        </div>
         <div id="harmonyResult" style="display:none">
-          <div class="card" id="harmonyScoreCard">
-            <h3>合盘评分</h3>
-            <div id="harmonyScoreDisplay" style="text-align:center;padding:10px"></div>
+          <div style="display:flex;align-items:center;margin-bottom:var(--space-md)">
+            <button class="btn-back" id="btnHarmonyBack">← 重新输入</button>
+          </div>
+          <div class="card" id="harmonyScoreCard" style="text-align:center">
+            <h3 style="font-family:var(--font-serif);font-size:18px;color:#fff;margin-bottom:var(--space-md)">合盘评分</h3>
+            <div id="harmonyScoreDisplay" style="padding:10px"></div>
           </div>
           <div class="card" id="harmonyDetailsCard">
-            <h3>详细分析</h3>
+            <h3 style="font-family:var(--font-serif);font-size:18px;color:#fff;margin-bottom:var(--space-md)">详细分析</h3>
             <div id="harmonyDetails"></div>
           </div>
         </div>
       </section>
 
-      <!-- ========== 名人库 TAB ========== -->
-      <section class="tab-content" id="tab-celebrities">
-        <div class="input-card">
-          <div class="input-row">
-            <div class="input-group">
-              <label>搜索名人</label>
-              <input type="text" id="celebritySearch" placeholder="输入姓名...">
-            </div>
-            <div class="input-group">
-              <label>分类</label>
-              <select id="celebrityTag">
-                <option value="">全部</option>
-                <option value="帝王">帝王</option>
-                <option value="政治家">政治家</option>
-                <option value="企业家">企业家</option>
-                <option value="科学家">科学家</option>
-                <option value="演员">演员</option>
-                <option value="歌手">歌手</option>
-                <option value="导演">导演</option>
-                <option value="作家">作家</option>
-                <option value="运动员">运动员</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div id="celebrityList"></div>
-      </section>
 
       <!-- ========== 历史记录 TAB ========== -->
       <section class="tab-content" id="tab-history">
         <div class="placeholder">
           <h2>排盘历史</h2>
+
           <p id="historyEmpty">暂无记录</p>
           <div id="historyList"></div>
         </div>
@@ -387,25 +359,25 @@
 
       <!-- ========== 设置 TAB ========== -->
       <section class="tab-content" id="tab-settings">
-        <div class="card">
-          <h3>显示</h3>
-          <label class="checkbox-label">
-            <input type="checkbox" id="darkMode"> 暗黑模式
-          </label>
-        </div>
         <div class="card" id="versionHistoryCard">
-          <h3>版本更新历史</h3>
+          <h3>成长记</h3>
           <div id="versionHistoryList"></div>
         </div>
       </section>
     </main>
   </div>
 
-  <div style="position:fixed;bottom:20px;right:20px;z-index:1000">
-    <button class="btn-primary" id="btnExport" style="opacity:0.8;font-size:13px;padding:6px 16px">📄 导出PDF</button>
-  </div>
+  <div class="footer-bottom">© 2026 卦卦</div>
 
-  <!-- lunar 库（CDN） -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <script>
+  try {
+    gsap.to('.hero-taiji', { rotation: 360, duration: 20, repeat: -1, ease: 'none' })
+    gsap.to('.hero-taiji', { y: -3, duration: 2.5, repeat: -1, yoyo: true, ease: 'sine.inOut' })
+  } catch(e) {}
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.min.js"
     onerror="var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.7.7/lunar.min.js';document.head.appendChild(s)"></script>
   <script src="js/data/cities.js"></script>
@@ -414,7 +386,6 @@
   <script src="js/data/shi-er-chang-sheng.js"></script>
   <script src="js/data/ren-yuan-si-ling.js"></script>
   <script src="js/data/gu-ji-pi-pei.js"></script>
-  <script src="js/data/celebrities.js"></script>
   <script src="js/core/guku.js"></script>
   <script src="js/core/bazi-engine.js"></script>
   <script src="js/core/extra-pillars.js"></script>
@@ -427,11 +398,121 @@
   <script src="js/ui/components/timeline.js"></script>
   <script src="js/ui/components/hepan.js"></script>
   <script src="js/ui/components/zeri.js"></script>
-  <script src="js/ui/components/celebrity.js"></script>
   <script src="js/ui/components/history.js"></script>
   <script src="js/ui/components/daily-score.js"></script>
   <script src="js/ui/components/yunshi.js"></script>
   <script src="js/ui/settings.js"></script>
   <script src="js/ui/app.js"></script>
+
+  <!-- Menu dropdown toggle -->
+  <script>
+  const menuBtn = document.getElementById('menuBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+
+  function toggleMenu() {
+    menuOverlay.classList.toggle('open');
+  }
+  function closeMenu() { menuOverlay.classList.remove('open'); }
+
+  menuBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  menuOverlay.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      const tab = this.dataset.tab;
+      if (tab) {
+        closeMenu();
+        setTimeout(() => BaziRouter.go(tab), 100);
+      }
+    });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!menuOverlay.contains(e.target) && e.target !== menuBtn) closeMenu();
+  });
+  </script>
+
+  <!-- Background text rain -->
+  <script>
+  (function() {
+    const c = document.getElementById('bg-rain');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const terms = [
+      '紫微星','天机星','太阳星','武曲星','天同星','廉贞星','天府星','太阴星','贪狼星','巨门星','天相星','天梁星','七杀星','破军星',
+      '左辅星','右弼星','文昌星','文曲星','天魁星','天钺星','禄存星','擎羊星','陀罗星','火星','铃星','地空星','地劫星','天马星',
+      '化禄','化权','化科','化忌',
+      '命宫','兄弟宫','夫妻宫','子女宫','财帛宫','疾厄宫','迁移宫','交友宫','官禄宫','田宅宫','福德宫','父母宫',
+      '七杀朝斗','紫府同宫','武贪同行','日月并明','日月反背','杀破狼','机月同梁','阳梁昌禄','火贪格','铃贪格',
+      '正官','七杀','正印','偏印','正财','偏财','比肩','劫财','食神','伤官','偏官',
+      '正官格','七杀格','财格','印格','食神格','伤官格','从格','化气格','建禄格','月刃格',
+      '天乙贵人','文昌贵人','天德贵人','月德贵人','三奇贵人','福星贵人','天厨贵人','天官贵人','太极贵人','华盖星','桃花星','驿马星',
+      '天喜星','红鸾星','天赦','天医','天巫','天权','天印','天贵','天敕','天寿','天福',
+      '白虎','朱雀','勾陈','腾蛇','劫煞','灾煞','孤辰','寡宿','天罗地网',
+      '长生','沐浴','冠带','临官','帝旺','衰','病','死','墓','绝','胎','养',
+      '天干','地支','五行','阴阳','八卦','九宫','大运','流年','太岁','十神','六爻','奇门','遁甲',
+      '命理','神煞','八字','紫微','星曜','罗盘','推命师','子平术','紫微斗数','天干地支','五行生克',
+      '三元九运','五运六气','二十四山','三合派','飞星派','玄空','八宅',
+    ];
+    let drops = [];
+    let fs = 14;
+
+    function resize() {
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      fs = window.innerWidth < 600 ? 16 : 18;
+      const w = fs * 0.2;
+      const n = Math.floor(c.width / w);
+      drops = [];
+      for (let i = 0; i < n; i++) {
+        const depth = Math.random();
+        let sizeLv, spdMul, alphaMul;
+        if (depth < 0.80)      { sizeLv = 0.55; spdMul = 0.35; alphaMul = 0.45; }
+        else if (depth < 0.93) { sizeLv = 0.75; spdMul = 0.6;  alphaMul = 0.65; }
+        else if (depth < 0.98) { sizeLv = 1.0;  spdMul = 1.0;  alphaMul = 0.85; }
+        else                   { sizeLv = 1.3;  spdMul = 1.4;  alphaMul = 1.0; }
+        drops[i] = {
+          x: i * w + w * 0.3,
+          y: Math.random() * c.height,
+          spd: (0.07 + Math.random() * 0.15) * spdMul,
+          word: terms[Math.floor(Math.random() * terms.length)],
+          sizeLv, alphaMul,
+        };
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, c.width, c.height);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (let i = 0; i < drops.length; i++) {
+        const d = drops[i];
+        const fsize = Math.round(fs * d.sizeLv);
+        const a = (0.35 + Math.random() * 0.35) * d.alphaMul;
+        if (a <= 0.02) continue;
+        ctx.font = `bold ${fsize}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+        ctx.globalAlpha = a;
+        ctx.fillStyle = i % 3 === 0 ? '#ffffff' : '#00E676';
+        for (let k = 0; k < d.word.length; k++)
+          ctx.fillText(d.word[k], d.x, d.y + k * fsize * 1.0);
+        ctx.globalAlpha = 1;
+        d.y += d.spd;
+        if (d.y > c.height + d.word.length * fs * d.sizeLv) {
+          d.y = -fs * d.sizeLv * 3;
+          d.word = terms[Math.floor(Math.random() * terms.length)];
+          d.spd = (0.07 + Math.random() * 0.15) * (d.sizeLv > 1 ? d.sizeLv * 1.1 : d.sizeLv * 0.7);
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    draw();
+  })();
+  </script>
 </body>
 </html>

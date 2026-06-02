@@ -65,7 +65,7 @@ function initHepanSelectors() {
 
 function readHpInput(prefix) {
   const name = document.getElementById(prefix + 'Name')?.value || (prefix === 'hp1' ? '甲方' : '乙方');
-  const gender = document.querySelector(`input[name="${prefix}Gender"]:checked`).value;
+  const gender = document.querySelector(`#${prefix}Gender .pill.active`).dataset.value;
   const year = parseInt(document.getElementById(prefix + 'Year').value);
   const month = parseInt(document.getElementById(prefix + 'Month').value);
   const day = parseInt(document.getElementById(prefix + 'Day').value);
@@ -80,17 +80,18 @@ function doHarmony() {
   const hp2 = readHpInput('hp2');
 
   if (!hp1.city || !hp2.city) {
-    showError('请为双方选择出生城市（用于真太阳时校正）');
+    document.querySelector('#tab-hepan > .input-card').style.display = 'none';
     document.getElementById('harmonyResult').style.display = 'block';
-    document.getElementById('harmonyScoreDisplay').innerHTML = '<p style="color:var(--text-light);padding:20px">请选择城市后重试</p>';
+    document.getElementById('harmonyScoreDisplay').innerHTML = '<p style="color:#c62828;padding:20px">请为双方选择出生城市（用于真太阳时校正）</p>';
     return;
   }
 
-  const r1 = calcBaZi(hp1.year, hp1.month, hp1.day, hp1.hour, hp1.minute, hp1.gender, hp1.city, document.getElementById('hpUseSolar').checked, hp1.name);
-  const r2 = calcBaZi(hp2.year, hp2.month, hp2.day, hp2.hour, hp2.minute, hp2.gender, hp2.city, document.getElementById('hpUseSolar').checked, hp2.name);
+  const r1 = calcBaZi(hp1.year, hp1.month, hp1.day, hp1.hour, hp1.minute, hp1.gender, hp1.city, true, hp1.name);
+  const r2 = calcBaZi(hp2.year, hp2.month, hp2.day, hp2.hour, hp2.minute, hp2.gender, hp2.city, true, hp2.name);
 
   const harmony = calcHarmony(r1, r2);
 
+  document.querySelector('#tab-hepan > .input-card').style.display = 'none';
   document.getElementById('harmonyResult').style.display = 'block';
 
   const scoreDisplay = document.getElementById('harmonyScoreDisplay');
@@ -126,5 +127,12 @@ function doHarmony() {
   window.scrollTo({ top: document.getElementById('harmonyScoreCard').offsetTop - 80, behavior: 'smooth' });
 }
 
+function backToHepanInput() {
+  document.getElementById('harmonyResult').style.display = 'none';
+  document.querySelector('#tab-hepan > .input-card').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 document.getElementById('btnHarmony').addEventListener('click', doHarmony);
+document.getElementById('btnHarmonyBack').addEventListener('click', backToHepanInput);
 initHepanSelectors();
