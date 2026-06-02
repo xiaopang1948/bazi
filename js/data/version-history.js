@@ -1,5 +1,11 @@
 const VERSION_HISTORY = [
   {
+    version: 'V2.6', label: '内测版', date: '2026-06-02', tag: 'fix',
+    items: [
+      '流月节气拼音→中文映射 — 库返回DA_XUE等拼音，加JIE_QI_NAME_MAP转中文显示',
+    ],
+  },
+  {
     version: 'V2.5', label: '内测版', date: '2026-06-02', tag: 'fix',
     items: [
       '流月改为节气列 — 12列对应立春→惊蛰→…→小寒，端午显示甲午而非乙未',

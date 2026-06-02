@@ -12,7 +12,28 @@ const panelState = {
 
 const TP_WX = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' }
 
+const JIE_QI_NAME_MAP = {
+  'DA_XUE': '大雪', 'DONG_ZHI': '冬至',
+  'XIAO_HAN': '小寒', 'DA_HAN': '大寒',
+  'LI_CHUN': '立春', 'YU_SHUI': '雨水',
+  'JING_ZHE': '惊蛰', 'CHUN_FEN': '春分',
+  'QING_MING': '清明', 'GU_YU': '谷雨',
+  'LI_XIA': '立夏', 'XIAO_MAN': '小满',
+  'MANG_ZHONG': '芒种', 'XIA_ZHI': '夏至',
+  'XIAO_SHU': '小暑', 'DA_SHU': '大暑',
+  'LI_QIU': '立秋', 'CHU_SHU': '处暑',
+  'BAI_LU': '白露', 'QIU_FEN': '秋分',
+  'HAN_LU': '寒露', 'SHUANG_JIANG': '霜降',
+  'LI_DONG': '立冬', 'XIAO_XUE': '小雪'
+}
+
 /* ===== 节气期 ===== */
+function toZhName(name) {
+  const m = name.match(/\{jq\.(\w+)\}/)
+  if (m) return JIE_QI_NAME_MAP[m[1].toUpperCase()] || name
+  return JIE_QI_NAME_MAP[name] || name
+}
+
 function getJiePeriods(year) {
   try {
     const lunar = Solar.fromYmd(year, 6, 1).getLunar()
@@ -25,7 +46,7 @@ function getJiePeriods(year) {
       const start = jqTable[name]
       const end = i < 11 ? jqTable[jieNames[i + 1]] : nextJqTable[jieNames[0]]
       const ganzhi = start.getLunar().getMonthInGanZhi()
-      return { name, start, end, ganzhi }
+      return { name: toZhName(name), start, end, ganzhi }
     })
   } catch (e) {
     return []
