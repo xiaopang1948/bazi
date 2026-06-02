@@ -15,21 +15,17 @@ const TP_WX = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' }
 /* ===== 节气期 ===== */
 function getJiePeriods(year) {
   try {
-    const terms = LunarYear.fromYear(year).getJieQi()
-    const jieDates = terms.filter((_, i) => i % 2 === 0).map(jq => ({
-      name: jq.getName(),
-      solar: jq.getSolar(),
-    }))
-    const nextJieDates = LunarYear.fromYear(year + 1).getJieQi().filter((_, i) => i % 2 === 0)
-    return jieDates.map((jd, i) => {
-      const next = i < 11 ? jieDates[i + 1] : { solar: nextJieDates[0].getSolar() }
-      const lunar = jd.solar.getLunar()
-      return {
-        name: jd.name,
-        start: jd.solar,
-        end: next.solar,
-        ganzhi: lunar.getMonthInGanZhi(),
-      }
+    const lunar = Solar.fromYmd(year, 6, 1).getLunar()
+    const jqTable = lunar.getJieQiTable()
+    const jqList = lunar.getJieQiList()
+    const jieNames = jqList.filter((_, i) => i % 2 === 0)
+    const nextLunar = Solar.fromYmd(year + 1, 6, 1).getLunar()
+    const nextJqTable = nextLunar.getJieQiTable()
+    return jieNames.map((name, i) => {
+      const start = jqTable[name]
+      const end = i < 11 ? jqTable[jieNames[i + 1]] : nextJqTable[jieNames[0]]
+      const ganzhi = start.getLunar().getMonthInGanZhi()
+      return { name, start, end, ganzhi }
     })
   } catch (e) {
     return []
@@ -277,30 +273,30 @@ function renderTimePanel(result) {
   }
 
   const periods = getJiePeriods(ps.liunianYear)
-  if (periods.length === 0) {
-    document.querySelectorAll('[data-level="流月"],[data-level="流日"],[data-level="流时"]').forEach(el => el.style.display = 'none')
-    return
-  }
   const liuyueItems = buildLiuyueItems(result, periods)
   function getPeriodIdxByDate(date) {
     const ymd = Solar.fromDate(date).toYmd()
     return periods.findIndex(p => ymd >= p.start.toYmd() && ymd < p.end.toYmd())
   }
-  if (ps.liuyueIdx < 0 || ps.liuyueIdx >= periods.length) {
-    const idx = getPeriodIdxByDate(now)
-    ps.liuyueIdx = idx >= 0 ? idx : 0
+  if (periods.length > 0) {
+    if (ps.liuyueIdx < 0 || ps.liuyueIdx >= periods.length) {
+      const idx = getPeriodIdxByDate(now)
+      ps.liuyueIdx = idx >= 0 ? idx : 0
+    }
   }
 
-  const curPeriod = periods[ps.liuyueIdx] || periods[0]
-  const liuriItems = buildLiuriItems(result, curPeriod)
-  if (ps.liuriDay < 1 || ps.liuriDay > liuriItems.length) {
+  const curPeriod = periods.length > 0 ? (periods[ps.liuyueIdx] || periods[0]) : null
+  const liuriItems = curPeriod ? buildLiuriItems(result, curPeriod) : []
+  if (curPeriod && (ps.liuriDay < 1 || ps.liuriDay > liuriItems.length)) {
     const startDt = new Date(curPeriod.start.getYear(), curPeriod.start.getMonth() - 1, curPeriod.start.getDay())
     const nowDt = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const diff = Math.round((nowDt - startDt) / 86400000)
     ps.liuriDay = diff >= 0 && diff < liuriItems.length ? diff + 1 : 1
   }
 
-  const selDt = new Date(curPeriod.start.getYear(), curPeriod.start.getMonth() - 1, curPeriod.start.getDay() + ps.liuriDay - 1)
+  const selDt = curPeriod
+    ? new Date(curPeriod.start.getYear(), curPeriod.start.getMonth() - 1, curPeriod.start.getDay() + ps.liuriDay - 1)
+    : now
   const selSolar = Solar.fromDate(selDt)
   const liushiItems = buildLiushiItems(result, selSolar.getYear(), selSolar.getMonth(), selSolar.getDay())
 
