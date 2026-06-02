@@ -1255,6 +1255,8 @@ html:not(.visited) .menu-overlay { display: none; }
     .form-row-top-left { gap: 8px; }
     .form-row-top-left .form-input { width: 110px; font-size: 12px; padding: 6px 10px; }
     .form-row-top-right { gap: 10px; }
+    .form-row-top-right .pill { padding: 2px 4px; }
+    .form-row-top-right .pill-group + .pill-group { margin-left: 8px; }
     .input-card select, .input-card input[type="text"] { font-size: 12px; }
     .analysis-grid { grid-template-columns: 1fr; gap: var(--space-sm); }
     .info-bar { padding: 8px 10px; gap: 6px; flex-wrap: wrap; }
@@ -1322,6 +1324,8 @@ html:not(.visited) .menu-overlay { display: none; }
     .form-label-inline { font-size: 12px; }
     .form-row-top-left .form-input { width: 100px; font-size: 12px; padding: 5px 8px; }
     .form-row-top-right { gap: 8px; }
+    .form-row-top-right .pill { padding: 2px 3px; font-size: 9px; }
+    .form-row-top-right .pill-group + .pill-group { margin-left: 6px; }
     .form-row-btn .btn-primary { min-width: 0; width: 100%; padding: 12px 20px; }
     .mg-grid { grid-template-columns: 30px repeat(6, 1fr); }
     .mg-cell { padding: 1px 2px; font-size: 10px; min-height: 16px; }
@@ -1341,6 +1345,10 @@ html:not(.visited) .menu-overlay { display: none; }
 
   @media (max-width: 380px) {
     body { overflow-x: hidden; }
+    .form-row-top-right .pill { padding: 1px 2px; font-size: 8px; }
+    .form-row-top-right .pill-group + .pill-group { margin-left: 4px; }
+    .form-row-top-left .form-input { width: 80px; padding: 4px 6px; font-size: 11px; }
+    .form-label-inline { width: 80px; font-size: 11px; gap: 12px; padding-left: 6px; }
     .mg-grid { grid-template-columns: 26px repeat(6, 1fr); }
     .mg-cell { font-size: 9px; }
     .mg-row-stem .mg-cell:not(.mg-cell-label),
