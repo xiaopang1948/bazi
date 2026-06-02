@@ -2,3 +2,5 @@ node_modules/
 package.json
 package-lock.json
 .playwright-cli/
+bazi-v3-redesign/
+current-app.png

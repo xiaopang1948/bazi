@@ -578,8 +578,8 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
 
   // 流月/流日/流时（当年）
   const liuYue = calcLiuYue(pillars.day.stem, currentYear);
-  const liuRi = calcLiuRi(pillars.day.stem, currentYear, month, day);
-  const liuShi = calcLiuShi(pillars.day.stem, currentYear, month, day);
+  const liuRi = calcLiuRi(pillars.day.stem, currentYear, now.getMonth() + 1, now.getDate());
+  const liuShi = calcLiuShi(pillars.day.stem, currentYear, now.getMonth() + 1, now.getDate());
 
   // 大运
   const dayun = calcDaYun(pillars, gender, year, month, day, calcHour, calcMin);
@@ -835,8 +835,8 @@ function calcDaYun(pillars, gender, year, month, day, hour, minute) {
     if (jie) {
       const js = jie.getSolar();
       jieName = jie.getName();
-      const birthDt = new Date(year, month - 1, day, hour, minute);
-      const jieDt = new Date(js.getYear(), js.getMonth() - 1, js.getDay(), js.getHour(), js.getMinute());
+      const birthDt = Date.UTC(year, month - 1, day, hour, minute);
+      const jieDt = Date.UTC(js.getYear(), js.getMonth() - 1, js.getDay(), js.getHour(), js.getMinute());
       diffDays = Math.abs(jieDt - birthDt) / (1000 * 60 * 60 * 24);
       startAge = Math.round(diffDays / 3);
       if (startAge < 0) startAge = 0;
@@ -918,10 +918,11 @@ function calcLiuShi(dayStem, year, month, day) {
     const solar = Solar.fromYmdHms(year, month, day, h, 0, 0);
     const lunar = solar.getLunar();
     const hGZ = lunar.getBaZi()[3];
+    const displayHour = (i * 2 + 23) % 24;
     hours.push({
       index: i,
       label: hourLabels[i],
-      timeRange: `${String(h).padStart(2,'0')}:00-${String(h+2).padStart(2,'0')}:00`,
+      timeRange: `${String(displayHour).padStart(2,'0')}:00-${String((displayHour+2)%24).padStart(2,'0')}:00`,
       ganzhi: hGZ,
       stem: hGZ.charAt(0),
       branch: hGZ.charAt(1),

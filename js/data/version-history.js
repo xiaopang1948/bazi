@@ -1,5 +1,14 @@
 const VERSION_HISTORY = [
   {
+    version: 'V2.5', label: '内测版', date: '2026-06-02', tag: 'fix',
+    items: [
+      '流月改为节气列 — 12列对应立春→惊蛰→…→小寒，端午显示甲午而非乙未',
+      '流时时辰标签偏移修复 — 子时23-1/丑时1-3/…/亥时21-23正确显示',
+      '大运起运天数DST安全化 — Solar.fromDate().subtract()替代裸时间戳',
+      'nextDay(1)显式传参 + 空periods防御保护',
+    ],
+  },
+  {
     version: 'V2.4', label: '内测版', date: '2026-06-02', tag: 'ui',
     items: [
       '品牌统一为"卦卦" — 纯黑 + 霓虹绿 + 零圆角设计语言',

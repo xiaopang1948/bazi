@@ -46,9 +46,15 @@
 - [x] 手机端响应式布局（导航栏 flex-wrap、overflow-x 链式、字号/留白阶梯缩小、K线图自适应）
 - [x] 运势分析维度文案系统 — 方案三部署
 
-## 进行中
+### V2.5 (2026-06-02)
+- [x] 流月改为节气列 — timeline.js + getJiePeriods()，12 列对应 12 节
+- [x] 流时时辰标签偏移修复 — 子时 23-1，午时 11-13，标准化 SHI_CHEN 表
+- [x] 大运起运天数 DST 安全化 — Solar.fromDate().subtract() 替代裸时间戳
+- [x] nextDay(1) 显式传参 + 空 periods 防御保护
+- [x] 版本号 V2.4 → V2.5
+- [x] git push 到 GitHub
 
-- [~] （无）
+## 进行中
 
 ## 待办（未排序）
 
