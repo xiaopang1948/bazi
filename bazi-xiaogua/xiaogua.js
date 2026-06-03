@@ -4,8 +4,8 @@
 class XiaoGua {
   constructor(container, options = {}) {
     this.container = container;
-    this.apiKey = options.apiKey || 'sk-79c4d7abebdd4a2789c228a3f4c5ea99';
-    this.apiUrl = options.apiUrl || 'https://api.deepseek.com/chat/completions';
+    this.apiKey = options.apiKey || 'sk-N2ff6TRf6nocDG7wpPTuWoOULeEZm5wBpyQr3rVy1nbhWoOl';
+    this.apiUrl = options.apiUrl || 'https://apihub.agnes-ai.com/v1/chat/completions';
     this.baziData = null;
     this.messages = [];
     this.streaming = false;
@@ -538,7 +538,7 @@ class XiaoGua {
         'Authorization': 'Bearer ' + this.apiKey,
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'agnes-2.0-flash',
         messages: msgs,
         stream: true,
       }),
