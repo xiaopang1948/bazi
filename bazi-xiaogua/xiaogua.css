@@ -223,6 +223,4 @@
   .xg-msg { max-width: 92%; }
 }
 
-@media (max-width: 380px) {
-  .xg-trigger span { display: none; }
-}
+
