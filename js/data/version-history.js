@@ -1,5 +1,12 @@
 const VERSION_HISTORY = [
   {
+    version: 'V2.7', label: '内测版', date: '2026-06-03', tag: 'ui',
+    items: [
+      '版本号自动填充 — 左上角/loading/页面标题从version-history.js第一条自动读取',
+      'lessons.md 版本号规则更新 — 只需改 version-history.js，无需手动改 HTML',
+    ],
+  },
+  {
     version: 'V2.6', label: '内测版', date: '2026-06-02', tag: 'fix',
     items: [
       '流月节气拼音→中文映射 — 库返回DA_XUE等拼音，加JIE_QI_NAME_MAP转中文显示',
