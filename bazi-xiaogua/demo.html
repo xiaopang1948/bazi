@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>小卦 · AI 命理助手 Demo</title>
+<link rel="stylesheet" href="./xiaogua.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:#000;
+  color:rgba(255,255,255,0.85);
+  font-family:'Noto Serif SC','PingFang SC','Microsoft YaHei',serif;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.brand{
+  text-align:center;
+  user-select:none;
+}
+.brand svg{
+  width:80px;height:80px;
+  margin-bottom:20px;
+}
+.brand h1{
+  font-size:36px;font-weight:800;
+  color:#00E676;letter-spacing:0.1em;
+  margin-bottom:8px;
+}
+.brand p{
+  font-size:16px;
+  color:rgba(255,255,255,0.4);
+  letter-spacing:0.08em;
+}
+.brand .hint{
+  margin-top:32px;
+  font-size:14px;
+  color:rgba(255,255,255,0.2);
+}
+</style>
+</head>
+<body>
+
+<div class="brand" id="brandArea">
+  <svg viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="48" fill="none" stroke="#00E676" stroke-width="2"/>
+    <path d="M50,2a24,24 0 0,1 0,48a24,24 0 0,0 0,48a48,48 0 0,1 0-96z" fill="#00E676" opacity="0.3"/>
+    <circle cx="50" cy="26" r="8" fill="#00E676"/>
+    <circle cx="50" cy="74" r="8" fill="#000"/>
+  </svg>
+  <h1>卦卦</h1>
+  <p>AI 命理助手</p>
+  <div class="hint">点击右下角图标开始对话</div>
+</div>
+
+<div id="xgContainer"></div>
+
+<script src="./xiaogua.js"></script>
+<script>
+var xg = new XiaoGua(document.getElementById('xgContainer'));
+
+// Test data — matches 毕新忠 1990-05-15 14:30 男
+var STEMS = '甲乙丙丁戊己庚辛壬癸'.split('');
+var BRANCHES = '子丑寅卯辰巳午未申酉戌亥'.split('');
+
+function buildTestData() {
+  var now = new Date();
+  var months = [];
+  for (var m = 1; m <= 12; m++) {
+    var gz = ['庚寅','辛卯','壬辰','癸巳','甲午','乙未','丙申','丁酉','戊戌','己亥','庚子','辛丑'][m - 1];
+    months.push({ month: m, ganzhi: gz, stem: gz[0], branch: gz[1], shishen: '偏印' });
+  }
+  var daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  var days = [];
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dg = STEMS[(d + 3) % 10] + BRANCHES[(d + 5) % 12];
+    days.push({ day: d, ganzhi: dg, stem: dg[0], branch: dg[1], shishen: '正财' });
+  }
+  var hours = [];
+  var hourLabels = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  for (var i = 0; i < 12; i++) {
+    var hg = STEMS[(i * 2 + 4) % 10] + BRANCHES[i];
+    hours.push({ index: i, label: hourLabels[i], ganzhi: hg, stem: hg[0], branch: hg[1], shishen: '食神' });
+  }
+  return {
+    input: { year: 1990, month: 5, day: 15, hour: 14, minute: 30, gender: 'male', name: '毕新忠' },
+    lunarDate: '庚午年四月廿一 未时',
+    pillars: {
+      year: { ganzhi: '庚午', stem: '庚', branch: '午' },
+      month: { ganzhi: '辛巳', stem: '辛', branch: '巳' },
+      day: { ganzhi: '甲申', stem: '甲', branch: '申' },
+      hour: { ganzhi: '辛未', stem: '辛', branch: '未' }
+    },
+    details: { day: { stem: '甲', stemWuxing: '木' } },
+    geJu: { name: '正官格' },
+    pattern: { isStrong: '身强', yongShen: '金', jiShen: '木' },
+    dayun: {
+      direction: '逆排',
+      periods: [
+        { ageRange: '12-21', ganzhi: '庚辰', shishen: '七杀' },
+        { ageRange: '22-31', ganzhi: '己卯', shishen: '正财' },
+        { ageRange: '32-41', ganzhi: '戊寅', shishen: '偏财' },
+        { ageRange: '42-51', ganzhi: '丁丑', shishen: '伤官' }
+      ]
+    },
+    liuNian: { year: now.getFullYear(), stem: '丙', branch: '午', ganzhi: '丙午', shishenTianGan: '食神', shishenDiZhi: '伤官' },
+    liuYue: months,
+    liuRi: days,
+    liuShi: hours
+  };
+}
+
+var TEST_DATA = buildTestData();
+
+// Auto-load test data (or from localStorage for main app bridge)
+try {
+  var saved = localStorage.getItem('bazi_current');
+  var data = saved ? JSON.parse(saved) : TEST_DATA;
+  if (data && data.input) xg.setBaziData(data);
+} catch(e) {
+  xg.setBaziData(TEST_DATA);
+}
+
+window.xg = xg;
+window.TEST_DATA = TEST_DATA;
+</script>
+</body>
+</html>

@@ -1,5 +1,14 @@
 const VERSION_HISTORY = [
   {
+    version: 'V2.8', label: '内测版', date: '2026-06-03', tag: 'feat',
+    items: [
+      'AI 小卦助手集成 — 右下角浮动触发，八字数据实时推送至状态栏+System Prompt',
+      '拖拽边界约束 — 不可拖出视口，顶部 60px 安全区避开太极图',
+      '手机端响应式增强 — touch-action、间距收缩、≤380px 隐藏文字',
+      '修复八字显示 bug — pillars.ganzhi → stem+branch 拼接',
+    ],
+  },
+  {
     version: 'V2.7', label: '内测版', date: '2026-06-03', tag: 'ui',
     items: [
       '版本号自动填充 — 左上角/loading/页面标题从version-history.js第一条自动读取',

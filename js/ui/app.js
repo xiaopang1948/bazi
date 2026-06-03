@@ -114,6 +114,7 @@ function doCalc() {
   renderTimePanel(result);
 
   lastResult = result;
+  if (window.xg) xg.setBaziData(lastResult);
   timeSelectedDay = new Date().getDate();
   saveHistory(name, result);
   } catch(e) {
@@ -195,6 +196,11 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('month').value = now.getMonth() + 1;
   updateDays();
   document.getElementById('day').value = now.getDate();
+
+  var xgContainer = document.getElementById('xgContainer');
+  if (xgContainer && typeof XiaoGua !== 'undefined') {
+    window.xg = new XiaoGua(xgContainer);
+  }
 });
 
 function copyReport() {

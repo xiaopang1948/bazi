@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/bazi.css">
+  <link rel="stylesheet" href="bazi-xiaogua/xiaogua.css">
   <script>if (localStorage.bazi_visited) document.documentElement.classList.add('visited')</script>
 </head>
 <body>
@@ -403,6 +404,7 @@
   <script src="js/ui/components/daily-score.js"></script>
   <script src="js/ui/components/yunshi.js"></script>
   <script src="js/ui/settings.js"></script>
+  <script src="bazi-xiaogua/xiaogua.js"></script>
   <script src="js/ui/app.js"></script>
 
   <!-- Menu dropdown toggle -->
@@ -435,6 +437,8 @@
     if (!menuOverlay.contains(e.target) && e.target !== menuBtn) closeMenu();
   });
   </script>
+
+  <div id="xgContainer"></div>
 
   <!-- Background text rain -->
   <script>
