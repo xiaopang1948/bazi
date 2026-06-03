@@ -17,5 +17,9 @@
 
 ## 版本号管理
 
-- **每次 git commit 前必须更新版本号** — index.html 3 处（title、loading overlay、hero title）从 Vx.y 升到下一版，同时在 memory/progress.md 顶部同步
-- **版本号同步时同时更新 `js/data/version-history.js`** — 新增当前版本的 entry（version/label/date/tag/items），按倒序插入到数组最前面
+- **每次 git commit 前只需更新 `js/data/version-history.js`** — 新增当前版本的 entry（version/label/date/tag/items），按倒序插入到数组最前面。左上角、loading 蒙层、页面标题自动从 `VERSION_HISTORY[0]` 读取，无需手动改 HTML
+
+## CDN 库兼容
+
+- **不对已发布库的 API 存在性做假设** — 用 `getJieQiTable()` + `getJieQiList()` 替代不存在的 `LunarYear.fromYear().getJieQi()`，只用实际存在的公开 API
+- **库返回的非中文标识（拼音/模板）不依赖内部 _convertJieQi 转换** — 改用独立映射表 `JIE_QI_NAME_MAP` 做拼音→中文转换，与库 API 解耦
