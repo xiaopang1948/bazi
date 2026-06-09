@@ -141,7 +141,6 @@ function doHarmony() {
       document.getElementById('harmonyResult').style.display = 'block';
       const container = document.getElementById('harmonyScoreDisplay');
       container.querySelector('.gauge-container').style.display = 'none';
-      container.querySelector('#btnSaveHarmony').style.display = 'none';
       document.getElementById('harmonyScoreText').innerHTML = '<p style="color:#c62828;padding:20px">请为双方选择出生城市（用于真太阳时校正）</p>';
       return;
     }
@@ -156,7 +155,6 @@ function doHarmony() {
 
   const container = document.getElementById('harmonyScoreDisplay');
   container.querySelector('.gauge-container').style.display = 'inline-block';
-  document.getElementById('btnSaveHarmony').style.display = '';
   document.getElementById('harmonyScoreText').innerHTML = '';
 
   const scoreColor = harmony.score >= 85 ? '#2e7d32' : harmony.score >= 70 ? '#f9a825' : harmony.score >= 55 ? '#e65100' : '#c62828';
@@ -220,11 +218,4 @@ function backToHepanInput() {
 
 document.getElementById('btnHarmony').addEventListener('click', doHarmony);
 document.getElementById('btnHarmonyBack').addEventListener('click', backToHepanInput);
-document.getElementById('btnSaveHarmony').addEventListener('click', function() {
-  const data = BaziStore.get('lastHarmonyData');
-  if (!data) return;
-  saveHarmonyToHistory(data.r1, data.r2, data.harmony);
-  this.textContent = '已保存 ✓';
-  setTimeout(() => { this.textContent = '保存到记录'; }, 2000);
-});
 initHepanSelectors();

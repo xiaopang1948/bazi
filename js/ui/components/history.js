@@ -238,6 +238,7 @@ function loadHistoryFromDetail(id) {
   document.getElementById('hour').value = hh;
   document.getElementById('minute').value = mi;
   setGender(h.gender);
+  document.getElementById('name').value = h.name;
   closeHistoryDetail();
   BaziStore.set('keepResult', true);
   BaziRouter.go('bazi');

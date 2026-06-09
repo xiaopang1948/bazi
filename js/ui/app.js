@@ -115,8 +115,7 @@ function doCalc() {
 
   lastResult = result;
   if (window.xg) xg.setBaziData(lastResult);
-  saveHistory(name, result);
-  document.getElementById('name').value = '';
+  document.getElementById('saveRow').style.display = 'block';
   } catch(e) {
     console.error('排盘错误:', e);
     let msg = e.message || '未知错误';
@@ -127,6 +126,7 @@ function doCalc() {
 }
 
 function backToInput() {
+  document.getElementById('saveRow').style.display = 'none';
   document.getElementById('result').style.display = 'none';
   document.getElementById('inputView').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -178,6 +178,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('btnCalc').addEventListener('click', doCalc);
   document.getElementById('btnBack').addEventListener('click', backToInput);
+  document.getElementById('btnSaveBazi').addEventListener('click', function() {
+    const el = this;
+    if (el.classList.contains('saved')) return;
+    const name = document.getElementById('name').value || '未知';
+    saveHistory(name, lastResult);
+    el.textContent = '已保存 ✓';
+    el.classList.add('saved');
+    setTimeout(() => {
+      el.textContent = '保存';
+      el.classList.remove('saved');
+    }, 2000);
+  });
 
   document.querySelectorAll('.pill-group').forEach(group => {
     group.addEventListener('click', function(e) {
