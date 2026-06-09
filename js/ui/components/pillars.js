@@ -81,7 +81,6 @@ function renderWuxingText(result) {
   const p = result.pattern
   const t = result.tiaoHou
   if (!p) return
-  const WX_CLASS = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' };
   const toWx = (c) => WX_CLASS[c] || (typeof getStemWuxing === 'function' && WX_CLASS[getStemWuxing(c)]) || (typeof getBranchWuxing === 'function' && WX_CLASS[getBranchWuxing(c)]) || ''
   const wx = (s) => { if (!s) return ''; return [...s].map(c => `<span class="wx-${toWx(c)}">${c}</span>`).join('') }
   let html = `<div class="wuxing-desc-row"><span>日主五行</span><strong>${wx(p.dayStemWuxing)}</strong></div>`
@@ -92,26 +91,6 @@ function renderWuxingText(result) {
   if (t) {
     html += `<div class="wuxing-desc-row tiaohou-desc-row"><span>调候用神</span><strong>${t.yong ? wx(t.yong) : t.yong}</strong></div>`
   }
-  container.innerHTML = html
-}
-
-function renderQiMing(result) {
-  const card = document.getElementById('qiMingCard')
-  const container = document.getElementById('qiMingContent')
-  if (!card) return
-  const p = result.pattern
-  if (!p || !p.yongShen) return
-  card.style.display = 'block'
-  const suggestions = calcNameSuggestions(p.dayStemWuxing, p.yongShen, 8)
-  let html = `<p style="font-size:13px;margin-bottom:8px;color:var(--text-light)">根据八字，宜补五行【${p.yongShen}】，以下推荐名字供参考：</p>`
-  html += '<div style="display:flex;flex-wrap:wrap;gap:8px">'
-  for (const s of suggestions) {
-    html += `<div style="padding:8px 14px;background:rgba(184,134,11,0.06);border:1px solid var(--border);border-radius:6px;text-align:center">
-      <div style="font-size:18px;font-weight:700;color:var(--primary)">${s.name}</div>
-      <div style="font-size:11px;color:var(--text-light);margin-top:2px">${s.reason}</div>
-    </div>`
-  }
-  html += '</div>'
   container.innerHTML = html
 }
 

@@ -1,11 +1,11 @@
 let lastResult = null;
-let timeSelectedDay = new Date().getDate();
 
 const WX_CLASS = { '木':'mu','火':'huo','土':'tu','金':'jin','水':'shui' };
 function wxSpan(wx, text) { return `<span class="wx-${WX_CLASS[wx] || ''}">${text}</span>`; }
 
 function getGender() {
-  return document.querySelector('#genderGroup .pill.active').dataset.value
+  const el = document.querySelector('#genderGroup .pill.active');
+  return el ? el.dataset.value : 'male';
 }
 function setGender(val) {
   document.querySelectorAll('#genderGroup .pill').forEach(b => b.classList.toggle('active', b.dataset.value === val))
@@ -115,8 +115,8 @@ function doCalc() {
 
   lastResult = result;
   if (window.xg) xg.setBaziData(lastResult);
-  timeSelectedDay = new Date().getDate();
   saveHistory(name, result);
+  document.getElementById('name').value = '';
   } catch(e) {
     console.error('排盘错误:', e);
     let msg = e.message || '未知错误';
@@ -165,9 +165,9 @@ document.addEventListener('DOMContentLoaded', function() {
   BaziRouter.go = function(tab, pushState) {
     origGo.call(this, tab, pushState)
     if (tab === 'yunshi') setTimeout(renderYunshi, 100)
-    if (tab === 'bazi' && !window._baziKeepResult) setTimeout(backToInput, 50)
+    if (tab === 'bazi' && !BaziStore.get('keepResult')) setTimeout(backToInput, 50)
     if (tab === 'hepan' && typeof backToHepanInput === 'function') setTimeout(backToHepanInput, 50)
-    window._baziKeepResult = false
+    BaziStore.set('keepResult', false)
   }
   if (location.hash === '#yunshi') setTimeout(renderYunshi, 150)
 
@@ -188,9 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   })
 
-  const copyBtn = document.getElementById('btnCopyReport');
-  if (copyBtn) copyBtn.addEventListener('click', copyReport);
-
   const now = new Date();
   document.getElementById('year').value = now.getFullYear();
   document.getElementById('month').value = now.getMonth() + 1;
@@ -202,21 +199,3 @@ document.addEventListener('DOMContentLoaded', function() {
     window.xg = new XiaoGua(xgContainer);
   }
 });
-
-function copyReport() {
-  const reportEl = document.getElementById('reportContent');
-  if (!reportEl || !reportEl.textContent) return;
-  navigator.clipboard.writeText(reportEl.textContent).then(() => {
-    const btn = document.getElementById('btnCopyReport');
-    const orig = btn.textContent;
-    btn.textContent = '✓ 已复制';
-    setTimeout(() => btn.textContent = orig, 2000);
-  }).catch(() => {
-    const range = document.createRange();
-    range.selectNode(reportEl);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-    window.getSelection().removeAllRanges();
-  });
-}

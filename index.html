@@ -249,7 +249,7 @@
           </div>
           <div class="card">
             <h3>本月概况</h3>
-            <div id="zeriMonthView" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:12px"></div>
+            <div id="zeriMonthView" style="display:grid;grid-template-columns:repeat(7,1fr);font-size:12px"></div>
           </div>
         </div>
       </section>
@@ -257,8 +257,8 @@
       <!-- ========== 合盘 TAB ========== -->
       <section class="tab-content" id="tab-hepan">
         <div class="input-card" style="padding:var(--space-md)">
-          <h3 style="font-family:var(--font-serif);font-size:18px;color:#fff;margin-bottom:4px">合盘分析</h3>
-          <p style="font-size:13px;color:var(--white-dim);margin-bottom:var(--space-md)">输入双方信息，查看八字合盘评分</p>
+          <h3 class="hp-title">合盘分析</h3>
+          <p class="hp-desc">输入双方信息，查看八字合盘评分</p>
           <div class="hepan-grid">
             <div class="card hepan-person">
               <h4>甲方</h4>
@@ -290,7 +290,14 @@
               </div>
               <div class="input-group">
                 <label>城市</label>
-                <select id="hp1City"></select>
+                <div id="hp1CityContainer">
+                  <div class="hp-flex-row">
+                    <select id="hp1Province" class="hp-select"><option value="">省份</option></select>
+                    <select id="hp1City" class="hp-select"><option value="">城市</option></select>
+                  </div>
+                  <input type="text" id="hp1CitySearch" placeholder="搜索城市..." class="hp-input">
+                  <div id="hp1CitySuggestions" class="hp-suggest"></div>
+                </div>
               </div>
             </div>
             <div class="card hepan-person">
@@ -323,25 +330,47 @@
               </div>
               <div class="input-group">
                 <label>城市</label>
-                <select id="hp2City"></select>
+                <div id="hp2CityContainer">
+                  <div class="hp-flex-row">
+                    <select id="hp2Province" class="hp-select"><option value="">省份</option></select>
+                    <select id="hp2City" class="hp-select"><option value="">城市</option></select>
+                  </div>
+                  <input type="text" id="hp2CitySearch" placeholder="搜索城市..." class="hp-input">
+                  <div id="hp2CitySuggestions" class="hp-suggest"></div>
+                </div>
               </div>
             </div>
           </div>
-          <div style="display:flex;justify-content:center;margin-top:var(--space-md)">
+          <div class="hp-flex-center">
             <button class="btn btn-primary" id="btnHarmony">开始合盘</button>
           </div>
 
         </div>
         <div id="harmonyResult" style="display:none">
-          <div style="display:flex;align-items:center;margin-bottom:var(--space-md)">
+          <div class="hp-flex-between">
             <button class="btn-back" id="btnHarmonyBack">← 重新输入</button>
           </div>
           <div class="card" id="harmonyScoreCard" style="text-align:center">
-            <h3 style="font-family:var(--font-serif);font-size:18px;color:#fff;margin-bottom:var(--space-md)">合盘评分</h3>
-            <div id="harmonyScoreDisplay" style="padding:10px"></div>
+            <h3 class="hp-section-title">合盘评分</h3>
+            <div id="harmonyScoreDisplay">
+              <div class="gauge-container">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="8"/>
+                  <circle id="gaugeArc" cx="60" cy="60" r="52" fill="none" stroke="#00E676"
+                    stroke-width="8" stroke-linecap="round"
+                    stroke-dasharray="326.7" stroke-dashoffset="326.7"
+                    transform="rotate(-90 60 60)"/>
+                  <text x="60" y="52" text-anchor="middle" fill="#fff" font-size="28" font-weight="700" id="gaugeScore">0</text>
+                  <text x="60" y="70" text-anchor="middle" fill="var(--white-dim)" font-size="11" id="gaugeLabel">-</text>
+                </svg>
+              </div>
+              <div id="harmonyScoreText" style="margin-top:8px"></div>
+              <div id="harmonyProfileDisplay" style="display:flex;justify-content:space-around;margin-top:12px;font-size:13px;color:var(--text-light)"></div>
+              <button class="btn btn-secondary" id="btnSaveHarmony" style="margin-top:12px;padding:6px 20px;font-size:13px">保存到记录</button>
+            </div>
           </div>
           <div class="card" id="harmonyDetailsCard">
-            <h3 style="font-family:var(--font-serif);font-size:18px;color:#fff;margin-bottom:var(--space-md)">详细分析</h3>
+            <h3 class="hp-section-title">详细分析</h3>
             <div id="harmonyDetails"></div>
           </div>
         </div>
@@ -351,12 +380,28 @@
       <!-- ========== 历史记录 TAB ========== -->
       <section class="tab-content" id="tab-history">
         <div class="placeholder">
-          <h2>排盘历史</h2>
-
-          <p id="historyEmpty">暂无记录</p>
+          <h2>记录</h2>
+          <div class="history-toolbar">
+            <input type="text" id="historySearch" placeholder="搜索姓名..." class="history-search">
+            <button id="btnClearHistory" class="btn btn-secondary btn-danger">清空全部</button>
+          </div>
+          <p id="historyEmpty" class="history-empty">暂无记录</p>
           <div id="historyList"></div>
         </div>
       </section>
+
+      <!-- 记录详情面板 -->
+      <div id="historyDetailOverlay" class="detail-overlay" onclick="closeHistoryDetail()"></div>
+      <div id="historyDetailPanel" class="card detail-panel">
+        <div class="detail-header">
+          <h3 id="detailTitle" class="detail-title">详情</h3>
+          <button onclick="closeHistoryDetail()" class="detail-close">×</button>
+        </div>
+        <div id="detailContent"></div>
+        <div class="detail-footer">
+          <button id="btnLoadFromDetail" class="btn btn-primary btn-load">载入排盘</button>
+        </div>
+      </div>
 
       <!-- ========== 设置 TAB ========== -->
       <section class="tab-content" id="tab-settings">
@@ -401,7 +446,6 @@
   <script src="js/ui/components/hepan.js"></script>
   <script src="js/ui/components/zeri.js"></script>
   <script src="js/ui/components/history.js"></script>
-  <script src="js/ui/components/daily-score.js"></script>
   <script src="js/ui/components/yunshi.js"></script>
   <script src="js/ui/settings.js"></script>
   <script src="bazi-xiaogua/xiaogua.js"></script>

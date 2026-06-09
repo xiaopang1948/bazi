@@ -488,8 +488,14 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
   const dStem = dGZ.charAt(0);
   const dBranch = dGZ.charAt(1);
 
-  // 时柱：库已正确实现早晚子时
-  const hGZ = bazi[3];
+  // 时柱：夜子时用五鼠遁按次日日干算 子时 时干
+  let hGZ;
+  if (isNightZiShi) {
+    const stemIdx = STEMS.indexOf(dGZ.charAt(0));
+    hGZ = STEMS[(stemIdx % 5) * 2] + '子';
+  } else {
+    hGZ = bazi[3];
+  }
   const hStem = hGZ.charAt(0);
   const hBranch = hGZ.charAt(1);
 
@@ -593,7 +599,7 @@ function calcBaZi(year, month, day, hour, minute, gender, cityKey, useSolarTime,
     branch: BRANCHES[liuNianZhiIdx],
     ganzhi: STEMS[liuNianGanIdx] + BRANCHES[liuNianZhiIdx],
     shishenTianGan: getShiShen(pillars.day.stem, STEMS[liuNianGanIdx]),
-    shishenDiZhi: getShiShen(pillars.day.stem, BRANCHES[liuNianZhiIdx]),
+    shishenDiZhi: getShiShen(pillars.day.stem, getHiddenStems(liuNianZhiIdx)[0] || ''),
   };
 
   return {

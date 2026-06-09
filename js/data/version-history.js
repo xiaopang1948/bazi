@@ -1,5 +1,17 @@
 const VERSION_HISTORY = [
   {
+    version: 'V2.9', label: '内测版', date: '2026-06-09', tag: 'feat',
+    items: [
+      '全局状态管理迁移 — 所有 localStorage 读写归一至 BaziStore，pub/sub 事件驱动',
+      'CSS 样式系统重构 — 19+ 冗余选择器合并，inline 样式→CSS 类迁移',
+      '死代码清理 — 移除 wuyun-liuqi/celebrity/daily-score/report 等 6 个未用文件',
+      '合盘评分引擎 — 多维合盘评分+仪表盘图+详情表',
+      '历史记录增强 — 合盘记录保存、多条件搜索、Clear All',
+      '合盘级联选择 — 省→市联动+真太阳时自动填充',
+      '全链路缺陷修复 — CSS 变量补齐、夜子时逻辑修正、流年十神算法修复、7+ null guard',
+    ],
+  },
+  {
     version: 'V2.8', label: '内测版', date: '2026-06-03', tag: 'feat',
     items: [
       'AI 小卦助手集成 — 右下角浮动触发，八字数据实时推送至状态栏+System Prompt',

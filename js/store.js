@@ -24,9 +24,22 @@ const BaziStore = {
     add(entry) {
       const h = this.getAll()
       h.unshift(entry)
-      if (h.length > 20) h.length = 20
+      if (h.length > 100) h.length = 100
       localStorage.setItem('bazi_history', JSON.stringify(h))
       BaziStore.set('history', h)
+    },
+    delete(id) {
+      const h = this.getAll()
+      const idx = h.findIndex(e => e.id === id)
+      if (idx > -1) {
+        h.splice(idx, 1)
+        localStorage.setItem('bazi_history', JSON.stringify(h))
+        BaziStore.set('history', h)
+      }
+    },
+    getById(id) {
+      const h = this.getAll()
+      return h.find(e => e.id === id) || null
     },
     clear() {
       localStorage.removeItem('bazi_history')

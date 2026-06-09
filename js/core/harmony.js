@@ -57,21 +57,27 @@ function calcHarmony(r1, r2) {
   const details = [];
   const warnings = [];
 
-  // ── 1. 年柱纳音 ──
-  const nayin1 = d1.year.nayin;
-  const nayin2 = d2.year.nayin;
-  const wx1 = NAYIN_WUXING[nayin1] || '';
-  const wx2 = NAYIN_WUXING[nayin2] || '';
-  if (wx1 && wx2) {
-    if (WUXING_SHENG[wx1] === wx2 || WUXING_SHENG[wx2] === wx1) {
-      score += 10;
-      details.push({ item: '年柱纳音', detail: `${nayin1}(${wx1}) → ${nayin2}(${wx2})，相生`, effect: '吉' });
-    } else if (WUXING_KE[wx1] === wx2 || WUXING_KE[wx2] === wx1) {
-      score -= 5;
-      details.push({ item: '年柱纳音', detail: `${nayin1}(${wx1}) → ${nayin2}(${wx2})，相克`, effect: '凶' });
-    } else {
-      details.push({ item: '年柱纳音', detail: `${nayin1}(${wx1}) → ${nayin2}(${wx2})，平和`, effect: '平' });
+  // ── 1. 四柱纳音逐一比较 ──
+  const pillarLabels = ['年柱','月柱','日柱','时柱'];
+  const pillarKeys = ['year','month','day','hour'];
+  let nayinTotal = 0;
+  const nayinParts = [];
+  for (let i = 0; i < 4; i++) {
+    const key = pillarKeys[i];
+    const n1 = NAYIN_WUXING[d1[key].nayin] || '';
+    const n2 = NAYIN_WUXING[d2[key].nayin] || '';
+    if (!n1 || !n2) continue;
+    if (WUXING_SHENG[n1] === n2 || WUXING_SHENG[n2] === n1) {
+      nayinTotal += i === 0 ? 10 : 3;
+      nayinParts.push(`${pillarLabels[i]}: ${d1[key].nayin}(${n1})→${d2[key].nayin}(${n2})相生`);
+    } else if (WUXING_KE[n1] === n2 || WUXING_KE[n2] === n1) {
+      nayinTotal -= i === 0 ? 5 : 2;
+      nayinParts.push(`${pillarLabels[i]}: ${d1[key].nayin}(${n1})→${d2[key].nayin}(${n2})相克`);
     }
+  }
+  if (nayinParts.length > 0) {
+    score += nayinTotal;
+    details.push({ item: '四柱纳音', detail: nayinParts.join('；'), effect: nayinTotal > 0 ? '吉' : nayinTotal < 0 ? '凶' : '平' });
   }
 
   // ── 2. 生肖 (年支) ──
@@ -133,15 +139,41 @@ function calcHarmony(r1, r2) {
     if (he) { score += 5; details.push({ item: '日支配偶宫', detail: `${db1}${db2}三合`, effect: '吉' }); }
   }
 
-  // ── 5. 夫妻星状态（日干 × 日支的十神） ──
-  const fq1 = d1.day.shishen;
-  const fq2 = d2.day.shishen;
-  // 女命以正官为夫，男命以正财为妻
+  // ── 5. 夫妻星状态 ──
   const maleWifeStars = ['正财','偏财'];
   const femaleHusbandStars = ['正官','七杀'];
-  
-  // 检查双方夫妻星是否在地支有强根
-  // (简化：只看是否存在)
+  let starScore = 0;
+  const starParts = [];
+  const g1Gender = r1.input.gender;
+  const g2Gender = r2.input.gender;
+  // 男方日支配偶宫为财星 → 妻星得位
+  if (g1Gender === 'male' && maleWifeStars.includes(d1.day.shishen)) {
+    starScore += 3; starParts.push('男方夫妻宫得财星');
+  }
+  // 女方日支配偶宫为官星 → 夫星得位
+  if (g2Gender === 'female' && femaleHusbandStars.includes(d2.day.shishen)) {
+    starScore += 3; starParts.push('女方夫妻宫得官星');
+  }
+  // 男方日干是女方的夫星
+  if (g2Gender === 'female' && femaleHusbandStars.includes(getShiShen(p2.day.stem, p1.day.stem))) {
+    starScore += 4; starParts.push('男方是女方夫星');
+  }
+  // 女方日干是男方的妻星
+  if (g1Gender === 'male' && maleWifeStars.includes(getShiShen(p1.day.stem, p2.day.stem))) {
+    starScore += 4; starParts.push('女方是男方妻星');
+  }
+  // 双方日干十神关系（生对方日主）
+  const s1 = getShiShen(p2.day.stem, p1.day.stem);
+  const s2 = getShiShen(p1.day.stem, p2.day.stem);
+  if (s1 === '正印' || s1 === '偏印') { starScore += 2; starParts.push('男方生女方'); }
+  if (s2 === '正印' || s2 === '偏印') { starScore += 2; starParts.push('女方生男方'); }
+  if (starScore > 0) {
+    score += Math.min(starScore, 14);
+    details.push({ item: '夫妻星', detail: starParts.join('、'), effect: starScore >= 8 ? '吉' : '平' });
+  } else {
+    score -= 3;
+    details.push({ item: '夫妻星', detail: '夫妻星不显，缘分较浅', effect: '凶' });
+  }
 
   // ── 6. 五行互补性 ──
   const wxCount1 = r1.wuxingCount;
@@ -162,27 +194,58 @@ function calcHarmony(r1, r2) {
     details.push({ item: '五行互补', detail: compDetails.join('、'), effect: '吉' });
   }
 
-  // ── 7. 大运同步性（简版） ──
-  // 如果两人当前大运的五行一致，说明人生节奏同步
+  // ── 7. 大运同步性 ──
   if (r1.dayun && r2.dayun && r1.dayun.periods.length > 0 && r2.dayun.periods.length > 0) {
-    // 找当前年龄对应的大运
     const now = new Date();
-    const age = now.getFullYear() - r1.input.year;
-    // 用第一个大运的五行做粗略比较
-    const wxDaYun1 = getStemWuxing(r1.dayun.periods[0].stem);
-    const wxDaYun2 = getStemWuxing(r2.dayun.periods[0].stem);
-    if (wxDaYun1 && wxDaYun2) {
-      if (wxDaYun1 === wxDaYun2) {
-        score += 5;
-        details.push({ item: '大运同步', detail: `当前大运五行同为${wxDaYun1}`, effect: '吉' });
-      } else if (WUXING_SHENG[wxDaYun1] === wxDaYun2 || WUXING_SHENG[wxDaYun2] === wxDaYun1) {
-        score += 3;
-        details.push({ item: '大运同步', detail: `大运五行相生`, effect: '吉' });
+    const findCurrentPeriod = (periods, birthYear) => {
+      const age = now.getFullYear() - birthYear;
+      return periods.find(p => {
+        const [s, e] = p.ageRange.split('-').map(Number);
+        return age >= s && age <= e;
+      }) || periods[0];
+    };
+    const cur1 = findCurrentPeriod(r1.dayun.periods, r1.input.year);
+    const cur2 = findCurrentPeriod(r2.dayun.periods, r2.input.year);
+    if (cur1 && cur2) {
+      const wx1 = getStemWuxing(cur1.stem);
+      const wx2 = getStemWuxing(cur2.stem);
+      if (wx1 && wx2) {
+        if (wx1 === wx2) {
+          score += 5;
+          details.push({ item: '大运同步', detail: `当前大运五行同为${wx1}(${cur1.ganzhi}/${cur1.ageRange}岁~${cur2.ganzhi}/${cur2.ageRange}岁)`, effect: '吉' });
+        } else if (WUXING_SHENG[wx1] === wx2 || WUXING_SHENG[wx2] === wx1) {
+          score += 3;
+          details.push({ item: '大运同步', detail: `当前大运五行相生(${wx1}→${wx2})`, effect: '吉' });
+        }
       }
     }
   }
 
-  // ── 8. 总分评定 ──
+  // ── 8. 神煞合婚 ──
+  const goodStarNames = ['天乙贵人','文昌贵人','天德','月德','红鸾','天喜'];
+  const badStarNames = ['孤辰','寡宿','劫煞','元辰','亡神'];
+  const allStars1 = [...d1.year.stars, ...d1.month.stars, ...d1.day.stars, ...d1.hour.stars];
+  const allStars2 = [...d2.year.stars, ...d2.month.stars, ...d2.day.stars, ...d2.hour.stars];
+  const sharedGood = allStars1.filter(s => goodStarNames.includes(s.name) && allStars2.find(s2 => s2.name === s.name));
+  const p1Bad = allStars1.filter(s => badStarNames.includes(s.name) && !allStars2.find(s2 => s2.name === s.name));
+  const p2Bad = allStars2.filter(s => badStarNames.includes(s.name) && !allStars1.find(s1 => s1.name === s.name));
+  let shenshaScore = 0;
+  const shenshaParts = [];
+  if (sharedGood.length > 0) {
+    shenshaScore += sharedGood.length * 3;
+    shenshaParts.push(`同带${sharedGood.map(s => s.name).join('、')}`);
+  }
+  if (p1Bad.length > 0 || p2Bad.length > 0) {
+    const allBad = [...new Set([...p1Bad, ...p2Bad].map(s => s.name))];
+    shenshaScore -= allBad.length * 2;
+    shenshaParts.push(`${allBad.join('、')}单方带`);
+  }
+  if (shenshaScore !== 0) {
+    score += Math.max(-6, Math.min(9, shenshaScore));
+    details.push({ item: '神煞合婚', detail: shenshaParts.join('；'), effect: shenshaScore > 0 ? '吉' : '凶' });
+  }
+
+  // ── 9. 总分评定 ──
   score = Math.max(0, Math.min(100, score));
   let level, summary;
   if (score >= 85) { level = '上等婚配'; summary = '天作之合，五行互补，命局相合。'; }

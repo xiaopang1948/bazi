@@ -76,7 +76,7 @@ playwright-cli -s=btest screenshot --filename=step1-main.png
 
 ### 6. 执行 JS 获取 DOM 状态
 
-Playwright eval 不支持 `;` 分割多语句（语法解析限制）。**正确做法**：
+Playwright eval 接收的参数会被包裹成 `() => (args)`，所以参数本身必须是**表达式**（不能有裸分号多语句）。**正确做法**：
 
 ```powershell
 # ✅ 用函数包装
@@ -88,9 +88,14 @@ playwright-cli -s=btest eval "!!document.getElementById('hp1City') && !!document
 # ✅ 三元表达式
 playwright-cli -s=btest eval "document.getElementById('harmonyResult')?.style.display === 'block' ? document.querySelector('#harmonyScoreDisplay div')?.textContent : 'hidden'"
 
+# ✅ 管道传文件（自动读取 stdin，文件需是 IIFE 或表达式）
+Get-Content tests/smoke.js -Raw | playwright-cli -s=btest eval
+
 # ❌ 不行：分号多语句
 playwright-cli -s=btest eval "var x = 1; var y = 2"    # SyntaxError
 ```
+
+**管道技巧**：`playwright-cli eval` 从 stdin 读取代码时不经过 `() => (...)` 包裹，所以支持任意多语句 JavaScript 文件。但对冒烟测试有用 —— 更可靠的是用 IIFE 包裹的 JS 文件通过管道传入（见 `tests/smoke.js`）。
 
 ### 7. 验证 DOM 内容
 
@@ -110,7 +115,25 @@ Stop-Process -Id $serverPid -Force               # 停掉 HTTP 服务器
 Remove-Item "./.playwright-cli" -Recurse -Force  # 清理截图和日志
 ```
 
-## 完整测试流程脚本
+## 快速冒烟测试（推荐）
+
+最快方式 — 一键运行，覆盖核心路径：
+
+```powershell
+powershell -File tests/run.ps1
+```
+
+或者带自动暂停（失败时等待按键）：
+
+```powershell
+powershell -File tests/run.ps1 -Watch
+```
+
+脚本自动完成：启动 HTTP → 打开浏览器 → 跑 smoke.js → 检查结果 → 清理。
+
+`tests/smoke.js` 测试路线：排盘计算 → 四柱验证（日柱壬午/时柱庚子）→ 合盘 Tab → 合盘计算 → 运程 Tab → 择日 Tab → 历史 Tab → 设置 Tab → 返回排盘。使用 `setTimeout` 链等待 DOM 异步更新，结果累在 `window.__test.results`。
+
+## 手动完整测试流程
 
 ```powershell
 # 1. 启动服务器

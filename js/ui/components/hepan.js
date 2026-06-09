@@ -41,17 +41,9 @@ function initHepanSelectors() {
       opt.value = m; opt.textContent = String(m).padStart(2,'0');
       minSel.appendChild(opt);
     }
-    const citySel = document.getElementById(prefix + 'City');
-    const defaultOpt = document.createElement('option');
-    defaultOpt.value = ''; defaultOpt.textContent = '— 请选择城市 —';
-    defaultOpt.disabled = true; defaultOpt.selected = true;
-    citySel.appendChild(defaultOpt);
-    for (const [key, city] of Object.entries(CITIES)) {
-      const opt = document.createElement('option');
-      opt.value = key; opt.textContent = city.name;
-      citySel.appendChild(opt);
-    }
   });
+  initHpCitySelector('hp1');
+  initHpCitySelector('hp2');
 
   const now = new Date();
   document.getElementById('hp1Year').value = now.getFullYear();
@@ -61,6 +53,70 @@ function initHepanSelectors() {
   ['hp1','hp2'].forEach(p => {
     document.getElementById(p + 'Day').value = now.getDate();
   });
+}
+
+function initHpCitySelector(prefix) {
+  const provSel = document.getElementById(prefix + 'Province');
+  const citySel = document.getElementById(prefix + 'City');
+  const searchInput = document.getElementById(prefix + 'CitySearch');
+  const suggestions = document.getElementById(prefix + 'CitySuggestions');
+
+  const provinces = Object.keys(PROVINCE_CITIES);
+  provSel.innerHTML = '<option value="">省份</option>' + provinces.map(p => `<option value="${p}">${p}</option>`).join('');
+
+  provSel.addEventListener('change', function() {
+    const keys = PROVINCE_CITIES[this.value] || [];
+    citySel.innerHTML = '<option value="">城市</option>' + keys.map(k => `<option value="${k}">${CITIES[k].name}</option>`).join('');
+    citySel.disabled = !this.value;
+    searchInput.value = '';
+    suggestions.style.display = 'none';
+  });
+
+  citySel.addEventListener('change', function() {
+    searchInput.value = '';
+    suggestions.style.display = 'none';
+  });
+
+  searchInput.addEventListener('input', function() {
+    const q = this.value.trim();
+    if (!q) { suggestions.style.display = 'none'; return; }
+    const matches = Object.entries(CITIES)
+      .filter(([k, v]) => v.name.includes(q))
+      .slice(0, 10);
+    if (matches.length === 0) { suggestions.style.display = 'none'; return; }
+    suggestions.innerHTML = matches.map(([k, v]) =>
+      `<div style="padding:6px 8px;cursor:pointer;color:var(--text-light);font-size:13px;border-bottom:1px solid var(--border)"
+            onmouseover="this.style.background='rgba(0,230,118,0.1)'"
+            onmouseout="this.style.background=''"
+            onclick="selectHpCity('${prefix}','${k}','${v.name}')">${v.name}</div>`
+    ).join('');
+    suggestions.style.display = 'block';
+  });
+
+  searchInput.addEventListener('blur', function() {
+    setTimeout(() => { suggestions.style.display = 'none'; }, 200);
+  });
+  searchInput.addEventListener('focus', function() {
+    if (this.value.trim() && suggestions.children.length > 0) {
+      suggestions.style.display = 'block';
+    }
+  });
+}
+
+function selectHpCity(prefix, cityKey, cityName) {
+  document.getElementById(prefix + 'CitySearch').value = cityName;
+  document.getElementById(prefix + 'City').value = cityKey;
+  document.getElementById(prefix + 'CitySuggestions').style.display = 'none';
+  const provSel = document.getElementById(prefix + 'Province');
+  for (const [prov, keys] of Object.entries(PROVINCE_CITIES)) {
+    if (keys.includes(cityKey)) {
+      provSel.value = prov;
+      const event = new Event('change');
+      provSel.dispatchEvent(event);
+      document.getElementById(prefix + 'City').value = cityKey;
+      break;
+    }
+  }
 }
 
 function readHpInput(prefix) {
@@ -76,35 +132,60 @@ function readHpInput(prefix) {
 }
 
 function doHarmony() {
-  const hp1 = readHpInput('hp1');
-  const hp2 = readHpInput('hp2');
+  try {
+    const hp1 = readHpInput('hp1');
+    const hp2 = readHpInput('hp2');
 
-  if (!hp1.city || !hp2.city) {
-    document.querySelector('#tab-hepan > .input-card').style.display = 'none';
-    document.getElementById('harmonyResult').style.display = 'block';
-    document.getElementById('harmonyScoreDisplay').innerHTML = '<p style="color:#c62828;padding:20px">请为双方选择出生城市（用于真太阳时校正）</p>';
-    return;
-  }
+    if (!hp1.city || !hp2.city) {
+      document.querySelector('#tab-hepan > .input-card').style.display = 'none';
+      document.getElementById('harmonyResult').style.display = 'block';
+      const container = document.getElementById('harmonyScoreDisplay');
+      container.querySelector('.gauge-container').style.display = 'none';
+      container.querySelector('#btnSaveHarmony').style.display = 'none';
+      document.getElementById('harmonyScoreText').innerHTML = '<p style="color:#c62828;padding:20px">请为双方选择出生城市（用于真太阳时校正）</p>';
+      return;
+    }
 
-  const r1 = calcBaZi(hp1.year, hp1.month, hp1.day, hp1.hour, hp1.minute, hp1.gender, hp1.city, true, hp1.name);
-  const r2 = calcBaZi(hp2.year, hp2.month, hp2.day, hp2.hour, hp2.minute, hp2.gender, hp2.city, true, hp2.name);
+    const r1 = calcBaZi(hp1.year, hp1.month, hp1.day, hp1.hour, hp1.minute, hp1.gender, hp1.city, true, hp1.name);
+    const r2 = calcBaZi(hp2.year, hp2.month, hp2.day, hp2.hour, hp2.minute, hp2.gender, hp2.city, true, hp2.name);
 
-  const harmony = calcHarmony(r1, r2);
+    const harmony = calcHarmony(r1, r2);
 
   document.querySelector('#tab-hepan > .input-card').style.display = 'none';
   document.getElementById('harmonyResult').style.display = 'block';
 
-  const scoreDisplay = document.getElementById('harmonyScoreDisplay');
+  const container = document.getElementById('harmonyScoreDisplay');
+  container.querySelector('.gauge-container').style.display = 'inline-block';
+  document.getElementById('btnSaveHarmony').style.display = '';
+  document.getElementById('harmonyScoreText').innerHTML = '';
+
   const scoreColor = harmony.score >= 85 ? '#2e7d32' : harmony.score >= 70 ? '#f9a825' : harmony.score >= 55 ? '#e65100' : '#c62828';
-  scoreDisplay.innerHTML = `
-    <div style="font-size:48px;font-weight:700;color:${scoreColor}">${harmony.score}</div>
-    <div style="font-size:20px;font-weight:600;color:${scoreColor};margin:4px 0">${harmony.level}</div>
-    <div style="font-size:14px;color:var(--text-light);margin:8px 0">${harmony.summary}</div>
-    <div style="display:flex;justify-content:space-around;margin-top:12px;font-size:13px;color:var(--text-light)">
-      <span><strong>${harmony.profile1.name}</strong> ${harmony.profile1.ganzhi}</span>
-      <span><strong>${harmony.profile2.name}</strong> ${harmony.profile2.ganzhi}</span>
-    </div>
+  const arc = document.getElementById('gaugeArc');
+  const gaugeScore = document.getElementById('gaugeScore');
+  const gaugeLabel = document.getElementById('gaugeLabel');
+
+  arc.setAttribute('stroke', scoreColor);
+  const circumference = 326.7;
+  const offset = circumference * (1 - harmony.score / 100);
+
+  if (typeof gsap !== 'undefined') {
+    gsap.set(arc, { strokeDashoffset: circumference });
+    gsap.set(gaugeScore, { textContent: 0 });
+    gsap.to(arc, { strokeDashoffset: offset, duration: 1, ease: 'power2.out' });
+    gsap.to(gaugeScore, { textContent: harmony.score, duration: 1, ease: 'power2.out', snap: { textContent: 1 } });
+  } else {
+    arc.setAttribute('stroke-dashoffset', offset);
+    gaugeScore.textContent = harmony.score;
+  }
+  gaugeLabel.textContent = harmony.level;
+
+  document.getElementById('harmonyScoreText').innerHTML = `<div style="font-size:14px;color:var(--text-light);margin-top:4px">${harmony.summary}</div>`;
+  document.getElementById('harmonyProfileDisplay').innerHTML = `
+    <span><strong>${harmony.profile1.name}</strong> ${harmony.profile1.ganzhi}</span>
+    <span><strong>${harmony.profile2.name}</strong> ${harmony.profile2.ganzhi}</span>
   `;
+
+  BaziStore.set('lastHarmonyData', { r1, r2, harmony });
 
   const detailsDiv = document.getElementById('harmonyDetails');
   let html = `<table style="width:100%;border-collapse:collapse;font-size:14px">`;
@@ -125,6 +206,10 @@ function doHarmony() {
   detailsDiv.innerHTML = html;
 
   window.scrollTo({ top: document.getElementById('harmonyScoreCard').offsetTop - 80, behavior: 'smooth' });
+  } catch (e) {
+    console.error('合盘出错', e);
+    document.getElementById('harmonyScoreText').innerHTML = '<p style="color:#c62828;padding:20px">合盘计算出错，请检查输入</p>';
+  }
 }
 
 function backToHepanInput() {
@@ -135,4 +220,11 @@ function backToHepanInput() {
 
 document.getElementById('btnHarmony').addEventListener('click', doHarmony);
 document.getElementById('btnHarmonyBack').addEventListener('click', backToHepanInput);
+document.getElementById('btnSaveHarmony').addEventListener('click', function() {
+  const data = BaziStore.get('lastHarmonyData');
+  if (!data) return;
+  saveHarmonyToHistory(data.r1, data.r2, data.harmony);
+  this.textContent = '已保存 ✓';
+  setTimeout(() => { this.textContent = '保存到记录'; }, 2000);
+});
 initHepanSelectors();

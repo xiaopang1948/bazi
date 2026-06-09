@@ -212,21 +212,6 @@ function buildLiuriItems(result, period) {
   return items
 }
 
-const SHI_CHEN = [
-  { label: '子', range: '23-1' },
-  { label: '丑', range: '1-3' },
-  { label: '寅', range: '3-5' },
-  { label: '卯', range: '5-7' },
-  { label: '辰', range: '7-9' },
-  { label: '巳', range: '9-11' },
-  { label: '午', range: '11-13' },
-  { label: '未', range: '13-15' },
-  { label: '申', range: '15-17' },
-  { label: '酉', range: '17-19' },
-  { label: '戌', range: '19-21' },
-  { label: '亥', range: '21-23' },
-]
-
 function buildLiushiItems(result, year, month, day) {
   const dayStem = result.pillars.day.stem
   const hours = calcLiuShi(dayStem, year, month, day)
@@ -451,7 +436,4 @@ function updateMainTable(result) {
   renderMainTable(result, extraCols, ps.dayunIdx, ps.liunianYear)
 }
 
-/* ===== 兼容旧引用 ===== */
-function switchTimeView() {}
-function renderTimeContent() {}
-function renderLiuNian() {}
+

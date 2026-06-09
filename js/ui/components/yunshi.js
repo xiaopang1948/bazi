@@ -452,27 +452,27 @@ function renderYunshiReport(result) {
   const shiIdx = Math.floor((now.getHours() + 1) / 2) % 12
   const curShi = result.liuShi[shiIdx]
 
-  const dyScore = calcDimScore(dayStem, currentDY.data.stem, currentDY.data.branch, YUNSHI.dim)
-  const lnScore = calcDimScore(dayStem, currentLN.stem, currentLN.branch, YUNSHI.dim)
-  const monthScore = calcDimScore(dayStem, curMonth.stem, curMonth.branch, YUNSHI.dim)
-  const dayScore = calcDimScore(dayStem, curDay.stem, curDay.branch, YUNSHI.dim)
-  const shiScore = calcDimScore(dayStem, curShi.stem, curShi.branch, YUNSHI.dim)
+  const dyScore = currentDY?.data ? calcDimScore(dayStem, currentDY.data.stem, currentDY.data.branch, YUNSHI.dim) : 0
+  const lnScore = currentLN ? calcDimScore(dayStem, currentLN.stem, currentLN.branch, YUNSHI.dim) : 0
+  const monthScore = curMonth ? calcDimScore(dayStem, curMonth.stem, curMonth.branch, YUNSHI.dim) : 0
+  const dayScore = curDay ? calcDimScore(dayStem, curDay.stem, curDay.branch, YUNSHI.dim) : 0
+  const shiScore = curShi ? calcDimScore(dayStem, curShi.stem, curShi.branch, YUNSHI.dim) : 0
 
-  const dySS = getShiShen(dayStem, currentDY.data.stem)
-  const lnSS = getShiShen(dayStem, currentLN.stem)
-  const monthSS = getShiShen(dayStem, curMonth.stem)
-  const daySS = getShiShen(dayStem, curDay.stem)
-  const shiSS = getShiShen(dayStem, curShi.stem)
+  const dySS = getShiShen(dayStem, currentDY?.data?.stem || '')
+  const lnSS = getShiShen(dayStem, currentLN?.stem || '')
+  const monthSS = getShiShen(dayStem, curMonth?.stem || '')
+  const daySS = getShiShen(dayStem, curDay?.stem || '')
+  const shiSS = getShiShen(dayStem, curShi?.stem || '')
 
   const pSeed = calcPersonSeed(result)
 
   let html = `<div class="ys-report">`
 
-  html += buildReportSection('当前流时', `${curShi.label}（${curShi.timeRange}）`, shiScore, dimLabel, shiSS, dayStem, 'shi', YUNSHI.dim, curShi.branch, pSeed)
-  html += buildReportSection('当前流日', `${curDay.day}日（${curDay.ganzhi}）`, dayScore, dimLabel, daySS, dayStem, 'day', YUNSHI.dim, curDay.branch, pSeed)
-  html += buildReportSection('当前流月', `${curMonth.month}月（${curMonth.ganzhi}）`, monthScore, dimLabel, monthSS, dayStem, 'month', YUNSHI.dim, curMonth.branch, pSeed)
-  html += buildReportSection('当前流年', `${currentLN.year}年（${currentLN.ganzhi}）`, lnScore, dimLabel, lnSS, dayStem, 'year', YUNSHI.dim, currentLN.branch, pSeed)
-  html += buildReportSection('当前大运', `${currentDY.data.ageRange}（${currentDY.data.stem}${currentDY.data.branch}）`, dyScore, dimLabel, dySS, dayStem, 'dayun', YUNSHI.dim, currentDY.data.branch, pSeed)
+  html += curShi ? buildReportSection('当前流时', `${curShi.label}（${curShi.timeRange}）`, shiScore, dimLabel, shiSS, dayStem, 'shi', YUNSHI.dim, curShi.branch, pSeed) : ''
+  html += curDay ? buildReportSection('当前流日', `${curDay.day}日（${curDay.ganzhi}）`, dayScore, dimLabel, daySS, dayStem, 'day', YUNSHI.dim, curDay.branch, pSeed) : ''
+  html += curMonth ? buildReportSection('当前流月', `${curMonth.month}月（${curMonth.ganzhi}）`, monthScore, dimLabel, monthSS, dayStem, 'month', YUNSHI.dim, curMonth.branch, pSeed) : ''
+  html += currentLN ? buildReportSection('当前流年', `${currentLN.year}年（${currentLN.ganzhi}）`, lnScore, dimLabel, lnSS, dayStem, 'year', YUNSHI.dim, currentLN.branch, pSeed) : ''
+  html += currentDY?.data ? buildReportSection('当前大运', `${currentDY.data.ageRange}（${currentDY.data.stem}${currentDY.data.branch}）`, dyScore, dimLabel, dySS, dayStem, 'dayun', YUNSHI.dim, currentDY.data.branch, pSeed) : ''
 
   html += `<div class="ys-report-section ys-section-advice"><div class="ys-report-title">综合建议（${dimLabel}）</div>`
   html += `<div class="ys-report-body">${buildAdvice(result, dyScore, lnScore, dySS, lnSS, YUNSHI.dim)}</div></div>`
